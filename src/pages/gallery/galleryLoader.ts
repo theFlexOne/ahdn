@@ -1,7 +1,6 @@
-import { DUMMY_IMAGE_URLS } from "@/dummyData";
+import { supabase } from "@/lib/supabaseClient";
 
 export default async function galleryLoader() {
-  return {
-    images: DUMMY_IMAGE_URLS,
-  }
+  const { data: images } = await supabase.from("images").select("*").eq("tag", "gallery");
+  return { images };
 }

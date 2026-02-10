@@ -1,5 +1,5 @@
 import EmbeddedVideo from "../../components/EmbeddedVideo"
-import image1 from "/images/band/band-pic1.jpg"
+import image1 from "/images/band/band-pic1.avif"
 import UpcomingEvents from "./components/UpcomingEvents"
 import AudioPlayer from "@/components/audioPlayer/AudioPlayer"
 import { useLoaderData } from "react-router"

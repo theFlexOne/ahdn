@@ -118,14 +118,14 @@ export const DUMMY_SONG_LIST = [
   "I Wanna Be Your Man"
 ]
 export const DUMMY_IMAGE_URLS = [
-  "band-pic1.jpg",
-  "band-pic2.jpg",
-  "band-pic3.jpg",
-  "band-pic4.jpg",
-  "band-pic5.jpg",
-  "band-pic6.jpg",
-  "band-pic7.jpg",
-  "band-pic8.jpg",
-  "band-pic9.jpg",
-  "band-pic10.jpg"
+  "band-pic1.avif",
+  "band-pic2.avif",
+  "band-pic3.avif",
+  "band-pic4.avif",
+  "band-pic5.avif",
+  "band-pic6.avif",
+  "band-pic7.avif",
+  "band-pic8.avif",
+  "band-pic9.avif",
+  "band-pic10.avif"
 ];

@@ -1,7 +1,9 @@
-import { DUMMY_SONG_LIST } from "@/dummyData";
+import { fetchSongs } from "@/lib/supabaseHelpers";
 
 export default async function songsLoader() {
+  const songData = await fetchSongs();
+  const songs = songData.map((song) => song.name);
   return {
-    songs: DUMMY_SONG_LIST,
+    songs: songs,
   }
 }

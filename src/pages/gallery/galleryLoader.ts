@@ -1,6 +1,10 @@
-import { supabase } from "@/lib/supabaseClient";
+import { fetchImageMetadataByTags } from "@/lib/supabaseHelpers";
 
 export default async function galleryLoader() {
-  const { data: images } = await supabase.from("images").select("*").eq("tag", "gallery");
-  return { images };
+  const images = await fetchImageMetadataByTags(["gallery"]);
+  console.log(images);
+
+  return {
+    images,
+  }
 }

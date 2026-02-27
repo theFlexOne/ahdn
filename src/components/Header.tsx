@@ -1,14 +1,14 @@
 import { cn } from '@/lib/utils'
-import ahdnLogo from '../assets/AHDN-logo.svg'
-import facebookBadge from '/badges/facebook-badge.svg'
-import youtubeBadge from '/badges/youtube-badge.svg'
-import xBadge from '/badges/x-badge.svg'
+import ahdnLogo from '@/assets/AHDN-logo.svg'
+import facebookBadge from '@/assets/badges/fb_badge.svg'
+import youtubeBadge from '@/assets/badges/yt_badge.svg'
+import xBadge from '@/assets/badges/x_badge.svg'
 
 export default function Header({ className }: { className?: string }) {
   className = cn('flex bg-white/90 border border-white/80 rounded-b-sm py-2 px-4 items-center', className)
   return (
     <header className={className}>
-      <a href="/">
+      <a href="/home">
         <img src={ahdnLogo} alt="A Hard Day's Night logo" width={150} />
       </a>
 

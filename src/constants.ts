@@ -1,0 +1,1 @@
+export const STORAGE_ROOT_URL = "https://lzgryhrztslevnuajiqm.supabase.co/storage/v1/object/public";

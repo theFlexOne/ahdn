@@ -1,17 +1,17 @@
 import EmbeddedVideo from "../../components/EmbeddedVideo"
-import image1 from "/images/band/band-pic1.avif"
 import UpcomingEvents from "./components/UpcomingEvents"
 import AudioPlayer from "@/components/audioPlayer/AudioPlayer"
 import { useLoaderData } from "react-router"
 import Page from "@/layout/Page"
 import PageSection from "@/layout/PageSection"
+import ImageCarousel from "@/components/ImageCarousel"
 
-function Home() {
-  const { events } = useLoaderData();
+export default function Home() {
+  const { events, images } = useLoaderData();
   return (
     <Page>
       <PageSection className="bg-uk-blue">
-        <img src={image1} alt="A Hard Day's Night" className="max-w-full" />
+        <ImageCarousel images={images} />
       </PageSection>
       <PageSection className="flex flex-col gap-4 text-center font-semibold text-lg font-beatles items-center">
         <div className="w-full max-w-3xl flex flex-col gap-4">
@@ -57,6 +57,4 @@ function Home() {
     </Page>
   )
 }
-
-export default Home
 

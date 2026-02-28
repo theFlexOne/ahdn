@@ -1,9 +1,12 @@
 import { cn } from '@/lib/utils'
 
 export default function Header2({ className }: { className?: string }) {
-  className = cn('flex bg-black text-gray-300 py-4 px-4 items-center', className)
   return (
-    <header className={className}>
+    <header className={cn(
+      'flex bg-black text-gray-200 py-4 px-4 items-center relative',
+      'after:content-[""] after:absolute after:w-full after:h-4 after:bg-[linear-gradient(to_top,#040404_0%,#020202_50%,#000000_100%)] after:bottom-0 after:left-0',
+      className
+    )}>
       <nav className="w-full font-gl text-2xl">
         <ul className="flex w-full items-center">
           <li className="flex-1 text-center">

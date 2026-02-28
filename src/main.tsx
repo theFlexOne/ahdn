@@ -1,24 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
+import { createBrowserRouter, RouterProvider } from 'react-router'
 import './index.css'
-
-import Layout from './layout/Layout.tsx'
-import Home from './pages/home/Home.tsx'
-import About from './pages/about/About.tsx'
-import Schedule from './pages/schedule/Schedule.tsx'
-import Songs from './pages/songs/Songs.tsx'
-import Gallery from './pages/gallery/Gallery.tsx'
-import Contact from './pages/contact/Contact.tsx'
-
-import homeLoader from './pages/home/homeLoader.ts'
-import scheduleLoader from './pages/schedule/scheduleLoader.ts'
-import songsLoader from './pages/songs/songsLoader.ts'
-import galleryLoader from './pages/gallery/galleryLoader.ts'
 
 import Layout2 from './layout/Layout2.tsx'
 import Home2 from './pages/home/Home2.tsx'
 import { supabase } from './lib/supabaseClient.ts'
+import { FbClientProvider } from './context/fb/FbClientProvider.tsx'
 
 const router = createBrowserRouter([
   // {
@@ -71,11 +59,11 @@ const router = createBrowserRouter([
             videoUrls: [
               {
                 src: webm,
-                type: "video/webm; codecs=\"vp9, vorbis"
+                type: "video/webm"
               },
               {
                 src: mp4,
-                type: "video/mp4; codecs=\"avc1.42E01E, mp4a.40.2"
+                type: "video/mp4"
               }
             ],
           }
@@ -87,7 +75,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <FbClientProvider
+      initOptions={{
+        appId: import.meta.env.VITE_FACEBOOK_APP_ID,
+      }}
+    >
+      <RouterProvider router={router} />
+    </FbClientProvider>
   </StrictMode>,
 )
-

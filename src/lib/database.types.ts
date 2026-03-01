@@ -79,50 +79,14 @@ export type Database = {
           },
         ]
       }
-      image_tags: {
-        Row: {
-          image_id: string
-          tag_id: number
-        }
-        Insert: {
-          image_id: string
-          tag_id: number
-        }
-        Update: {
-          image_id?: string
-          tag_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "image_tags_image_id_fkey"
-            columns: ["image_id"]
-            isOneToOne: false
-            referencedRelation: "image_metadata"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "image_tags_image_id_fkey"
-            columns: ["image_id"]
-            isOneToOne: false
-            referencedRelation: "images"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "image_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "tags"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      images: {
+      media_metadata: {
         Row: {
           alt: string | null
           created_at: string
           id: string
           path: string
           sort_key: number
+          type: string
         }
         Insert: {
           alt?: string | null
@@ -130,6 +94,7 @@ export type Database = {
           id: string
           path: string
           sort_key: number
+          type: string
         }
         Update: {
           alt?: string | null
@@ -137,8 +102,46 @@ export type Database = {
           id?: string
           path?: string
           sort_key?: number
+          type?: string
         }
         Relationships: []
+      }
+      media_tags: {
+        Row: {
+          media_metadata_id: string
+          tag_id: number
+        }
+        Insert: {
+          media_metadata_id: string
+          tag_id: number
+        }
+        Update: {
+          media_metadata_id?: string
+          tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_tags_media_metadata_id_fkey"
+            columns: ["media_metadata_id"]
+            isOneToOne: false
+            referencedRelation: "media_metadata"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_tags_media_metadata_id_fkey"
+            columns: ["media_metadata_id"]
+            isOneToOne: false
+            referencedRelation: "media_metadata_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "media_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       songs: {
         Row: {
@@ -175,55 +178,18 @@ export type Database = {
       }
     }
     Views: {
-      image_metadata: {
+      media_metadata_view: {
         Row: {
           alt: string | null
           id: string | null
           path: string | null
           tags: string[] | null
+          type: string | null
         }
         Relationships: []
       }
     }
     Functions: {
-      create_image_with_tags:
-        | {
-            Args: {
-              p_alt: string
-              p_image_id: string
-              p_path: string
-              p_tag_slugs: string[]
-            }
-            Returns: {
-              alt: string | null
-              created_at: string
-              id: string
-              path: string
-              sort_key: number
-            }
-            SetofOptions: {
-              from: "*"
-              to: "images"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: { p_alt: string; p_path: string; p_tag_slugs: string[] }
-            Returns: {
-              alt: string | null
-              created_at: string
-              id: string
-              path: string
-              sort_key: number
-            }
-            SetofOptions: {
-              from: "*"
-              to: "images"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
       create_images_with_tags_bulk: {
         Args: {
           p_items: Database["public"]["CompositeTypes"]["new_image_with_tags"][]
@@ -234,14 +200,61 @@ export type Database = {
           id: string
           path: string
           sort_key: number
+          type: string
         }[]
         SetofOptions: {
           from: "*"
-          to: "images"
+          to: "media_metadata"
           isOneToOne: false
           isSetofReturn: true
         }
       }
+      create_media_metadata:
+        | {
+            Args: {
+              p_alt: string
+              p_id: string
+              p_path: string
+              p_tag_slugs: string[]
+              p_type: string
+            }
+            Returns: {
+              alt: string | null
+              created_at: string
+              id: string
+              path: string
+              sort_key: number
+              type: string
+            }
+            SetofOptions: {
+              from: "*"
+              to: "media_metadata"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_alt: string
+              p_path: string
+              p_tag_slugs: string[]
+              p_type: string
+            }
+            Returns: {
+              alt: string | null
+              created_at: string
+              id: string
+              path: string
+              sort_key: number
+              type: string
+            }
+            SetofOptions: {
+              from: "*"
+              to: "media_metadata"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
     }
     Enums: {
       [_ in never]: never

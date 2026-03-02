@@ -1,9 +1,9 @@
-import type { ImageMetadata } from "@/types";
+import type { MediaMetadata } from "@/types";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "./ui/carousel";
 import { useState, useEffect, useMemo } from "react";
 
 type ImageCarouselProps = {
-  images: ImageMetadata[],
+  images: MediaMetadata[],
   windowRadius?: number
 }
 

@@ -4,8 +4,9 @@ import path from "node:path";
 import process from "node:process";
 import { loadEnv } from "vite";
 
-const MEDIA_JSON_PATH = path.join(process.cwd(), "supabase/data/media.json");
+import type { CreateMediaMetadataParams } from "../src/types"
 
+const MEDIA_JSON_PATH = path.join(process.cwd(), "supabase/data/media.json");
 // const SUPABASE_STORAGE_ROOT = "https://lzgryhrztslevnuajiqm.supabase.co/storage/v1/object/public";
 
 const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
@@ -19,13 +20,12 @@ const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 //   }[] | null;
 // };
 
-
-type MediaMetadata = {
-  id: string;
-  path: string;
-  alt: string;
-  tags: string[];
-}
+// type MediaMetadata = {
+//   id: string;
+//   path: string;
+//   alt: string;
+//   tags: string[];
+// }
 
 type UploadMediaParams = {
   localPath: string;
@@ -53,30 +53,6 @@ const media = (() => {
   }
 })();
 
-async function main() {
-  const mediaIds = await uploadMediaToBucket("media", media.slice(0, 1));
-  const mediaMetadata = media.map((m, i) => ({
-    id: mediaIds[i],
-    path: m.destPath,
-    alt: m.alt ?? "",
-    tags: m.tags ?? []
-  }));
-
-  const data = await insertMediaMetadata(mediaMetadata);
-
-  console.log(data);
-
-}
-
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
-
-
-
-
-
 function contentTypeFromExt(filePath: string): string {
   const ext = path.extname(filePath).toLowerCase();
   switch (ext) {
@@ -99,27 +75,32 @@ function contentTypeFromExt(filePath: string): string {
       return "application/octet-stream";
   }
 }
+async function insertMediaMetadata(
+  media: UploadMediaParams[],
+  uploadData: { id: string; type: string; }[],
+  upsert = false
+) {
 
+  const createMediaMetadataParams: CreateMediaMetadataParams[] = media.map((m, i) => ({
+    id: uploadData[i].id,
+    path: m.destPath,
+    alt: m.alt ?? "",
+    type: uploadData[i].type,
+    tag_slugs: m.tags ?? []
+  }));
 
-async function insertMediaMetadata(metadata: MediaMetadata | MediaMetadata[], upsert = false) {
-  const { data, error } = await supabase
-    .from("media_metadata")
-    .upsert(
-      metadata,
-      { onConflict: "id", ignoreDuplicates: !upsert },
-    );
+  const { data, error } = await supabase.rpc("create_media_metadata_bulk", {
+    p_items: createMediaMetadataParams,
+    p_upsert: upsert
+  })
 
   if (error) throw error;
   return data;
 }
-
 async function uploadMediaToBucket(bucket: string, media: UploadMediaParams[] | UploadMediaParams) {
   const mediaToUpload = Array.isArray(media) ? media : [media];
-  const mediaIds = await Promise.all(mediaToUpload.map((m) => _uploadMediaToBucket(bucket, m)));
-  return mediaIds;
+  return await Promise.all(mediaToUpload.map((m) => _uploadMediaToBucket(bucket, m)));
 }
-
-
 async function _uploadMediaToBucket(bucket: string, params: UploadMediaParams) {
   const { localPath, destPath, upsert = false } = params;
 
@@ -129,16 +110,33 @@ async function _uploadMediaToBucket(bucket: string, params: UploadMediaParams) {
   const { data, error } = await supabase.storage
     .from(bucket)
     .upload(destPath, bytes, {
-      contentType,
       upsert,
-      cacheControl: "31536000", // optional: long cache
+      contentType,
     });
 
   if (error) throw error;
-  return data.id;
+
+  return { id: data.id, type: contentType };
+}
+function deleteMediaFromBucket(bucket: string, mediaPaths: string[]) {
+  return supabase.storage.from(bucket).remove(mediaPaths);
 }
 
-// main().catch((err) => {
-//   console.error(err);
-//   process.exit(1);
-// });
+
+async function main() {
+  console.log('Uploading image files to S3');
+  const uploadedMediaData = await uploadMediaToBucket("media", media);
+
+  console.log('Inserting media metadata into DB');
+  await insertMediaMetadata(media, uploadedMediaData, true);
+}
+
+main().catch(async (err) => {
+  console.error(err);
+  // try {
+  //   await deleteMediaFromBucket("media", media.map((m) => m.destPath));
+  // } catch (err) {
+  //   console.error(err);
+  // }
+  process.exit(1);
+});

@@ -1,5 +1,10 @@
 import type { Database } from "./lib/database.types"
 
+type NonNullProps<T, K extends keyof T = keyof T> =
+  Omit<T, K> & {
+    [P in K]-?: NonNullable<T[P]>;
+  };
+
 export type Event = {
   date: Date
   title: string
@@ -16,10 +21,8 @@ export type Event = {
 
 
 // These are the types for each db table or view
-export type ImageMetadataView = Database["public"]["Views"]["image_metadata"]["Row"]
-export type ImageMetadata = {
-  id: string
-  path: string
-  alt: string
-  tags: string[]
-}
+type MediaMetadataView = Database["public"]["Views"]["media_metadata_view"]["Row"]
+
+export type MediaMetadata = NonNullProps<MediaMetadataView>
+
+export type CreateMediaMetadataParams = NonNullProps<Database["public"]["CompositeTypes"]["media_metadata_input"]>

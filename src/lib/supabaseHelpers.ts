@@ -1,10 +1,10 @@
-import type { ImageMetadata } from "@/types";
+import type { MediaMetadata } from "@/types";
 import { supabase } from "./supabaseClient";
 import { STORAGE_ROOT_URL } from "@/constants";
 
 export async function fetchImageMetadataByTags(
   tags: string[]
-): Promise<ImageMetadata[]> {
+): Promise<MediaMetadata[]> {
   const { data, error } = await supabase
     .from("image_metadata")
     .select(`*`)
@@ -19,7 +19,7 @@ export async function fetchImageMetadataByTags(
     const url = (new URL(`${STORAGE_ROOT_URL}/images${image.path}`)).href;
     image.path = url;
   })
-  return data as ImageMetadata[] ?? [];
+  return data as MediaMetadata[] ?? [];
 }
 
 export async function fetchEvents(startDate = new Date(), endDate?: Date) {

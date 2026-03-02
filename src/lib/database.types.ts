@@ -128,13 +128,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "media_tags_media_metadata_id_fkey"
-            columns: ["media_metadata_id"]
-            isOneToOne: false
-            referencedRelation: "media_metadata_view"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "media_tags_tag_id_fkey"
             columns: ["tag_id"]
             isOneToOne: false
@@ -190,9 +183,30 @@ export type Database = {
       }
     }
     Functions: {
-      create_images_with_tags_bulk: {
+      create_media_metadata: {
         Args: {
-          p_items: Database["public"]["CompositeTypes"]["new_image_with_tags"][]
+          p_item: Database["public"]["CompositeTypes"]["media_metadata_input"]
+          p_upsert?: boolean
+        }
+        Returns: {
+          alt: string | null
+          created_at: string
+          id: string
+          path: string
+          sort_key: number
+          type: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "media_metadata"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_media_metadata_bulk: {
+        Args: {
+          p_items: Database["public"]["CompositeTypes"]["media_metadata_input"][]
+          p_upsert?: boolean
         }
         Returns: {
           alt: string | null
@@ -209,57 +223,18 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      create_media_metadata:
-        | {
-            Args: {
-              p_alt: string
-              p_id: string
-              p_path: string
-              p_tag_slugs: string[]
-              p_type: string
-            }
-            Returns: {
-              alt: string | null
-              created_at: string
-              id: string
-              path: string
-              sort_key: number
-              type: string
-            }
-            SetofOptions: {
-              from: "*"
-              to: "media_metadata"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              p_alt: string
-              p_path: string
-              p_tag_slugs: string[]
-              p_type: string
-            }
-            Returns: {
-              alt: string | null
-              created_at: string
-              id: string
-              path: string
-              sort_key: number
-              type: string
-            }
-            SetofOptions: {
-              from: "*"
-              to: "media_metadata"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
     }
     Enums: {
       [_ in never]: never
     }
     CompositeTypes: {
+      media_metadata_input: {
+        id: string | null
+        path: string | null
+        alt: string | null
+        type: string | null
+        tag_slugs: string[] | null
+      }
       new_image_with_tags: {
         id: string | null
         path: string | null

@@ -4,22 +4,23 @@ import path from "node:path";
 import process from "node:process";
 import { loadEnv } from "vite";
 
+const MEDIA_JSON_PATH = path.join(process.cwd(), "supabase/data/media.json");
 
-const SUPABASE_STORAGE_ROOT = "https://lzgryhrztslevnuajiqm.supabase.co/storage/v1/object/public";
+// const SUPABASE_STORAGE_ROOT = "https://lzgryhrztslevnuajiqm.supabase.co/storage/v1/object/public";
 
 const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
-type SupabaseImageRow = {
-  id: string;
-  path: string;
-  alt: string | null;
-  image_tags?: {
-    tags?: { id: number; slug: string }[] | null; // <-- array
-  }[] | null;
-};
+// type SupabaseMediaMetadataRow = {
+//   id: string;
+//   path: string;
+//   alt: string | null;
+//   media_tags?: {
+//     tags?: { id: number; slug: string }[] | null; // <-- array
+//   }[] | null;
+// };
 
 
-type ImageMetadata = {
+type MediaMetadata = {
   id: string;
   path: string;
   alt: string;
@@ -36,12 +37,11 @@ type UploadMediaParams = {
 
 const supabaseUrl = env.VITE_SUPABASE_URL;
 const supabaseKey = env.VITE_SUPABASE_SECRET;
-
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 const media = (() => {
   try {
-    const media = JSON.parse(fs.readFileSync("./media.json", "utf-8")) as UploadMediaParams[];
+    const media = JSON.parse(fs.readFileSync(MEDIA_JSON_PATH, "utf-8")) as UploadMediaParams[];
     media.forEach((m) => {
       m.upsert = true;
       m.alt = path.basename(m.destPath, path.extname(m.destPath));
@@ -53,7 +53,28 @@ const media = (() => {
   }
 })();
 
-console.log('media', media);
+async function main() {
+  const mediaIds = await uploadMediaToBucket("media", media.slice(0, 1));
+  const mediaMetadata = media.map((m, i) => ({
+    id: mediaIds[i],
+    path: m.destPath,
+    alt: m.alt ?? "",
+    tags: m.tags ?? []
+  }));
+
+  const data = await insertMediaMetadata(mediaMetadata);
+
+  console.log(data);
+
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
+
+
+
 
 
 function contentTypeFromExt(filePath: string): string {
@@ -79,7 +100,27 @@ function contentTypeFromExt(filePath: string): string {
   }
 }
 
-async function uploadImageToBucket(bucket: string, params: UploadMediaParams) {
+
+async function insertMediaMetadata(metadata: MediaMetadata | MediaMetadata[], upsert = false) {
+  const { data, error } = await supabase
+    .from("media_metadata")
+    .upsert(
+      metadata,
+      { onConflict: "id", ignoreDuplicates: !upsert },
+    );
+
+  if (error) throw error;
+  return data;
+}
+
+async function uploadMediaToBucket(bucket: string, media: UploadMediaParams[] | UploadMediaParams) {
+  const mediaToUpload = Array.isArray(media) ? media : [media];
+  const mediaIds = await Promise.all(mediaToUpload.map((m) => _uploadMediaToBucket(bucket, m)));
+  return mediaIds;
+}
+
+
+async function _uploadMediaToBucket(bucket: string, params: UploadMediaParams) {
   const { localPath, destPath, upsert = false } = params;
 
   const bytes = await fs.promises.readFile(localPath);
@@ -95,34 +136,6 @@ async function uploadImageToBucket(bucket: string, params: UploadMediaParams) {
 
   if (error) throw error;
   return data.id;
-}
-
-async function insertImageMetadata(metadata: ImageMetadata | ImageMetadata[], upsert = false) {
-  const { data, error } = await supabase
-    .from("images")
-    .upsert(
-      metadata,
-      { onConflict: "id", ignoreDuplicates: !upsert },
-    );
-
-  if (error) throw error;
-  return data;
-}
-
-async function uploadImages(bucket: string, images: UploadMediaParams[]) {
-  return Promise.all(images.map((img) => uploadImageToBucket(bucket, img)));
-}
-
-async function main() {
-  const imageIds = await uploadImages("images", media);
-  const imageMetadata = media.map((m, i) => ({
-    id: imageIds[i],
-    path: m.destPath,
-    alt: m.alt ?? "",
-    tags: m.tags ?? []
-  }));
-
-  await insertImageMetadata(imageMetadata);
 }
 
 // main().catch((err) => {

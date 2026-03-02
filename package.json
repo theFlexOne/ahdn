@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dbtypes": "supabase gen types typescript --project-id lzgryhrztslevnuajiqm --schema public > src/lib/database.types.ts"
+    "types": "supabase gen types typescript --project-id lzgryhrztslevnuajiqm --schema public > src/lib/database.types.ts",
+    "script": "bash -c 'npm exec tsx $1'",
+    "schema": "supabase db dump --schema public -f schema.sql"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",

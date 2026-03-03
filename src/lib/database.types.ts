@@ -79,63 +79,6 @@ export type Database = {
           },
         ]
       }
-      media_metadata: {
-        Row: {
-          alt: string | null
-          created_at: string
-          id: string
-          path: string
-          sort_key: number
-          type: string
-        }
-        Insert: {
-          alt?: string | null
-          created_at?: string
-          id: string
-          path: string
-          sort_key: number
-          type: string
-        }
-        Update: {
-          alt?: string | null
-          created_at?: string
-          id?: string
-          path?: string
-          sort_key?: number
-          type?: string
-        }
-        Relationships: []
-      }
-      media_tags: {
-        Row: {
-          media_metadata_id: string
-          tag_id: number
-        }
-        Insert: {
-          media_metadata_id: string
-          tag_id: number
-        }
-        Update: {
-          media_metadata_id?: string
-          tag_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "media_tags_media_metadata_id_fkey"
-            columns: ["media_metadata_id"]
-            isOneToOne: false
-            referencedRelation: "media_metadata"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "media_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "tags"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       songs: {
         Row: {
           created_at: string
@@ -154,75 +97,32 @@ export type Database = {
         }
         Relationships: []
       }
-      tags: {
-        Row: {
-          id: number
-          slug: string
-        }
-        Insert: {
-          id?: number
-          slug: string
-        }
-        Update: {
-          id?: number
-          slug?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
-      media_metadata_view: {
+      media_bucket_data: {
         Row: {
           alt: string | null
-          id: string | null
+          mimeType: string | null
           path: string | null
           tags: string[] | null
-          type: string | null
+        }
+        Insert: {
+          alt?: never
+          mimeType?: never
+          path?: string | null
+          tags?: never
+        }
+        Update: {
+          alt?: never
+          mimeType?: never
+          path?: string | null
+          tags?: never
         }
         Relationships: []
       }
     }
     Functions: {
-      create_media_metadata: {
-        Args: {
-          p_item: Database["public"]["CompositeTypes"]["media_metadata_input"]
-          p_upsert?: boolean
-        }
-        Returns: {
-          alt: string | null
-          created_at: string
-          id: string
-          path: string
-          sort_key: number
-          type: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "media_metadata"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      create_media_metadata_bulk: {
-        Args: {
-          p_items: Database["public"]["CompositeTypes"]["media_metadata_input"][]
-          p_upsert?: boolean
-        }
-        Returns: {
-          alt: string | null
-          created_at: string
-          id: string
-          path: string
-          sort_key: number
-          type: string
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "media_metadata"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

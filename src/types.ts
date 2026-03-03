@@ -21,7 +21,7 @@ export type Event = {
 
 
 // These are the types for each db table or view
-type MediaMetadataView = Database["public"]["Views"]["media_metadata_view"]["Row"]
+type MediaMetadataView = Database["public"]["Views"]["media_bucket_data"]["Row"]
 
 export type MediaMetadata = NonNullProps<MediaMetadataView>
 

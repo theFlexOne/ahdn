@@ -2,23 +2,20 @@ import type { MediaMetadata } from "@/types";
 import { supabase } from "./supabaseClient";
 import { STORAGE_ROOT_URL } from "@/constants";
 
-export async function fetchImageMetadataByTags(
+export async function fetchImageDataByTags(
   tags: string[]
 ): Promise<MediaMetadata[]> {
   const { data, error } = await supabase
-    .from("image_metadata")
+    .from("media_bucket_data")
     .select(`*`)
     .contains("tags", tags)
-    .order("path");
+    .like("mimeType", "image/%");
 
   if (error) {
     console.error(error);
     return [];
   }
-  data.forEach((image) => {
-    const url = (new URL(`${STORAGE_ROOT_URL}/images${image.path}`)).href;
-    image.path = url;
-  })
+
   return data as MediaMetadata[] ?? [];
 }
 

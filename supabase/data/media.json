@@ -1,240 +1,308 @@
 [
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic1.avif",
-    "destPath": "media/band-pic1.avif",
+    "destPath": "band-pic1.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic1",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic10.avif",
-    "destPath": "media/band-pic10.avif",
+    "destPath": "band-pic10.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic10",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic11.avif",
-    "destPath": "media/band-pic11.avif",
+    "destPath": "band-pic11.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic11",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic13.avif",
-    "destPath": "media/band-pic13.avif",
+    "destPath": "band-pic13.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic13",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic14.avif",
-    "destPath": "media/band-pic14.avif",
+    "destPath": "band-pic14.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic14",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic15.avif",
-    "destPath": "media/band-pic15.avif",
+    "destPath": "band-pic15.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic15",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic16.avif",
-    "destPath": "media/band-pic16.avif",
+    "destPath": "band-pic16.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic16",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic17.avif",
-    "destPath": "media/band-pic17.avif",
+    "destPath": "band-pic17.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic17",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic18.avif",
-    "destPath": "media/band-pic18.avif",
+    "destPath": "band-pic18.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic18",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic19.avif",
-    "destPath": "media/band-pic19.avif",
+    "destPath": "band-pic19.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic19",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic2.avif",
-    "destPath": "media/band-pic2.avif",
+    "destPath": "band-pic2.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic2",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic20.avif",
-    "destPath": "media/band-pic20.avif",
+    "destPath": "band-pic20.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic20",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic21.avif",
-    "destPath": "media/band-pic21.avif",
+    "destPath": "band-pic21.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic21",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic22.avif",
-    "destPath": "media/band-pic22.avif",
+    "destPath": "band-pic22.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic22",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic23.avif",
-    "destPath": "media/band-pic23.avif",
+    "destPath": "band-pic23.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic23",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic24.avif",
-    "destPath": "media/band-pic24.avif",
+    "destPath": "band-pic24.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic24",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic25.avif",
-    "destPath": "media/band-pic25.avif",
+    "destPath": "band-pic25.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic25",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic26.avif",
-    "destPath": "media/band-pic26.avif",
+    "destPath": "band-pic26.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic26",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic3.avif",
-    "destPath": "media/band-pic3.avif",
+    "destPath": "band-pic3.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic3",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic4.avif",
-    "destPath": "media/band-pic4.avif",
+    "destPath": "band-pic4.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic4",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic5.avif",
-    "destPath": "media/band-pic5.avif",
+    "destPath": "band-pic5.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic5",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic6.avif",
-    "destPath": "media/band-pic6.avif",
+    "destPath": "band-pic6.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic6",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic7.avif",
-    "destPath": "media/band-pic7.avif",
+    "destPath": "band-pic7.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic7",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic8.avif",
-    "destPath": "media/band-pic8.avif",
+    "destPath": "band-pic8.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic8",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-pic9.avif",
-    "destPath": "media/band-pic9.avif",
+    "destPath": "band-pic9.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-pic9",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-profile-pic.avif",
-    "destPath": "media/band-profile-pic.avif",
+    "destPath": "band-profile-pic.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-profile-pic",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/band/band/band-profile-pic2.avif",
-    "destPath": "media/band-profile-pic2.avif",
+    "destPath": "band-profile-pic2.avif",
     "tags": [
       "gallery"
-    ]
+    ],
+    "alt": "band-profile-pic2",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/bio/bio/aron.avif",
-    "destPath": "media/aron.avif",
+    "destPath": "aron.avif",
     "tags": [
       "bio"
-    ]
+    ],
+    "alt": "aron",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/bio/bio/kevin.avif",
-    "destPath": "media/kevin.avif",
+    "destPath": "kevin.avif",
     "tags": [
       "bio"
-    ]
+    ],
+    "alt": "kevin",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/bio/bio/joe.avif",
-    "destPath": "media/joe.avif",
+    "destPath": "joe.avif",
     "tags": [
       "bio"
-    ]
+    ],
+    "alt": "joe",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/media/bio/bio/jeff.avif",
-    "destPath": "media/jeff.avif",
+    "destPath": "jeff.avif",
     "tags": [
       "bio"
-    ]
+    ],
+    "alt": "jeff",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/bg_hero_poster.avif",
-    "destPath": "media/bg_hero_poster.avif",
+    "destPath": "bg_hero_poster.avif",
     "tags": [
       "hero"
-    ]
+    ],
+    "alt": "bg_hero_poster",
+    "type": "image/avif"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/bg_hero_vid.av1.webm",
-    "destPath": "media/bg_hero_vid.av1.webm",
+    "destPath": "bg_hero_vid.av1.webm",
     "tags": [
       "hero"
-    ]
+    ],
+    "alt": "bg_hero_vid.av1",
+    "type": "video/webm"
   },
   {
     "localPath": "/mnt/c/Users/edhav/Downloads/ahdn/bg_hero_vid.h264.mp4",
-    "destPath": "media/bg_hero_vid.h264.mp4",
+    "destPath": "bg_hero_vid.h264.mp4",
     "tags": [
       "hero"
-    ]
+    ],
+    "alt": "bg_hero_vid.h264",
+    "type": "video/mp4"
   }
 ]

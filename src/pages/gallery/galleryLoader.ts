@@ -1,7 +1,7 @@
-import { fetchImageDataByTags } from "@/lib/supabaseHelpers";
+import { fetchMediaMetadata } from "@/lib/supabaseHelpers";
 
 export default async function galleryLoader() {
-  const images = await fetchImageDataByTags(["gallery"]);
+  const images = await fetchMediaMetadata(["gallery"]);
   console.log(images);
 
   return {

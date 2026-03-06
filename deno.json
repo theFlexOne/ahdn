@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@supabase/functions-js": "jsr:@supabase/functions-js@^2",
+    "sharp": "npm:sharp@0.34.5",
+    "@img/sharp-linux-x64": "npm:@img/sharp-linux-x64@0.34.5"
+  }
+}

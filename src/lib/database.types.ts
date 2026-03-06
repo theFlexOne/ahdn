@@ -99,7 +99,7 @@ export type Database = {
       }
     }
     Views: {
-      media_bucket_data: {
+      media_bucket_metadata: {
         Row: {
           alt: string | null
           mimeType: string | null

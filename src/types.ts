@@ -18,10 +18,17 @@ export type Event = {
   }
 }
 
+export type UploadMediaParams = {
+  alt: string;
+  tags: string[];
+  type: string;
+}
+
+
 
 
 // These are the types for each db table or view
-type MediaMetadataView = Database["public"]["Views"]["media_bucket_data"]["Row"]
+type MediaMetadataView = Database["public"]["Views"]["media_bucket_metadata"]["Row"]
 
 export type MediaMetadata = NonNullProps<MediaMetadataView>
 

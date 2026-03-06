@@ -31,8 +31,9 @@ const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 type UploadMediaParams = {
   localPath: string;
   destPath: string;
-  alt?: string;
-  tags?: string[];
+  alt: string;
+  tags: string[];
+  type: string;
 }
 
 const supabaseUrl = env.VITE_SUPABASE_URL;
@@ -50,10 +51,6 @@ const media = (() => {
 })();
 
 async function uploadMediaListToBucket(bucket: string, media: UploadMediaParams[], upsert = false) {
-  media.forEach((m) => {
-    m.alt ||= path.basename(m.destPath, path.extname(m.destPath));
-    m.tags ??= [];
-  })
   return await Promise.all(media.map((m) => uploadMediaToBucket(bucket, m, upsert)));
 }
 
@@ -105,7 +102,7 @@ function validateMediaMimeType(filePath: string) {
 
 async function main() {
   console.log('Uploading image files to S3');
-  await uploadMediaListToBucket("media", media, true);
+  await uploadMediaListToBucket("public_media", media, true);
   process.exit(0);
 }
 

@@ -1,23 +1,33 @@
-import type { MediaMetadata } from "@/types";
 import { supabase } from "./supabaseClient";
+import mime from "mime-types";
+
 import { STORAGE_ROOT_URL } from "@/constants";
 
-export async function fetchImageDataByTags(
-  tags: string[]
+import type { MediaMetadata, UploadMediaParams } from "@/types";
+
+export async function fetchMediaMetadata({
+  tags = [],
+  types = [],
+}: {
+  tags?: string[],
+  types?: ("image" | "video")[]
+}
 ): Promise<MediaMetadata[]> {
+  const typeOrFIlter = types.map((t) => `mimeType.ilike.${t}%`).join(",");
+
   const { data, error } = await supabase
-    .from("media_bucket_data")
+    .from("media_bucket_metadata")
     .select(`*`)
     .contains("tags", tags)
-    .like("mimeType", "image/%");
+    .or(typeOrFIlter);
 
   if (error) {
-    console.error(error);
-    return [];
+    throw error;
   }
 
   return data as MediaMetadata[] ?? [];
 }
+
 
 export async function fetchEvents(startDate = new Date(), endDate?: Date) {
   const { data, error } = await supabase
@@ -45,4 +55,40 @@ export async function fetchSongs() {
   }
 
   return data ?? [];
+}
+
+export async function uploadMediaListToBucket(files: File[], upsert = false) {
+  return await Promise.all(files.map((f) => {
+    uploadMediaToBucket(f, upsert)
+  }));
+}
+
+export async function uploadMediaToBucket(file: File, destPath: string, params: UploadMediaParams, upsert: boolean) {
+
+  validateMediaMimeType(file);
+
+  try {
+    const { error } = await supabase.storage
+      .from("media")
+      .upload(destPath, file, {
+        upsert,
+        metadata: {
+          alt: params.alt,
+          tags: params.tags
+        }
+      });
+
+    if (error) throw error;
+  } catch (error) {
+    console.error("Error uploading media", error);
+    return;
+  };
+
+  return;
+}
+function validateMediaMimeType(file: File) {
+  if (file.type.startsWith("image") || file.type.startsWith("video")) {
+    console.error(`File ${file.name} is not an image or video`);
+    return;
+  }
 }

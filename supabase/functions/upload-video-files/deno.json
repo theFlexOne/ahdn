@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@supabase/functions-js": "jsr:@supabase/functions-js@^2",
+    "ffmpeg-static": "npm:ffmpeg-static@^5.2.0",
+    "execa": "npm:execa@^9.6.0"
+  }
+}

@@ -4,12 +4,12 @@ export const IMAGE_PRESETS = {
   hero: { small: 768, standard: 1280, large: 1920 },
 } as const;
 
-export const ENCODE = {
+export const IMAGE_PRESET_KEYS = Object.keys(IMAGE_PRESETS) as Array<
+  keyof typeof IMAGE_PRESETS
+>;
+
+export const IMAGE_ENCODE = {
   avif: { quality: 45, effort: 6 }, // effort: 0–9
   webp: { quality: 75 }, // 0–100
   jpg: { quality: 82, mozjpeg: true },
 } as const satisfies Record<"avif" | "webp" | "jpg", object>;
-
-export const IMAGE_PRESET_KEYS = Object.keys(IMAGE_PRESETS) as Array<
-  keyof typeof IMAGE_PRESETS
->;

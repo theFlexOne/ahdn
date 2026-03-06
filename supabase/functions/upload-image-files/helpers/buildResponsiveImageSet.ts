@@ -1,7 +1,7 @@
 import sharp from "sharp";
 
 import type { Sharp, SharpInput } from "sharp";
-import { ENCODE, IMAGE_PRESETS } from "../constants.ts";
+import { IMAGE_ENCODE, IMAGE_PRESETS } from "../constants.ts";
 import { ImagePreset, ImageSet, SizeKey } from "../types.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -41,17 +41,17 @@ export default async function buildResponsiveImageSet(
       out.avif[size] = await base
         .clone()
         .resize(resizeOpts)
-        .avif(ENCODE.avif)
+        .avif(IMAGE_ENCODE.avif)
         .toBuffer(),
       out.webp[size] = await base
         .clone()
         .resize(resizeOpts)
-        .webp(ENCODE.webp)
+        .webp(IMAGE_ENCODE.webp)
         .toBuffer(),
       out.jpg[size] = await base
         .clone()
         .resize(resizeOpts)
-        .jpeg(ENCODE.jpg)
+        .jpeg(IMAGE_ENCODE.jpg)
         .toBuffer(),
     ]);
   }

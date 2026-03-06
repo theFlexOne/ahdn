@@ -1,6 +1,6 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 
-import type { ImagePreset } from "./types.ts";
+import type { ImagePreset, RequestData } from "./types.ts";
 import { IMAGE_PRESET_KEYS } from "./constants.ts";
 import buildResponsiveImageSetsForPreset from "./helpers/buildResponsiveImageSetForPreset.ts";
 
@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  const payload = body as { images: unknown; preset?: unknown };
+  const payload = body as RequestData;
   const preset = payload.preset ?? "content";
   if (!isImagePreset(preset)) {
     return Response.json(

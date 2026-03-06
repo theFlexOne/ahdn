@@ -52,6 +52,4 @@ Project-level operating rules for Codex in this repository.
 
 ## Miscellaneous
 
-- After every code comment, in-line, append this exact suffix (including the leading space):
-  - ` ~ according to ChatGPT.`
 - Print all git commit messages inside a markdown box.

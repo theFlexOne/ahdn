@@ -4591,6 +4591,8 @@
     "dependencies": [
       "jsr:@supabase/functions-js@2",
       "npm:@img/sharp-linux-x64@0.34.5",
+      "npm:execa@^9.6.0",
+      "npm:ffmpeg-static@^5.2.0",
       "npm:sharp@0.34.5"
     ],
     "packageJson": {
@@ -4610,6 +4612,8 @@
         "npm:eslint-plugin-react-hooks@^7.0.1",
         "npm:eslint-plugin-react-refresh@~0.4.24",
         "npm:eslint@^9.39.1",
+        "npm:execa@^9.6.1",
+        "npm:ffmpeg-static@^5.3.0",
         "npm:globals@^16.5.0",
         "npm:lucide-react@0.563",
         "npm:mime-types@^3.0.2",

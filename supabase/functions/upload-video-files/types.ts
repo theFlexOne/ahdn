@@ -1,37 +1,36 @@
+import type { MediaFileWithMetadata } from "../_shared/types.ts";
+
 export type RequestData = { images: unknown; preset?: unknown };
 
 export type FfmpegArgs = {
   "-i": "pipe:0";
   "-vf": string;
-  "-c:v": "libx264" | "libsvtav1";
+  "-c:v": "libx264" | "libsvtav1" | "libvpx-vp9";
   "-crf": number;
-  "-preset": number | "slow" | "medium" | "fast" | "superfast" | "ultrafast";
+  "-preset"?: number | "slow" | "medium" | "fast" | "superfast" | "ultrafast";
+  "-b:v"?: number;
   "-movflags"?: "+frag_keyframe+empty_moov";
   "-an": boolean;
   "-f": "mp4" | "webm";
-  pipe: 1;
+  "pipe:1": true;
 };
 
-/*
-ffmpeg \
--i pipe:0 \
--vf "scale=-2:720:flags=lanczos,fps=30" \
--c:v libx264 \
--crf 23 \
--preset slow \
--pix_fmt yuv420p \
--movflags +frag_keyframe+empty_moov \
--an \
--f mp4 \
-pipe:1
+export type VideoFormat = "mp4" | "webm";
+export type VideoSize = 854 | 1280 | 1920;
 
-ffmpeg \
--i pipe:0 \
--vf "scale=-2:720:flags=lanczos,fps=30,format=yuv420p" \
--c:v libsvtav1 \
--crf 35 \
--preset 6 \
--an \
--f webm \
-pipe:1
-*/
+export type VideoMetadata = {
+  tags?: string[];
+};
+
+export type VideoFileWithMetadata = MediaFileWithMetadata<VideoMetadata>;
+
+export type FileVariantsWithMetadata = {
+  files: File[];
+  metadata: VideoMetadata;
+};
+
+export type RequestBody = {
+  videos: VideoFileWithMetadata[];
+  formats?: VideoFormat[];
+  sizes?: VideoSize[];
+};

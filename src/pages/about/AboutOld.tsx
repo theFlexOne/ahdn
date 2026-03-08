@@ -4,7 +4,7 @@ import Page from "@/layout/Page";
 import PageSection from "@/layout/PageSection";
 import { cn } from "@/lib/utils";
 
-export default function About2() {
+export default function AboutOld() {
   return (
     <Page>
       <PageHeading>About</PageHeading>

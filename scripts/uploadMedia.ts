@@ -5,7 +5,7 @@ import process from "node:process";
 import { loadEnv } from "vite";
 import mime from "mime-types";
 
-import type { CreateMediaMetadataParams } from "../src/types"
+import type { CreateMediaMetadataParams } from "../src/types";
 
 const MEDIA_JSON_PATH = path.join(process.cwd(), "supabase/data/media.json");
 // const SUPABASE_STORAGE_ROOT = "https://lzgryhrztslevnuajiqm.supabase.co/storage/v1/object/public";
@@ -34,15 +34,17 @@ type UploadMediaParams = {
   alt: string;
   tags: string[];
   type: string;
-}
+};
 
 const supabaseUrl = env.VITE_SUPABASE_URL;
 const supabaseKey = env.VITE_SUPABASE_SECRET;
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const media = (() => {
   try {
-    const media = JSON.parse(fs.readFileSync(MEDIA_JSON_PATH, "utf-8")) as UploadMediaParams[];
+    const media = JSON.parse(
+      fs.readFileSync(MEDIA_JSON_PATH, "utf-8"),
+    ) as UploadMediaParams[];
     return media;
   } catch (err) {
     console.error(err);
@@ -50,11 +52,21 @@ const media = (() => {
   }
 })();
 
-async function uploadMediaListToBucket(bucket: string, media: UploadMediaParams[], upsert = false) {
-  return await Promise.all(media.map((m) => uploadMediaToBucket(bucket, m, upsert)));
+async function uploadMediaListToBucket(
+  bucket: string,
+  media: UploadMediaParams[],
+  upsert = false,
+) {
+  return await Promise.all(
+    media.map((m) => uploadMediaToBucket(bucket, m, upsert)),
+  );
 }
 
-async function uploadMediaToBucket(bucket: string, params: UploadMediaParams, upsert: boolean) {
+async function uploadMediaToBucket(
+  bucket: string,
+  params: UploadMediaParams,
+  upsert: boolean,
+) {
   const { localPath, destPath } = params;
 
   validateMediaMimeType(localPath);
@@ -64,9 +76,11 @@ async function uploadMediaToBucket(bucket: string, params: UploadMediaParams, up
 
     const file = new File(
       [bytes],
-      path.basename(localPath), {
-      type: mime.lookup(localPath) as string
-    });
+      path.basename(localPath),
+      {
+        type: mime.lookup(localPath) as string,
+      },
+    );
 
     const { error } = await supabase.storage
       .from(bucket)
@@ -74,18 +88,19 @@ async function uploadMediaToBucket(bucket: string, params: UploadMediaParams, up
         upsert,
         metadata: {
           alt: params.alt,
-          tags: params.tags
-        }
+          tags: params.tags,
+        },
       });
 
     if (error) throw error;
   } catch (error) {
     console.error("Error uploading media", error);
     process.exit(1);
-  };
+  }
 
   return;
 }
+
 function validateMediaMimeType(filePath: string) {
   const type = mime.lookup(filePath);
   if (!type) {
@@ -99,9 +114,8 @@ function validateMediaMimeType(filePath: string) {
   }
 }
 
-
 async function main() {
-  console.log('Uploading image files to S3');
+  console.log("Uploading image files to S3");
   await uploadMediaListToBucket("public_media", media, true);
   process.exit(0);
 }

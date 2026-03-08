@@ -1,35 +1,31 @@
-import type { Database } from "./lib/database.types"
+import type { Database } from "./lib/database.types";
 
 type NonNullProps<T, K extends keyof T = keyof T> =
-  Omit<T, K> & {
+  & Omit<T, K>
+  & {
     [P in K]-?: NonNullable<T[P]>;
   };
 
 export type Event = {
-  date: Date
-  title: string
-  description: string
-  venue: string
+  date: Date;
+  title: string;
+  description: string;
+  venue: string;
   address: {
-    street: string
-    city: string
-    state: string
-    zip: string
-  }
-}
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+  };
+};
 
-export type UploadMediaParams = {
-  alt: string;
-  tags: string[];
-  type: string;
-}
+type MediaMetadataView =
+  Database["public"]["Views"]["media_bucket_metadata"]["Row"];
 
+export type MediaMetadata = NonNullProps<MediaMetadataView>;
 
+export type CreateMediaMetadata = NonNullProps<
+  Database["public"]["CompositeTypes"]["media_metadata_input"]
+>;
 
-
-// These are the types for each db table or view
-type MediaMetadataView = Database["public"]["Views"]["media_bucket_metadata"]["Row"]
-
-export type MediaMetadata = NonNullProps<MediaMetadataView>
-
-export type CreateMediaMetadataParams = NonNullProps<Database["public"]["CompositeTypes"]["media_metadata_input"]>
+export type MediaType = "image" | "video";

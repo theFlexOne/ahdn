@@ -1,22 +1,40 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router'
-import './index.css'
-
-import Layout2 from './layout/Layout2.tsx'
-import Home2 from './pages/home/Home2.tsx'
 import { FbClientProvider } from './context/fb/FbClientProvider.tsx'
-import homeLoader2 from './pages/home/homeLoader.ts'
+
+import Home from './pages/home/Home.tsx'
+import Gallery from './pages/gallery/Gallery.tsx'
+import Contact from './pages/contact/Contact.tsx'
+import About from './pages/about/About.tsx'
+import Layout from './layout/Layout.tsx'
+import homeLoader from './pages/home/homeLoader.ts'
+import galleryLoader from './pages/gallery/galleryLoader.ts'
+
+import './index.css'
 
 const router = createBrowserRouter([
   {
-    element: <Layout2 />,
+    element: <Layout />,
     children: [
       {
-        path: "*",
-        element: <Home2 />,
-        loader: homeLoader2
-      }
+        path: "/",
+        element: <Home />,
+        loader: homeLoader
+      },
+      {
+        path: "/about",
+        element: <About />
+      },
+      {
+        path: "/gallery",
+        element: <Gallery />,
+        loader: galleryLoader
+      },
+      {
+        path: "/contact",
+        element: <Contact />
+      },
     ]
   }
 ])

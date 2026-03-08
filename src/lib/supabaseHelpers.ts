@@ -1,17 +1,10 @@
 import { supabase } from "./supabaseClient";
-import mime from "mime-types";
 
-import { STORAGE_ROOT_URL } from "@/constants";
+import type { MediaMetadata, UploadMediaMetadata } from "@/types";
 
-import type { MediaMetadata, UploadMediaParams } from "@/types";
-
-export async function fetchMediaMetadata({
-  tags = [],
-  types = [],
-}: {
-  tags?: string[],
-  types?: ("image" | "video")[]
-}
+export async function fetchMediaMetadata(
+  tags: string[] = [],
+  types: ["image", "video"] | ["image" | "video"] = ["image", "video"],
 ): Promise<MediaMetadata[]> {
   const typeOrFIlter = types.map((t) => `mimeType.ilike.${t}%`).join(",");
 
@@ -21,13 +14,10 @@ export async function fetchMediaMetadata({
     .contains("tags", tags)
     .or(typeOrFIlter);
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 
   return data as MediaMetadata[] ?? [];
 }
-
 
 export async function fetchEvents(startDate = new Date(), endDate?: Date) {
   const { data, error } = await supabase
@@ -59,33 +49,37 @@ export async function fetchSongs() {
 
 export async function uploadMediaListToBucket(files: File[], upsert = false) {
   return await Promise.all(files.map((f) => {
-    uploadMediaToBucket(f, upsert)
+    uploadMediaToBucket(f, upsert);
   }));
 }
 
-export async function uploadMediaToBucket(file: File, destPath: string, params: UploadMediaParams, upsert: boolean) {
-
+export async function uploadMediaToBucket(
+  file: File,
+  upsert = false,
+  metadata: UploadMediaMetadata = {},
+) {
   validateMediaMimeType(file);
+
+  const destPath = `${file.type.match(/^image|video/)}s/${file.name}`;
 
   try {
     const { error } = await supabase.storage
-      .from("media")
+      .from("public_media")
       .upload(destPath, file, {
         upsert,
-        metadata: {
-          alt: params.alt,
-          tags: params.tags
-        }
+        contentType: file.type,
+        metadata,
       });
 
     if (error) throw error;
   } catch (error) {
     console.error("Error uploading media", error);
     return;
-  };
+  }
 
   return;
 }
+
 function validateMediaMimeType(file: File) {
   if (file.type.startsWith("image") || file.type.startsWith("video")) {
     console.error(`File ${file.name} is not an image or video`);

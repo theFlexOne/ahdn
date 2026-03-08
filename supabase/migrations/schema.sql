@@ -140,7 +140,7 @@ CREATE OR REPLACE VIEW "public"."media_bucket_metadata" WITH ("security_invoker"
     ("user_metadata" ->> 'alt'::"text") AS "alt",
     ARRAY( SELECT "jsonb_array_elements_text"((("objects"."user_metadata" ->> 'tags'::"text"))::"jsonb") AS "jsonb_array_elements_text") AS "tags"
    FROM "storage"."objects"
-  WHERE ("name" !~ '(^|/)\.[^/]+$'::"text");
+  WHERE (("name" !~ '(^|/)\.[^/]+$'::"text") AND ("bucket_id" = 'public_media'::"text"));
 
 
 ALTER VIEW "public"."media_bucket_metadata" OWNER TO "postgres";

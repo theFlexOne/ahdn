@@ -1,8 +1,11 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
-import convertVideoFile from "./helpers/convertVideoFile.ts";
+import convertVideoFiles from "./helpers/convertVideoFiles.ts";
+import { VideoFormat, VideoSize } from "./types.ts";
 
 type RequestBody = {
   videos: File[];
+  formats?: VideoFormat[];
+  sizes?: VideoSize[];
 };
 
 Deno.serve(async (req: Request): Promise<Response> => {
@@ -44,24 +47,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
   }
 
-  const validVideos = [];
-
-  for (const video of videos) {
-    try {
-      validVideos.push([
-        convertVideoFile(video, "mp4", 1280),
-        convertVideoFile(video, "mp4", 854),
-        convertVideoFile(video, "webm", 1280),
-        convertVideoFile(video, "webm", 854),
-      ]);
-    } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : "Failed to process video";
-
-      return Response.json({ error: message }, { status: 400 });
-    }
-  }
+  const validVideos = await convertVideoFiles(videos);
 
   return Response.json({
     count: validVideos.length,

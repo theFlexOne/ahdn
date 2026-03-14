@@ -10,3 +10,8 @@ export type MediaFileWithMetadata<T> = {
   file: File;
   metadata: T;
 };
+
+export type MediaFileVariantsWithMetadata<T> = {
+  files: File[];
+  metadata: T;
+};

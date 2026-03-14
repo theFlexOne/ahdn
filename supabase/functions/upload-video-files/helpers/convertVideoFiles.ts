@@ -1,6 +1,6 @@
 import { BASE_FORMATS, BASE_SIZES } from "../constants.ts";
 import {
-  FileVariantsWithMetadata,
+  VideoFileVariantsWithMetadata,
   VideoFileWithMetadata,
   VideoFormat,
   VideoSize,
@@ -11,7 +11,7 @@ export default function convertVideoFiles(
   videos: VideoFileWithMetadata[],
   formats: readonly VideoFormat[] = BASE_FORMATS,
   sizes: readonly VideoSize[] = BASE_SIZES,
-): Promise<FileVariantsWithMetadata[]> {
+): Promise<VideoFileVariantsWithMetadata[]> {
   return Promise.all(
     videos.map(async (video) => ({
       files: await convertFileVariants(video.file, formats, sizes),

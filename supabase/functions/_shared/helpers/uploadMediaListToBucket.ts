@@ -1,35 +1,38 @@
 import uploadMediaToBucket from "./uploadMediaToBucket.ts";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { MediaFileWithMetadata } from "../types.ts";
-
-const DEFAULT_OPTIONS = {
-  bucket: "public_media",
-  upsert: false,
-};
+import type { MediaFileVariantsWithMetadata } from "../types.ts";
+import { UPLOAD_MEDIA_DEFAULT_OPTIONS } from "../constants.ts";
 
 export default async function uploadMediaListToBucket<
   T extends Record<string, unknown>,
 >(
   supabase: SupabaseClient,
-  media: MediaFileWithMetadata<T>[],
+  media: MediaFileVariantsWithMetadata<T>[],
   options: {
     bucket?: string;
     upsert?: boolean;
   } = {},
 ) {
-  const fails: Error[] = [];
   try {
-    await Promise.all(
-      media.map((m) =>
-        uploadMediaToBucket(supabase, m, { ...DEFAULT_OPTIONS, ...options })
-      ),
+    const res = await Promise.all(
+      media.map(async ({ files, metadata }) => {
+        const uploadedFiles = files.map((file) =>
+          uploadMediaToBucket(supabase, { file, metadata }, {
+            ...UPLOAD_MEDIA_DEFAULT_OPTIONS,
+            ...options,
+          })
+        );
+        return {
+          files: await Promise.all(uploadedFiles),
+          metadata,
+        };
+      }),
     );
-  } catch (error) {
-    if (error instanceof Error) {
-      fails.push(error);
-    }
 
-    console.error(fails);
+    return res;
+  } catch (error) {
+    console.error("Error uploading media", error);
+    return [];
   }
 }

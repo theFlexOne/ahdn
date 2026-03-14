@@ -1,4 +1,7 @@
-import type { MediaFileWithMetadata } from "../_shared/types.ts";
+import type {
+  MediaFileVariantsWithMetadata,
+  MediaFileWithMetadata,
+} from "../_shared/types.ts";
 
 export type RequestData = { images: unknown; preset?: unknown };
 
@@ -23,11 +26,9 @@ export type VideoMetadata = {
 };
 
 export type VideoFileWithMetadata = MediaFileWithMetadata<VideoMetadata>;
-
-export type FileVariantsWithMetadata = {
-  files: File[];
-  metadata: VideoMetadata;
-};
+export type VideoFileVariantsWithMetadata = MediaFileVariantsWithMetadata<
+  VideoMetadata
+>;
 
 export type RequestBody = {
   videos: VideoFileWithMetadata[];

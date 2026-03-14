@@ -1,12 +1,18 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import convertVideoFiles from "./helpers/convertVideoFiles.ts";
-import { VideoFormat, VideoSize } from "./types.ts";
+import { RequestBody, VideoMetadata } from "./types.ts";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import uploadMediaListToBucket from "../_shared/helpers/uploadMediaListToBucket.ts";
 
-type RequestBody = {
-  videos: File[];
-  formats?: VideoFormat[];
-  sizes?: VideoSize[];
-};
+let supabase: SupabaseClient;
+
+try {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const supabaseKey = Deno.env.get("SUPABASE_KEY") ?? "";
+  supabase = createClient(supabaseUrl, supabaseKey);
+} catch (error) {
+  console.error("Error creating Supabase client:", error);
+}
 
 Deno.serve(async (req: Request): Promise<Response> => {
   if (req.method !== "POST") {
@@ -36,7 +42,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   for (const video of videos) {
-    if (typeof video !== "string") {
+    if (typeof video.file !== "string") {
       return Response.json(
         {
           error:
@@ -47,11 +53,17 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
   }
 
-  const validVideos = await convertVideoFiles(videos);
+  const validVideos = await convertVideoFiles(videos, body.formats, body.sizes);
+  const results = await uploadMediaListToBucket<VideoMetadata>(
+    supabase,
+    validVideos,
+    {
+      upsert: true,
+    },
+  );
 
   return Response.json({
-    count: validVideos.length,
-    results: validVideos,
+    results,
   });
 });
 

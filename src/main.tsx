@@ -6,12 +6,14 @@ import { FbClientProvider } from './context/fb/FbClientProvider.tsx'
 import Home from './pages/home/Home.tsx'
 import Gallery from './pages/gallery/Gallery.tsx'
 import Contact from './pages/contact/Contact.tsx'
-import About from './pages/about/About.tsx'
 import Layout from './layout/Layout.tsx'
 import homeLoader from './pages/home/homeLoader.ts'
 import galleryLoader from './pages/gallery/galleryLoader.ts'
 
 import './index.css'
+import Bio from './pages/bio/Bio.tsx'
+import Schedule from './pages/schedule/Schedule.tsx'
+import scheduleLoader from './pages/schedule/scheduleLoader.ts'
 
 const router = createBrowserRouter([
   {
@@ -23,8 +25,13 @@ const router = createBrowserRouter([
         loader: homeLoader
       },
       {
-        path: "/about",
-        element: <About />
+        path: "/bio",
+        element: <Bio />
+      },
+      {
+        path: "/schedule",
+        element: <Schedule />,
+        loader: scheduleLoader
       },
       {
         path: "/gallery",

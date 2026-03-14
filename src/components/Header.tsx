@@ -7,7 +7,7 @@ export default function Header({ className }: { className?: string }) {
       'after:content-[""] after:absolute after:w-full after:h-4 after:bg-[linear-gradient(to_top,#040404_0%,#020202_50%,#000000_100%)] after:bottom-0 after:left-0',
       className
     )}>
-      <nav className="w-full font-gl text-2xl">
+      <nav className="w-full font-[Montserrat] text-2xl">
         <ul className="flex w-full items-center">
           <li className="flex-1 text-center">
             <a href="/schedule">Schedule</a>

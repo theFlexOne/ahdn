@@ -1,10 +1,14 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import uploadMediaListToBucket from "../../_shared/helpers/uploadMediaListToBucket.ts";
-import { VideoFileWithMetadata, VideoMetadata } from "../types.ts";
+import { VideoFileVariantsWithMetadata, VideoMetadata } from "../types.ts";
 
-export default function uploadVideos(
+export default function uploadVideoVariantsToBucket(
   supabase: SupabaseClient,
-  videos: VideoFileWithMetadata[],
+  videos: VideoFileVariantsWithMetadata[],
+  options: {
+    bucket?: string;
+    upsert?: boolean;
+  } = {},
 ) {
-  return uploadMediaListToBucket<VideoMetadata>(supabase, videos);
+  return uploadMediaListToBucket<VideoMetadata>(supabase, videos, options);
 }

@@ -18,16 +18,17 @@ export default async function uploadMediaToBucket<
   validateMediaMimeType(media.file);
 
   const { file, metadata } = media;
+  const filenameBase = path.basename(file.name, path.extname(file.name)).match(
+    "^.*?(?=-.*\\..*$)",
+  )![0];
   const destPath = path.join(
     `${file.type.match(/^image|video/)}s`,
-    path.basename(file.name, path.extname(file.name)).match(
-      "^.*?(?=-.*\\..*$)",
-    )![0],
+    filenameBase,
     file.name,
   );
 
   try {
-    const { error } = await supabase.storage
+    const { data, error } = await supabase.storage
       .from(bucket)
       .upload(destPath, file, {
         upsert,
@@ -35,6 +36,8 @@ export default async function uploadMediaToBucket<
       });
 
     if (error) throw error;
+
+    return data;
   } catch (error) {
     const err = new Error(
       `Error uploading file ${file.name} to bucket ${bucket}: ${error}`,
@@ -42,6 +45,4 @@ export default async function uploadMediaToBucket<
     console.error(err);
     throw err;
   }
-
-  return;
 }

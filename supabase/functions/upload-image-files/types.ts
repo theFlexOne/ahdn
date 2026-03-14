@@ -1,10 +1,7 @@
-import { SharpInput } from "sharp";
-import {
-  MediaFileVariantsWithMetadata,
-  MediaFileWithMetadata,
-} from "../_shared/types.ts";
 import { IMAGE_ENCODE, IMAGE_PRESETS } from "./constants.ts";
-import { Prettify } from "@supabase/supabase-js";
+
+import type { SharpInput } from "sharp";
+import type { Prettify } from "@supabase/supabase-js";
 
 export type ImagePreset = keyof typeof IMAGE_PRESETS;
 export type SizeKey = keyof (typeof IMAGE_PRESETS)[ImagePreset]; // "small" | "standard" | "large" ~ according to ChatGPT.
@@ -41,13 +38,21 @@ export type RequestData = {
   upsert?: boolean;
 };
 
-export type ImageMetadata = {
-  width: number;
-  height: number;
-  tags: string[];
+export type UploadImageMetadata = Prettify<
+  Record<string, unknown> & {
+    width: number;
+    height: number;
+    tags: string[];
+    alt: string;
+  }
+>;
+
+export type ImageFileWithMetadata = {
+  file: File;
+  metadata: UploadImageMetadata;
 };
 
-export type ImageFileWithMetadata = MediaFileWithMetadata<ImageMetadata>;
-export type ImageFileVariantsWithMetadata = MediaFileVariantsWithMetadata<
-  ImageMetadata
->;
+export type ImageFileVariantsWithMetadata = {
+  files: File[];
+  metadata: UploadImageMetadata;
+};

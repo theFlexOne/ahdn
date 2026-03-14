@@ -14,31 +14,37 @@ import './index.css'
 import Bio from './pages/bio/Bio.tsx'
 import Schedule from './pages/schedule/Schedule.tsx'
 import scheduleLoader from './pages/schedule/scheduleLoader.ts'
+import layoutLoader from './layout/layoutLoader.ts'
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       {
+        id: "home",
         path: "/",
         element: <Home />,
         loader: homeLoader
       },
       {
+        id: "bio",
         path: "/bio",
         element: <Bio />
       },
       {
+        id: "schedule",
         path: "/schedule",
         element: <Schedule />,
         loader: scheduleLoader
       },
       {
+        id: "gallery",
         path: "/gallery",
         element: <Gallery />,
         loader: galleryLoader
       },
       {
+        id: "contact",
         path: "/contact",
         element: <Contact />
       },

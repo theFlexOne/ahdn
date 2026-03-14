@@ -3,14 +3,14 @@ import type React from "react";
 
 export default function Page({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
+    <main
       className={cn(
-        "w-5xl bg-white/90 rounded-sm mx-auto flex flex-col gap-20 my-30",
+        "bg-lime-500/90 mx-auto flex flex-col gap-20",
         className
       )}
       {...props}
     >
 
-    </div>
+    </main>
   )
 }

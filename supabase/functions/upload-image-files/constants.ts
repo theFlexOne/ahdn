@@ -1,7 +1,7 @@
 export const IMAGE_PRESETS = {
-  thumbnail: { small: 240, standard: 400, large: 640 },
-  content: { small: 600, standard: 900, large: 1440 },
-  hero: { small: 768, standard: 1280, large: 1920 },
+  thumbnail: { small: 240, medium: 400, large: 640 },
+  content: { small: 600, medium: 900, large: 1440 },
+  hero: { small: 768, medium: 1280, large: 1920, xLarge: 2560 },
 } as const;
 
 export const IMAGE_PRESET_KEYS = Object.keys(IMAGE_PRESETS) as Array<

@@ -1,3 +1,14 @@
+import { Prettify } from "@supabase/supabase-js";
+
+export type Expand<T> = T extends (...args: unknown[]) => unknown ? T
+  : T extends readonly (infer U)[] ? readonly Expand<U>[]
+  : T extends object ? Prettify<
+      {
+        [K in keyof T]: Expand<T[K]>;
+      }
+    >
+  : T;
+
 export type UploadMediaParams = {
   localPath: string;
   destPath: string;

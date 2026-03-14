@@ -2,12 +2,14 @@ import "@supabase/functions-js/edge-runtime.d.ts";
 
 import type { ImagePreset, RequestData } from "./types.ts";
 import { IMAGE_PRESET_KEYS } from "./constants.ts";
-import buildResponsiveImageSetsForPreset from "./helpers/buildResponsiveImageSetForPreset.ts";
+import buildImageSets from "./helpers/buildResponsiveImageSetForPreset.ts";
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
+
+  const fails: {name: string; message: string}[] = [];
 
   let body: unknown;
   try {
@@ -24,111 +26,33 @@ Deno.serve(async (req) => {
   }
 
   const payload = body as RequestData;
-  const preset = payload.preset ?? "content";
-  if (!isImagePreset(preset)) {
-    return Response.json(
-      {
-        error: `preset must be one of: ${IMAGE_PRESET_KEYS.join(", ")}`,
-      },
-      { status: 400 },
-    );
-  }
 
-  const rawImages = payload.images;
-  if (!Array.isArray(rawImages) || rawImages.length === 0) {
+  if (!Array.isArray(payload.images) || payload.images.length === 0) {
     return Response.json(
       { error: "images must be a non-empty array" },
       { status: 400 },
     );
   }
 
-  const inputs: Uint8Array[] = [];
-  for (const raw of rawImages) {
-    const decoded = decodeImageInput(raw);
-    if (!decoded) {
-      return Response.json(
-        {
-          error:
-            "Each images item must be a byte array, base64 string, or data URL",
-        },
-        { status: 400 },
-      );
+  for (const image of payload.images) {
+    if (!isImagePreset(image.preset)) {
+      fails.push({
+        name: image.name,
+        message: `preset must be one of: ${IMAGE_PRESET_KEYS.join(", ")}`,
+      });
+      continue;
     }
-    inputs.push(decoded);
+
   }
 
-  try {
-    const sets = await buildResponsiveImageSetsForPreset(inputs, preset, {
-      async: true,
-    });
+);
 
-    return Response.json({
-      count: sets.length,
-      preset,
-      results: sets.map((set) => ({
-        avif: summarizeBySize(set.avif),
-        webp: summarizeBySize(set.webp),
-        jpg: summarizeBySize(set.jpg),
-      })),
-    });
-  } catch (error) {
-    return Response.json(
-      {
-        error: error instanceof Error
-          ? error.message
-          : "Image processing failed",
-      },
-      { status: 500 },
-    );
-  }
-});
-
-function isImagePreset(value: unknown): value is ImagePreset {
+function isImagePreset(value: string): value is ImagePreset {
   return typeof value === "string" &&
     IMAGE_PRESET_KEYS.includes(value as ImagePreset);
 }
 
-function decodeImageInput(value: unknown): Uint8Array | null {
-  if (value instanceof Uint8Array) {
-    return value;
-  }
 
-  if (Array.isArray(value)) {
-    if (!value.every((n) => Number.isInteger(n) && n >= 0 && n <= 255)) {
-      return null;
-    }
-    return Uint8Array.from(value as number[]);
-  }
-
-  if (typeof value === "string") {
-    const base64 = value.startsWith("data:")
-      ? value.slice(value.indexOf(",") + 1)
-      : value;
-
-    try {
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-      return bytes;
-    } catch {
-      return null;
-    }
-  }
-
-  return null;
-}
-
-function summarizeBySize(
-  entries: Partial<Record<"small" | "standard" | "large", Uint8Array>>,
-) {
-  return {
-    small: entries.small?.byteLength ?? null,
-    standard: entries.standard?.byteLength ?? null,
-    large: entries.large?.byteLength ?? null,
-  };
-}
 
 /* To invoke locally:
 

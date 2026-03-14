@@ -27,11 +27,6 @@ Project-level operating rules for Codex in this repository.
 
 ## Validation
 
-- After meaningful code changes, run:
-  - `npm run build`
-  - `npm run lint`
-- If a command fails due to environment limitations, report it clearly.
-
 ## Safety Rules
 
 - Do not edit `.env*` files unless explicitly requested.

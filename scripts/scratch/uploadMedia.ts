@@ -5,8 +5,6 @@ import process from "node:process";
 import { loadEnv } from "vite";
 import mime from "mime-types";
 
-import type { CreateMediaMetadataParams } from "../src/types";
-
 const MEDIA_JSON_PATH = path.join(process.cwd(), "supabase/data/media.json");
 // const SUPABASE_STORAGE_ROOT = "https://lzgryhrztslevnuajiqm.supabase.co/storage/v1/object/public";
 

@@ -27,3 +27,4 @@ dist-ssr
 .env.*
 
 notes.txt
+.data/

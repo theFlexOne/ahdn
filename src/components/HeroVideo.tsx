@@ -1,15 +1,18 @@
+import { cn } from "@/lib/utils";
+import type { ClassValue } from "clsx";
 import { useEffect, useRef, useState } from "react";
 
-type Props = {
+type HeroVideoProps = {
   urls: {
     src: string;
     type: string;
   }[];
-  posterSrcList: string[];
-  className?: string;
+  posterSrc: string;
+  className?: ClassValue;
+  fallbackImgClassName?: ClassValue;
 };
 
-export default function HeroVideo({ posterSrcList, urls, className }: Props) {
+export default function HeroVideo({ posterSrc, urls, className, fallbackImgClassName }: HeroVideoProps) {
   const [canPlay, setCanPlay] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -23,7 +26,7 @@ export default function HeroVideo({ posterSrcList, urls, className }: Props) {
 
   return canPlay ? (
     <video
-      className={className}
+      className={cn(className)}
       autoPlay
       muted
       loop
@@ -35,6 +38,6 @@ export default function HeroVideo({ posterSrcList, urls, className }: Props) {
       ))}
     </video>
   ) : (
-    <img srcSet={posterSrcList.join(",")} alt="A Hard Day's Night" className={className} />
+    <img srcSet={posterSrc} alt="A Hard Day's Night" className={cn(fallbackImgClassName)} />
   );
 }

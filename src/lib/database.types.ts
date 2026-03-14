@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.1"
-  }
   public: {
     Tables: {
       address: {
@@ -79,6 +74,27 @@ export type Database = {
           },
         ]
       }
+      file_extensions: {
+        Row: {
+          extension: string
+          id: number
+          is_active: boolean
+          mime_type: string
+        }
+        Insert: {
+          extension: string
+          id?: number
+          is_active?: boolean
+          mime_type: string
+        }
+        Update: {
+          extension?: string
+          id?: number
+          is_active?: boolean
+          mime_type?: string
+        }
+        Relationships: []
+      }
       songs: {
         Row: {
           created_at: string
@@ -99,6 +115,22 @@ export type Database = {
       }
     }
     Views: {
+      images: {
+        Row: {
+          filename_base: string | null
+          files: Json | null
+        }
+        Relationships: []
+      }
+      images_mv: {
+        Row: {
+          alt: string | null
+          filename_base: string | null
+          files: Json | null
+          tags: string[] | null
+        }
+        Relationships: []
+      }
       media_bucket_metadata: {
         Row: {
           alt: string | null
@@ -117,6 +149,16 @@ export type Database = {
           mimeType?: never
           path?: string | null
           tags?: never
+        }
+        Relationships: []
+      }
+      media_files: {
+        Row: {
+          alt: string | null
+          defaultFilename: string | null
+          filenameBase: string | null
+          mimeType: string | null
+          srcset: string[] | null
         }
         Relationships: []
       }
@@ -267,3 +309,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

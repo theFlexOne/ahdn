@@ -27,7 +27,6 @@ export default function convertVideoFiles(
             metadata: {
               ...video.metadata,
               tags: video.tags ?? [],
-              alt: video.alt,
               width: dimensions.width,
               height: dimensions.height,
             },

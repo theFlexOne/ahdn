@@ -10,7 +10,6 @@ Deno.test("video parseFormData groups indexed video fields", () => {
   );
   formData.append("tags[0]", "hero");
   formData.append("tags[0]", "homepage");
-  formData.append("alt[0]", "My video");
   formData.append("metadata[0]", JSON.stringify({ section: "home" }));
   formData.append(
     "file[1]",
@@ -26,14 +25,12 @@ Deno.test("video parseFormData groups indexed video fields", () => {
     JSON.stringify(parsed[0].tags),
     JSON.stringify(["hero", "homepage"]),
   );
-  assertEquals(parsed[0].alt, "My video");
   assertEquals(
     JSON.stringify(parsed[0].metadata),
     JSON.stringify({ section: "home" }),
   );
   assertEquals(parsed[1].file.name, "example-video2.webm");
   assertEquals(JSON.stringify(parsed[1].tags), JSON.stringify([]));
-  assertEquals(parsed[1].alt, "example-video2");
 });
 
 Deno.test("video parseFormData throws for invalid metadata JSON", () => {

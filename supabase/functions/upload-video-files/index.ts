@@ -93,7 +93,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
     --form 'upsert=true' \
     --form 'file[0]=@/path/to/hero-video.mp4' \
     --form 'tags[0]=hero' \
-    --form 'alt[0]=Band performance background video' \
     --form 'metadata[0]={"section":"home"}'
 
 */

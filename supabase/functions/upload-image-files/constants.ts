@@ -10,8 +10,6 @@ export const IMAGE_PRESET_KEYS = Object.keys(IMAGE_PRESETS) as Array<
   keyof typeof IMAGE_PRESETS
 >;
 
-export const IMAGE_FILE_FIELD_NAME = "file" as const;
-
 export const IMAGE_FORMATS = [
   { extension: "avif", mimeType: "image/avif" },
   { extension: "webp", mimeType: "image/webp" },

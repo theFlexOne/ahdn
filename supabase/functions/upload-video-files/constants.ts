@@ -1,5 +1,3 @@
-export const VIDEO_FILE_FIELD_NAME = "file" as const;
-
 export const VIDEO_FORMATS = [
   { extension: "mp4", mimeType: "video/mp4" },
   { extension: "webm", mimeType: "video/webm" },

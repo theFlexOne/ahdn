@@ -1,14 +1,9 @@
 import path from "node:path";
-import { IMAGE_FILE_FIELD_NAME } from "../constants.ts";
 
-import type { ImageFileFieldName, ParsedImageData } from "../types.ts";
+import type { ParsedImageData } from "../types.ts";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isImageFileFieldName(value: string): value is ImageFileFieldName {
-  return value === IMAGE_FILE_FIELD_NAME;
 }
 
 export default function parseFormData(formData: FormData): ParsedImageData[] {
@@ -26,7 +21,7 @@ export default function parseFormData(formData: FormData): ParsedImageData[] {
     const imageData = imageDataByIndex.get(index) ?? {};
     imageDataByIndex.set(index, imageData);
 
-    if (isImageFileFieldName(keyName)) {
+    if (keyName === "file") {
       if (!(value instanceof File)) {
         throw new Error(`Field "${key}" must be a file`);
       }

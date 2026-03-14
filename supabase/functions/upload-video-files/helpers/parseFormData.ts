@@ -1,14 +1,7 @@
-import path from "node:path";
-import { VIDEO_FILE_FIELD_NAME } from "../constants.ts";
-
-import type { ParsedVideoData, VideoFileFieldName } from "../types.ts";
+import type { ParsedVideoData } from "../types.ts";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isVideoFileFieldName(value: string): value is VideoFileFieldName {
-  return value === VIDEO_FILE_FIELD_NAME;
 }
 
 export default function parseFormData(formData: FormData): ParsedVideoData[] {
@@ -26,7 +19,7 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
     const videoData = videoDataByIndex.get(index) ?? {};
     videoDataByIndex.set(index, videoData);
 
-    if (isVideoFileFieldName(keyName)) {
+    if (keyName === "file") {
       if (!(value instanceof File)) {
         throw new Error(`Field "${key}" must be a file`);
       }
@@ -43,13 +36,6 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
 
         videoData.tags ??= [];
         videoData.tags.push(value.trim());
-        return;
-      case "alt":
-        if (typeof value !== "string") {
-          throw new Error(`Field "${key}" must be a string`);
-        }
-
-        videoData.alt = value.trim();
         return;
       case "metadata":
         if (typeof value !== "string") {
@@ -91,8 +77,6 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
       return {
         file: videoData.file,
         tags: videoData.tags?.filter((tag) => tag.length > 0) ?? [],
-        alt: videoData.alt?.trim() ||
-          path.basename(videoData.file.name, path.extname(videoData.file.name)),
         metadata: videoData.metadata ?? {},
       };
     });

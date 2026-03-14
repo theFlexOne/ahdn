@@ -1,17 +1,11 @@
-import {
-  DEFAULT_VIDEO_FORMATS,
-  VIDEO_FILE_FIELD_NAME,
-  VIDEO_FORMATS,
-} from "./constants.ts";
+import { DEFAULT_VIDEO_FORMATS, VIDEO_FORMATS } from "./constants.ts";
 
 export type ParsedVideoData = {
   file: File;
   tags?: string[];
-  alt: string;
   metadata: Record<string, unknown>;
 };
 
-export type VideoFileFieldName = typeof VIDEO_FILE_FIELD_NAME;
 export type VideoFormat = typeof DEFAULT_VIDEO_FORMATS[number];
 export type VideoVariantMimeType = typeof VIDEO_FORMATS[number]["mimeType"];
 
@@ -30,7 +24,6 @@ export type FfmpegArgs = {
 
 export type VideoVariantMetadata = Record<string, unknown> & {
   tags: string[];
-  alt: string;
   width: number;
   height: number;
 };

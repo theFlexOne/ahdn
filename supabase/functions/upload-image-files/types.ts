@@ -1,58 +1,61 @@
-import { IMAGE_ENCODE, IMAGE_PRESETS } from "./constants.ts";
+import {
+  IMAGE_FILE_FIELD_NAME,
+  IMAGE_FORMATS,
+  IMAGE_PRESETS,
+} from "./constants.ts";
 
-import type { SharpInput } from "sharp";
-import type { Prettify } from "@supabase/supabase-js";
-
-export type ImagePreset = keyof typeof IMAGE_PRESETS;
-export type SizeKey = keyof (typeof IMAGE_PRESETS)[ImagePreset]; // "small" | "standard" | "large" ~ according to ChatGPT.
-export type FormatKey = keyof typeof IMAGE_ENCODE;
-
-type ImageVariant = Prettify<{
-  data: Uint8Array;
-  filename: string;
-}>;
-
-type ImageVariantsBySize = Prettify<Partial<Record<SizeKey, ImageVariant>>>;
-
-type ImageVariantsByFormat = Prettify<Record<FormatKey, ImageVariantsBySize>>;
-
-export type ImageSet = Prettify<{
-  filenameBase: string;
-  variants: ImageVariantsByFormat;
-  alt: string;
-  tags: string[];
-  metadata: Record<string, unknown>;
-}>;
-
-export type ImageData = {
-  name: string;
-  data: SharpInput;
-  preset: ImagePreset;
-  tags: string[];
+export type ParsedImageData = {
+  file: File;
+  tags?: string[];
   alt: string;
   metadata: Record<string, unknown>;
 };
 
-export type RequestData = {
-  images: ImageData[];
+export type ImagePreset = keyof typeof IMAGE_PRESETS;
+export type ImageFileFieldName = typeof IMAGE_FILE_FIELD_NAME;
+export type ImageVariantExtension = typeof IMAGE_FORMATS[number]["extension"];
+export type ImageVariantMimeType = typeof IMAGE_FORMATS[number]["mimeType"];
+
+export type ImageVariantMetadata = Record<string, unknown> & {
+  tags: string[];
+  alt: string;
+  width: number;
+  height: number;
+};
+
+export type ImageVariantData = {
+  mimeType: ImageVariantMimeType;
+  width: number;
+  height: number;
+  file: File;
+  metadata: ImageVariantMetadata;
+};
+
+export type ImageVariantsData = {
+  filenameBase: string;
+  variants: ImageVariantData[];
+};
+
+export type UploadImagesOptions = {
+  bucket?: string;
   upsert?: boolean;
 };
 
-export type UploadImageMetadata = Prettify<
-  Record<string, unknown> & {
-    width: number;
-    height: number;
-    tags: string[];
-    alt: string;
-  }
->;
-
-export type ImageFileWithMetadata = {
-  file: File;
-  metadata: UploadImageMetadata;
+export type UploadRequestOptions = {
+  preset: ImagePreset;
+  upsert: boolean;
 };
 
-export type ImageFileVariantsWithMetadata = {
-  files: File[];
-  metadata: UploadImageMetadata;
+export type UploadedImageVariant = {
+  id: string | null;
+  path: string;
+  fullPath: string | null;
+  mimeType: ImageVariantMimeType;
+  width: number;
+  height: number;
+};
+
+export type UploadedImageVariantsData = {
+  filenameBase: string;
+  variants: UploadedImageVariant[];
 };

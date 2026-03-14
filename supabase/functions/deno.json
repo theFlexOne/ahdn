@@ -2,9 +2,8 @@
   "imports": {
     "@supabase/functions-js": "jsr:@supabase/functions-js@^2",
     "@supabase/supabase-js": "npm:@supabase/supabase-js@^2.98.0",
+    "@imagemagick/magick-wasm": "npm:@imagemagick/magick-wasm@0.0.30",
     "mime-types": "npm:mime-types@^3.0.2",
-    "sharp": "npm:sharp@0.34.5",
-    "@img/sharp-linux-x64": "npm:@img/sharp-linux-x64@0.34.5",
     "ffmpeg-static": "npm:ffmpeg-static@^5.2.0",
     "execa": "npm:execa@^9.6.0"
   }

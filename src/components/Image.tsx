@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef } from "react";
 import type { ImageBase } from "@/types";
 
-type ImageProps = ImageBase & ComponentPropsWithRef<"img">;
+export type ImageProps = ImageBase & ComponentPropsWithRef<"img">;
 
 function buildSrcSet(
   formatFile: ImageBase["files"][number] | undefined,

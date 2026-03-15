@@ -1,20 +1,15 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { Outlet, useMatches } from "react-router";
+import { Outlet } from "react-router";
 
 export default function Layout() {
-  const matches = useMatches()
-
-  console.log('matches', matches);
-
-
   return (
-    <div className="flex min-h-screen flex-col overflow-hidden font-default">
-      <Header className="shrink-0" />
-      <main className="relative min-h-0 flex-1 bg-[hsl(0,100%,48%)]">
+    <div className="flex min-h-screen flex-col overflow-x-hidden font-default">
+      <Header className="relative z-20 shrink-0" />
+      <main className="relative flex-1">
         <Outlet />
       </main>
-      <Footer className="shrink-0" />
+      <Footer className="relative z-20 shrink-0" />
     </div>
   )
 }

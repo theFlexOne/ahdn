@@ -1,20 +1,35 @@
 import AHDNLogo from "@/components/AHDNLogo";
 import HeroVideo from "@/components/HeroVideo";
+import { Page } from "@/layout";
 import { useLoaderData } from "react-router";
 
+type HomeLoaderData = {
+  videoUrls: {
+    src: string;
+    type: string;
+  }[];
+  posterSrc: string;
+};
+
 export default function Home() {
-  const { videoUrls, posterSrc } = useLoaderData();
+  const { videoUrls, posterSrc } = useLoaderData() as HomeLoaderData;
 
   return (
-    <div className="flex-1 min-h-0">
-      <div className="relative">
+    <div className="relative isolate">
+      <div aria-hidden className="pointer-events-none sticky top-0 h-svh overflow-hidden">
         <HeroVideo
           urls={videoUrls}
-          posterSrc={[posterSrc]}
-          className="w-full h-full object-cover brightness-75"
+          posterSrc={posterSrc}
+          className="h-full w-full object-cover brightness-50"
+          fallbackImgClassName="h-full w-full object-cover brightness-50"
+          dim={30}
         />
-        <AHDNLogo className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10/12 fill-gray-200/90" />
       </div>
+
+      <Page className="-mt-[100svh] min-h-svh justify-center bg-transparent px-6 py-12 sm:px-10">
+        <AHDNLogo className="w-full max-w-5xl self-center fill-gray-200/90 drop-shadow-[0_0_24px_rgba(0,0,0,0.6)]" />
+        {/* expect more content here */}
+      </Page>
     </div>
   )
 }

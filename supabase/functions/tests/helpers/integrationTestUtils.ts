@@ -4,6 +4,7 @@ const DEFAULT_LOCAL_SUPABASE_URL = "http://127.0.0.1:54321";
 const DEFAULT_LOCAL_JWT_SECRET =
   "super-secret-jwt-token-with-at-least-32-characters-long";
 const DEFAULT_JWT_ISSUER = "supabase-demo";
+const LOCAL_FUNCTION_ENV_FILE = new URL("../../.env", import.meta.url);
 
 export const INTEGRATION_TEST_RUN_FLAG =
   "RUN_SUPABASE_FUNCTION_INTEGRATION_TESTS" as const;
@@ -20,39 +21,108 @@ export type MediaBucketMetadataRow = {
 
 let anonClientPromise: Promise<SupabaseClient> | null = null;
 let adminClientPromise: Promise<SupabaseClient> | null = null;
+let localFunctionEnv: Map<string, string> | null = null;
 
-export function getSupabaseUrl(): string {
-  return Deno.env.get("TEST_SUPABASE_URL") ??
-    Deno.env.get("SUPABASE_URL") ??
-    DEFAULT_LOCAL_SUPABASE_URL;
-}
-
-export function isIntegrationTestEnabled(): boolean {
+function readProcessEnv(key: string): string | undefined {
   try {
-    return Deno.env.get(INTEGRATION_TEST_RUN_FLAG) === "true";
+    const value = Deno.env.get(key)?.trim();
+    return value || undefined;
   } catch (error) {
     if (error instanceof Deno.errors.NotCapable) {
-      return false;
+      return undefined;
     }
 
     throw error;
   }
 }
 
+function normalizeEnvValue(value: string): string | undefined {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return undefined;
+  }
+
+  if (
+    trimmed.length >= 2 &&
+    ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+      (trimmed.startsWith("'") && trimmed.endsWith("'")))
+  ) {
+    return trimmed.slice(1, -1).trim() || undefined;
+  }
+
+  return trimmed;
+}
+
+// Integration tests run outside `supabase functions serve`, so they load the
+// same local function env file explicitly when process env is absent.
+function getLocalFunctionEnv(): ReadonlyMap<string, string> {
+  if (localFunctionEnv) {
+    return localFunctionEnv;
+  }
+
+  localFunctionEnv = new Map();
+
+  try {
+    const contents = Deno.readTextFileSync(LOCAL_FUNCTION_ENV_FILE);
+
+    for (const line of contents.split(/\r?\n/u)) {
+      const trimmed = line.trim();
+
+      if (!trimmed || trimmed.startsWith("#")) {
+        continue;
+      }
+
+      const separatorIndex = trimmed.indexOf("=");
+
+      if (separatorIndex <= 0) {
+        continue;
+      }
+
+      const key = trimmed.slice(0, separatorIndex).trim();
+      const value = normalizeEnvValue(trimmed.slice(separatorIndex + 1));
+
+      if (key && value) {
+        localFunctionEnv.set(key, value);
+      }
+    }
+  } catch (error) {
+    if (!(error instanceof Deno.errors.NotFound)) {
+      throw error;
+    }
+  }
+
+  return localFunctionEnv;
+}
+
+function readConfiguredEnv(key: string): string | undefined {
+  return readProcessEnv(key) ?? getLocalFunctionEnv().get(key);
+}
+
+export function getSupabaseUrl(): string {
+  return readProcessEnv("TEST_SUPABASE_URL") ??
+    readConfiguredEnv("SUPABASE_URL") ??
+    DEFAULT_LOCAL_SUPABASE_URL;
+}
+
+export function isIntegrationTestEnabled(): boolean {
+  return readProcessEnv(INTEGRATION_TEST_RUN_FLAG) === "true";
+}
+
 function getJwtSecret(): string {
-  return Deno.env.get("TEST_SUPABASE_JWT_SECRET") ??
-    Deno.env.get("SUPABASE_JWT_SECRET") ??
-    Deno.env.get("JWT_SECRET") ??
+  return readProcessEnv("TEST_SUPABASE_JWT_SECRET") ??
+    readConfiguredEnv("SUPABASE_JWT_SECRET") ??
+    readConfiguredEnv("JWT_SECRET") ??
     DEFAULT_LOCAL_JWT_SECRET;
 }
 
 function getTokenEnvVar(role: JwtRole): string {
   return role === "anon"
-    ? Deno.env.get("TEST_SUPABASE_ANON_KEY") ??
-      Deno.env.get("SUPABASE_ANON_KEY") ??
+    ? readProcessEnv("TEST_SUPABASE_ANON_KEY") ??
+      readConfiguredEnv("SUPABASE_ANON_KEY") ??
       ""
-    : Deno.env.get("TEST_SUPABASE_SERVICE_ROLE_KEY") ??
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
+    : readProcessEnv("TEST_SUPABASE_SERVICE_ROLE_KEY") ??
+      readConfiguredEnv("SUPABASE_SERVICE_ROLE_KEY") ??
       "";
 }
 

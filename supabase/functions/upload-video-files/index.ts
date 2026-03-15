@@ -8,9 +8,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 let supabase: SupabaseClient | null = null;
 
 try {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-  const supabaseKey = Deno.env.get("SUPABASE_KEY") ??
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")?.trim() ?? "";
+  const supabaseKey = Deno.env.get("SUPABASE_KEY")?.trim() ??
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")?.trim() ?? "";
 
   if (supabaseUrl && supabaseKey) {
     supabase = createClient(supabaseUrl, supabaseKey);

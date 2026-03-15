@@ -1,6 +1,5 @@
 import PageHeading from "@/components/PageHeading";
-import Page from "@/layout/Page";
-import PageSection from "@/layout/PageSection";
+import { Page, PageSection } from "@/layout";
 
 export default function Contact() {
   return (

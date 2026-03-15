@@ -1,7 +1,6 @@
 import PageHeading from "@/components/PageHeading";
 import { STORAGE_URL_BASE } from "@/constants";
-import Page from "@/layout/Page";
-import PageSection from "@/layout/PageSection";
+import { Page, PageSection } from "@/layout";
 import { cn } from "@/lib/utils";
 
 export default function Bio() {

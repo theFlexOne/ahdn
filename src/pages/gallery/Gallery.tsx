@@ -1,5 +1,5 @@
 import PageHeading from "@/components/PageHeading";
-import Page from "@/layout/Page";
+import { Page } from "@/layout";
 import { useLoaderData } from "react-router";
 
 import type { MediaMetadata } from "@/types";

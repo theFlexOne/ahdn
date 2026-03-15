@@ -2,7 +2,7 @@ import PageHeading from "@/components/PageHeading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Page from "@/layout/Page";
+import { Page } from "@/layout";
 import type { Event } from "@/types";
 import { useLoaderData } from "react-router";
 

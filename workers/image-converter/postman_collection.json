@@ -1,0 +1,68 @@
+{
+  "info": {
+    "_postman_id": "0d88f3b8-c0d9-4fd5-9df4-0d6440af7b58",
+    "name": "Image Converter Local",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Local requests for the Cloud Run image converter worker."
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        },
+        "description": "Equivalent to `curl -i http://127.0.0.1:8080/health`."
+      },
+      "response": []
+    },
+    {
+      "name": "Convert",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "preset",
+              "value": "thumbnail",
+              "type": "text"
+            },
+            {
+              "key": "file[0]",
+              "type": "file",
+              "src": "",
+              "contentType": "image/png"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/convert",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "convert"
+          ]
+        },
+        "description": "Equivalent to the multipart curl request for local image conversion."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080"
+    }
+  ]
+}

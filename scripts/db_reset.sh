@@ -1,3 +1,5 @@
+# Reset the local Postgres public schema using schema.sql
+# and optional data.sql from the provided directory.
 #!/usr/bin/env bash
 set -euo pipefail
 

@@ -1,147 +1,258 @@
 import path from "node:path";
-import {
-  ImageMagick,
-  MagickFormat,
-  MagickGeometry,
-} from "@imagemagick/magick-wasm";
-import {
-  DEFAULT_IMAGE_PRESET,
-  IMAGE_ENCODERS,
-  IMAGE_FORMATS,
-  IMAGE_PRESETS,
-} from "../constants.ts";
-import initializeBundledImageMagick from "./initializeImageMagick.ts";
+import { DEFAULT_IMAGE_PRESET } from "../constants.ts";
 
 import type {
   ImagePreset,
   ImageVariantData,
-  ImageVariantExtension,
+  ImageVariantMimeType,
   ImageVariantsData,
   ParsedImageData,
 } from "../types.ts";
 
-const IMAGE_MAGICK_FORMATS: Record<ImageVariantExtension, MagickFormat> = {
-  avif: MagickFormat.Avif,
-  webp: MagickFormat.WebP,
-  jpg: MagickFormat.Jpeg,
+const DEFAULT_LOCAL_IMAGE_CONVERTER_URL =
+  "http://127.0.0.1:8080/convert" as const;
+
+type WorkerImageVariantData = {
+  mimeType: ImageVariantMimeType;
+  width: number;
+  height: number;
+  filename: string;
+  contentBase64: string;
 };
 
-function getTargetWidths(sourceWidth: number, preset: ImagePreset): number[] {
-  const presetWidths = Object.values(IMAGE_PRESETS[preset]).filter((width) =>
-    width <= sourceWidth
-  );
+type WorkerImageVariantsData = {
+  filenameBase: string;
+  variants: WorkerImageVariantData[];
+};
 
-  if (presetWidths.length > 0) {
-    return [...new Set(presetWidths)];
-  }
-
-  return [sourceWidth];
-}
+type WorkerResponseBody = {
+  results: WorkerImageVariantsData[];
+};
 
 function isSvgFile(file: File): boolean {
   return file.type === "image/svg+xml" ||
     path.extname(file.name).toLowerCase() === ".svg";
 }
 
-function getResizeGeometry(targetWidth: number): MagickGeometry {
-  const geometry = new MagickGeometry(`${targetWidth}x`);
-  geometry.greater = true;
-  return geometry;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function getSourceWidth(sourceBytes: Uint8Array): number {
-  return ImageMagick.read(sourceBytes, (image) => {
-    image.autoOrient();
-    return image.width;
-  });
+function readEnv(key: string): string | undefined {
+  try {
+    const value = Deno.env.get(key)?.trim();
+    return value || undefined;
+  } catch (error) {
+    if (error instanceof Deno.errors.NotCapable) {
+      return undefined;
+    }
+
+    throw error;
+  }
 }
 
-function createVariant(
-  sourceBytes: Uint8Array,
+function normalizeWorkerUrl(urlValue: string): string {
+  let url: URL;
+
+  try {
+    url = new URL(urlValue);
+  } catch {
+    throw new Error(`IMAGE_CONVERTER_URL is invalid: ${urlValue}`);
+  }
+
+  if (url.pathname === "" || url.pathname === "/") {
+    url.pathname = "/convert";
+  }
+
+  return url.toString();
+}
+
+function getWorkerUrl(): string {
+  const configuredWorkerUrl = readEnv("IMAGE_CONVERTER_URL");
+
+  if (configuredWorkerUrl) {
+    return normalizeWorkerUrl(configuredWorkerUrl);
+  }
+
+  const supabaseUrl = readEnv("SUPABASE_URL");
+
+  if (supabaseUrl) {
+    try {
+      const hostname = new URL(supabaseUrl).hostname.toLowerCase();
+
+      if (hostname === "127.0.0.1" || hostname === "localhost") {
+        return DEFAULT_LOCAL_IMAGE_CONVERTER_URL;
+      }
+    } catch {
+      // Ignore invalid SUPABASE_URL values and fall through to the config error.
+    }
+  }
+
+  throw new Error(
+    "IMAGE_CONVERTER_URL is not configured for upload-image-files",
+  );
+}
+
+function getWorkerSecret(): string {
+  return readEnv("IMAGE_CONVERTER_SHARED_SECRET") ??
+    readEnv("WORKER_SHARED_SECRET") ??
+    "";
+}
+
+function decodeBase64(value: string): Uint8Array {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return bytes;
+}
+
+function toFilenameBase(imageData: ParsedImageData): string {
+  return path.basename(imageData.file.name, path.extname(imageData.file.name));
+}
+
+function toImageVariantData(
   imageData: ParsedImageData,
-  filenameBase: string,
-  targetWidth: number,
-  format: typeof IMAGE_FORMATS[number],
+  variant: WorkerImageVariantData,
 ): ImageVariantData {
-  return ImageMagick.read(sourceBytes, (image) => {
-    image.autoOrient();
-    image.resize(getResizeGeometry(targetWidth));
-    image.quality = IMAGE_ENCODERS[format.extension].quality;
-
-    return image.write(IMAGE_MAGICK_FORMATS[format.extension], (data) => {
-      const width = image.width;
-      const height = image.height;
-
-      return {
-        mimeType: format.mimeType,
-        width,
-        height,
-        file: new File(
-          [Uint8Array.from(data)],
-          `${filenameBase}-${width}.${format.extension}`,
-          { type: format.mimeType },
-        ),
-        metadata: {
-          ...imageData.metadata,
-          tags: imageData.tags ?? [],
-          alt: imageData.alt,
-          width,
-          height,
-        },
-      };
-    });
-  });
-}
-
-async function createImageVariantSet(
-  imageData: ParsedImageData,
-  preset: ImagePreset,
-): Promise<ImageVariantsData> {
-  await initializeBundledImageMagick();
-
-  if (isSvgFile(imageData.file)) {
-    throw new Error(
-      `File "${imageData.file.name}" is an SVG, which is not supported by magick-wasm in this edge function`,
-    );
+  if (
+    !variant.filename ||
+    !variant.mimeType ||
+    !Number.isFinite(variant.width) ||
+    variant.width <= 0 ||
+    !Number.isFinite(variant.height) ||
+    variant.height <= 0
+  ) {
+    throw new Error("Image conversion worker returned an invalid variant");
   }
-
-  const filenameBase = path.basename(
-    imageData.file.name,
-    path.extname(imageData.file.name),
-  );
-  const sourceBytes = new Uint8Array(await imageData.file.arrayBuffer());
-  const sourceWidth = getSourceWidth(sourceBytes);
-
-  if (!sourceWidth) {
-    throw new Error(
-      `Could not determine image width for "${imageData.file.name}"`,
-    );
-  }
-
-  const targetWidths = getTargetWidths(sourceWidth, preset);
-  const variants = await Promise.all(
-    targetWidths.flatMap((targetWidth) =>
-      IMAGE_FORMATS.map((format) =>
-        createVariant(sourceBytes, imageData, filenameBase, targetWidth, format)
-      )
-    ),
-  );
-
-  variants.sort((left, right) =>
-    left.width - right.width || left.mimeType.localeCompare(right.mimeType)
-  );
 
   return {
-    filenameBase,
-    variants,
+    mimeType: variant.mimeType,
+    width: variant.width,
+    height: variant.height,
+    file: new File([decodeBase64(variant.contentBase64)], variant.filename, {
+      type: variant.mimeType,
+    }),
+    metadata: {
+      ...imageData.metadata,
+      tags: imageData.tags ?? [],
+      alt: imageData.alt,
+      width: variant.width,
+      height: variant.height,
+    },
   };
 }
 
-export default function createImageVariants(
+async function requestImageVariants(
+  images: ParsedImageData[],
+  preset: ImagePreset,
+): Promise<WorkerImageVariantsData[]> {
+  const formData = new FormData();
+  formData.append("preset", preset);
+
+  images.forEach((imageData, index) => {
+    formData.append(`file[${index}]`, imageData.file, imageData.file.name);
+  });
+
+  const headers = new Headers();
+  const workerSecret = getWorkerSecret();
+
+  if (workerSecret) {
+    headers.set("x-worker-secret", workerSecret);
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(getWorkerUrl(), {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to reach image conversion worker: ${message}`);
+  }
+
+  const rawBody = await response.text();
+  let parsedBody: unknown = null;
+
+  if (rawBody) {
+    try {
+      parsedBody = JSON.parse(rawBody) as unknown;
+    } catch {
+      if (!response.ok) {
+        throw new Error(rawBody);
+      }
+
+      throw new Error("Image conversion worker returned invalid JSON");
+    }
+  }
+
+  if (!response.ok) {
+    const errorMessage =
+      isRecord(parsedBody) && typeof parsedBody.error === "string"
+        ? parsedBody.error
+        : rawBody || `Image conversion worker returned HTTP ${response.status}`;
+
+    throw new Error(errorMessage);
+  }
+
+  if (!isRecord(parsedBody) || !Array.isArray(parsedBody.results)) {
+    throw new Error("Image conversion worker returned an invalid response");
+  }
+
+  return (parsedBody as WorkerResponseBody).results;
+}
+
+export default async function createImageVariants(
   images: ParsedImageData[],
   preset: ImagePreset = DEFAULT_IMAGE_PRESET,
 ): Promise<ImageVariantsData[]> {
-  return Promise.all(
-    images.map((imageData) => createImageVariantSet(imageData, preset)),
-  );
+  for (const imageData of images) {
+    if (isSvgFile(imageData.file)) {
+      throw new Error(
+        `File "${imageData.file.name}" is an SVG, which is not supported by magick-wasm in this edge function`,
+      );
+    }
+  }
+
+  const workerResults = await requestImageVariants(images, preset);
+
+  if (workerResults.length !== images.length) {
+    throw new Error(
+      "Image conversion worker returned an unexpected number of result sets",
+    );
+  }
+
+  return workerResults.map((workerResult, index) => {
+    const imageData = images[index];
+
+    if (
+      !imageData ||
+      !isRecord(workerResult) ||
+      !Array.isArray(workerResult.variants)
+    ) {
+      throw new Error("Image conversion worker returned an invalid response");
+    }
+
+    const variants = workerResult.variants.map((variant) =>
+      toImageVariantData(imageData, variant)
+    );
+
+    variants.sort((left, right) =>
+      left.width - right.width || left.mimeType.localeCompare(right.mimeType)
+    );
+
+    return {
+      filenameBase: typeof workerResult.filenameBase === "string" &&
+          workerResult.filenameBase.length > 0
+        ? workerResult.filenameBase
+        : toFilenameBase(imageData),
+      variants,
+    };
+  });
 }

@@ -1,5 +1,13 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
@@ -12,6 +20,7 @@ type PackageJson = {
 };
 
 type CliOptions = {
+  integrationOnly: boolean;
   noBootstrap: boolean;
   skipFrontend: boolean;
   skipIntegration: boolean;
@@ -23,14 +32,28 @@ type BackgroundProcess = {
   subprocess: ReturnType<typeof execa>;
 };
 
+type ManagedImageWorker = {
+  containerName: string;
+  envFilePath: string;
+  envFileDirectory: string;
+};
+
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = resolve(SCRIPT_DIR, "..");
+const PROJECT_SLUG = toDockerSafeName(basename(ROOT_DIR));
 const ROOT_PACKAGE_JSON_PATH = join(ROOT_DIR, "package.json");
+const LOCAL_FUNCTIONS_ENV_PATH = join(ROOT_DIR, "supabase/functions/.env");
 const WORKER_DIR = join(ROOT_DIR, "workers/image-converter");
 const FRONTEND_DIRS = [join(ROOT_DIR, "src"), join(ROOT_DIR, "tests")];
 const SUPABASE_DENO_CONFIG = join(ROOT_DIR, "supabase/functions/deno.json");
 const SUPABASE_UNIT_GLOB = "supabase/functions/tests/*.unit.test.ts";
 const SUPABASE_INTEGRATION_GLOB = "supabase/functions/tests/*.integration.test.ts";
+const EDGE_RUNTIME_CONTAINER_PREFIX = "supabase_edge_runtime_";
+const EDGE_RUNTIME_CONTAINER_NAME = `${EDGE_RUNTIME_CONTAINER_PREFIX}${PROJECT_SLUG}`;
+const IMAGE_WORKER_IMAGE_TAG = `${PROJECT_SLUG}-image-converter-integration`;
+const IMAGE_WORKER_CONTAINER_PREFIX = `${PROJECT_SLUG}-image-converter-integration`;
+const IMAGE_WORKER_PORT = 8080;
+const IMAGE_WORKER_READY_MESSAGE = `Image worker listening on port ${IMAGE_WORKER_PORT}`;
 const FUNCTION_HEALTH_URLS = [
   "http://127.0.0.1:54321/functions/v1/upload-image-files",
   "http://127.0.0.1:54321/functions/v1/upload-video-files",
@@ -47,6 +70,7 @@ const TEST_FILE_PATTERN = /\.(test|spec)\.[cm]?[jt]sx?$/u;
 
 function parseCliOptions(argv: string[]): CliOptions {
   const options: CliOptions = {
+    integrationOnly: false,
     noBootstrap: false,
     skipFrontend: false,
     skipIntegration: false,
@@ -60,6 +84,9 @@ function parseCliOptions(argv: string[]): CliOptions {
         process.exit(0);
       case "--no-bootstrap":
         options.noBootstrap = true;
+        break;
+      case "--integration-only":
+        options.integrationOnly = true;
         break;
       case "--skip-frontend":
         options.skipFrontend = true;
@@ -83,6 +110,7 @@ Usage:
 
 Options:
   --no-bootstrap      Skip npm install/ci checks for Node packages
+  --integration-only  Run only Supabase integration tests and their local setup
   --skip-frontend     Skip frontend test discovery and execution
   --skip-integration  Skip Supabase integration tests and function runtime setup
   -h, --help          Show this help message
@@ -96,6 +124,66 @@ function readPackageJson(path: string): PackageJson {
 function formatRelativePath(path: string): string {
   const relativePath = relative(ROOT_DIR, path);
   return relativePath || ".";
+}
+
+function toDockerSafeName(value: string): string {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9_.-]+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
+
+  return normalized || "app";
+}
+
+function parseEnvContents(contents: string): Record<string, string> {
+  const entries: Record<string, string> = {};
+
+  for (const line of contents.split(/\r?\n/u)) {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    const separatorIndex = trimmed.indexOf("=");
+
+    if (separatorIndex <= 0) {
+      continue;
+    }
+
+    const key = trimmed.slice(0, separatorIndex).trim();
+    let value = trimmed.slice(separatorIndex + 1).trim();
+
+    if (
+      value.length >= 2 &&
+      ((value.startsWith("\"") && value.endsWith("\"")) ||
+        (value.startsWith("'") && value.endsWith("'")))
+    ) {
+      value = value.slice(1, -1).trim();
+    }
+
+    if (key && value) {
+      entries[key] = value;
+    }
+  }
+
+  return entries;
+}
+
+function readOptionalEnvFile(path: string): Record<string, string> {
+  if (!existsSync(path)) {
+    return {};
+  }
+
+  return parseEnvContents(readFileSync(path, "utf8"));
+}
+
+function formatEnvValue(value: string): string {
+  return /[\s#"']/u.test(value) ? JSON.stringify(value) : value;
+}
+
+function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolvePromise) => setTimeout(resolvePromise, milliseconds));
 }
 
 function hasDependency(packageJson: PackageJson, dependencyName: string): boolean {
@@ -178,6 +266,42 @@ async function runCommand(
   });
 }
 
+async function captureCommandOutput(
+  command: string,
+  args: string[],
+  options: {
+    cwd?: string;
+    env?: Record<string, string | undefined>;
+  } = {},
+): Promise<string> {
+  const cwd = options.cwd ?? ROOT_DIR;
+  const { stdout } = await execa(command, args, {
+    cwd,
+    env: options.env,
+    stderr: "pipe",
+  });
+
+  return stdout.trim();
+}
+
+async function captureCombinedCommandOutput(
+  command: string,
+  args: string[],
+  options: {
+    cwd?: string;
+    env?: Record<string, string | undefined>;
+  } = {},
+): Promise<string> {
+  const cwd = options.cwd ?? ROOT_DIR;
+  const { all } = await execa(command, args, {
+    all: true,
+    cwd,
+    env: options.env,
+  });
+
+  return all?.trim() ?? "";
+}
+
 async function ensureNodeDependencies(packageDir: string): Promise<void> {
   const packageJsonPath = join(packageDir, "package.json");
 
@@ -244,12 +368,20 @@ async function maybeRunE2ETests(rootPackageJson: PackageJson): Promise<void> {
   });
 }
 
-async function startSupabaseFunctionsServe(): Promise<BackgroundProcess> {
+async function startSupabaseFunctionsServe(
+  envFilePath?: string,
+): Promise<BackgroundProcess> {
   logStep("Starting Supabase function runtime");
-  console.log("supabase functions serve");
+  const args = ["functions", "serve"];
+
+  if (envFilePath) {
+    args.push("--env-file", envFilePath);
+  }
+
+  console.log(`supabase ${args.join(" ")}`);
 
   const outputChunks: string[] = [];
-  const subprocess = execa("supabase", ["functions", "serve"], {
+  const subprocess = execa("supabase", args, {
     all: true,
     cleanup: true,
     cwd: ROOT_DIR,
@@ -282,6 +414,13 @@ function getProcessOutputTail(outputChunks: string[]): string {
   return `\nRecent output from "supabase functions serve":\n${tail}`;
 }
 
+function isSupabaseFunctionsServeReady(outputChunks: string[]): boolean {
+  const output = outputChunks.join("");
+
+  return output.includes("Serving functions on") &&
+    output.includes("Using supabase-edge-runtime");
+}
+
 async function waitForFunctionsReady(backgroundProcess: BackgroundProcess): Promise<void> {
   const timeoutAt = Date.now() + 20_000;
 
@@ -290,6 +429,11 @@ async function waitForFunctionsReady(backgroundProcess: BackgroundProcess): Prom
       throw new Error(
         `Supabase function runtime exited before becoming ready.${getProcessOutputTail(backgroundProcess.outputChunks)}`,
       );
+    }
+
+    if (!isSupabaseFunctionsServeReady(backgroundProcess.outputChunks)) {
+      await sleep(500);
+      continue;
     }
 
     for (const url of FUNCTION_HEALTH_URLS) {
@@ -310,7 +454,7 @@ async function waitForFunctionsReady(backgroundProcess: BackgroundProcess): Prom
       }
     }
 
-    await new Promise((resolvePromise) => setTimeout(resolvePromise, 500));
+    await sleep(500);
   }
 
   throw new Error(
@@ -333,6 +477,214 @@ async function stopSupabaseFunctionsServe(
   await backgroundProcess.settled;
 }
 
+async function getSupabaseEdgeRuntimeContainerName(): Promise<string> {
+  const containerNames = (await captureCommandOutput("docker", [
+    "ps",
+    "--format",
+    "{{.Names}}",
+  ]))
+    .split(/\r?\n/u)
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+  if (containerNames.includes(EDGE_RUNTIME_CONTAINER_NAME)) {
+    return EDGE_RUNTIME_CONTAINER_NAME;
+  }
+
+  const matchingContainerNames = containerNames.filter((name) =>
+    name.startsWith(EDGE_RUNTIME_CONTAINER_PREFIX)
+  );
+
+  if (matchingContainerNames.length === 1) {
+    return matchingContainerNames[0];
+  }
+
+  if (matchingContainerNames.length === 0) {
+    throw new Error(
+      "Could not find the Supabase edge runtime container after `supabase start`.",
+    );
+  }
+
+  throw new Error(
+    `Found multiple Supabase edge runtime containers: ${matchingContainerNames.join(", ")}`,
+  );
+}
+
+async function getContainerNetworkName(containerName: string): Promise<string> {
+  const networkNames = (await captureCommandOutput("docker", [
+    "inspect",
+    "-f",
+    "{{range $name, $_ := .NetworkSettings.Networks}}{{println $name}}{{end}}",
+    containerName,
+  ]))
+    .split(/\r?\n/u)
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+  if (networkNames.length === 0) {
+    throw new Error(`Container "${containerName}" is not attached to a Docker network.`);
+  }
+
+  return networkNames[0];
+}
+
+async function waitForImageWorkerReady(containerName: string): Promise<void> {
+  const timeoutAt = Date.now() + 20_000;
+
+  while (Date.now() < timeoutAt) {
+    const status = await captureCommandOutput("docker", [
+      "inspect",
+      "-f",
+      "{{.State.Status}}",
+      containerName,
+    ]);
+
+    if (status !== "running") {
+      const logs = await captureCombinedCommandOutput("docker", [
+        "logs",
+        "--tail",
+        "40",
+        containerName,
+      ]);
+
+      throw new Error(
+        `Image conversion worker container exited before becoming ready.${
+          logs ? `\nRecent output from the worker container:\n${logs}` : ""
+        }`,
+      );
+    }
+
+    const logs = await captureCombinedCommandOutput("docker", [
+      "logs",
+      "--tail",
+      "40",
+      containerName,
+    ]);
+
+    if (logs.includes(IMAGE_WORKER_READY_MESSAGE)) {
+      return;
+    }
+
+    await sleep(500);
+  }
+
+  const logs = await captureCombinedCommandOutput("docker", [
+    "logs",
+    "--tail",
+    "40",
+    containerName,
+  ]);
+
+  throw new Error(
+    `Timed out waiting for the image conversion worker container to start.${
+      logs ? `\nRecent output from the worker container:\n${logs}` : ""
+    }`,
+  );
+}
+
+function createFunctionsEnvFile(workerUrl: string): {
+  envFileDirectory: string;
+  envFilePath: string;
+} {
+  const localFunctionEnv = readOptionalEnvFile(LOCAL_FUNCTIONS_ENV_PATH);
+  const functionsEnv = {
+    ...localFunctionEnv,
+    ...(process.env.IMAGE_CONVERTER_SHARED_SECRET?.trim()
+      ? { IMAGE_CONVERTER_SHARED_SECRET: process.env.IMAGE_CONVERTER_SHARED_SECRET.trim() }
+      : {}),
+    ...(process.env.WORKER_SHARED_SECRET?.trim()
+      ? { WORKER_SHARED_SECRET: process.env.WORKER_SHARED_SECRET.trim() }
+      : {}),
+    IMAGE_CONVERTER_URL: workerUrl,
+  };
+  const envFileDirectory = mkdtempSync(join(tmpdir(), `${PROJECT_SLUG}-functions-env-`));
+  const envFilePath = join(envFileDirectory, "functions.env");
+  const contents = Object.entries(functionsEnv)
+    .map(([key, value]) => `${key}=${formatEnvValue(value)}`)
+    .join("\n");
+
+  writeFileSync(envFilePath, contents ? `${contents}\n` : "", "utf8");
+
+  return { envFileDirectory, envFilePath };
+}
+
+async function startImageWorker(): Promise<ManagedImageWorker> {
+  const localFunctionEnv = readOptionalEnvFile(LOCAL_FUNCTIONS_ENV_PATH);
+  const workerSharedSecret = process.env.WORKER_SHARED_SECRET?.trim() ||
+    process.env.IMAGE_CONVERTER_SHARED_SECRET?.trim() ||
+    localFunctionEnv.WORKER_SHARED_SECRET ||
+    localFunctionEnv.IMAGE_CONVERTER_SHARED_SECRET ||
+    "";
+
+  await runCommand(
+    "Building image conversion worker container",
+    "docker",
+    ["build", "-t", IMAGE_WORKER_IMAGE_TAG, "."],
+    { cwd: WORKER_DIR },
+  );
+
+  const edgeRuntimeContainerName = await getSupabaseEdgeRuntimeContainerName();
+  const networkName = await getContainerNetworkName(edgeRuntimeContainerName);
+  const containerName = `${IMAGE_WORKER_CONTAINER_PREFIX}-${Date.now()}`;
+  const args = [
+    "run",
+    "--rm",
+    "-d",
+    "--name",
+    containerName,
+    "--network",
+    networkName,
+  ];
+
+  if (workerSharedSecret) {
+    args.push("-e", `WORKER_SHARED_SECRET=${workerSharedSecret}`);
+  }
+
+  args.push(IMAGE_WORKER_IMAGE_TAG);
+
+  await runCommand("Starting image conversion worker container", "docker", args, {
+    cwd: ROOT_DIR,
+  });
+
+  await waitForImageWorkerReady(containerName);
+
+  const { envFileDirectory, envFilePath } = createFunctionsEnvFile(
+    `http://${containerName}:${IMAGE_WORKER_PORT}/convert`,
+  );
+
+  return {
+    containerName,
+    envFilePath,
+    envFileDirectory,
+  };
+}
+
+async function stopImageWorker(worker: ManagedImageWorker | undefined): Promise<void> {
+  if (!worker) {
+    return;
+  }
+
+  try {
+    const status = await captureCommandOutput("docker", [
+      "inspect",
+      "-f",
+      "{{.State.Status}}",
+      worker.containerName,
+    ]).catch(() => "");
+
+    if (status === "running") {
+      logStep("Stopping image conversion worker container");
+      await execa("docker", ["stop", worker.containerName], {
+        cwd: ROOT_DIR,
+        stderr: "inherit",
+        stdout: "inherit",
+      });
+    }
+  } finally {
+    rmSync(worker.envFileDirectory, { force: true, recursive: true });
+  }
+}
+
 async function main(): Promise<void> {
   const options = parseCliOptions(process.argv.slice(2));
   const rootPackageJson = readPackageJson(ROOT_PACKAGE_JSON_PATH);
@@ -341,27 +693,36 @@ async function main(): Promise<void> {
 
   if (!options.noBootstrap) {
     await ensureNodeDependencies(ROOT_DIR);
-    await ensureNodeDependencies(WORKER_DIR);
+    if (!options.integrationOnly) {
+      await ensureNodeDependencies(WORKER_DIR);
+    }
   }
 
-  await runCommand("Running worker tests", "npm", ["test"], {
-    cwd: WORKER_DIR,
-  });
-
-  if (options.skipFrontend) {
-    logSkip("frontend tests (--skip-frontend)");
+  if (options.integrationOnly) {
+    logSkip("worker tests (--integration-only)");
+    logSkip("frontend tests (--integration-only)");
+    logSkip("Supabase function unit tests (--integration-only)");
   } else {
-    await maybeRunFrontendTests(rootPackageJson);
-  }
+    await runCommand("Running worker tests", "npm", ["test"], {
+      cwd: WORKER_DIR,
+    });
 
-  await runCommand(
-    "Running Supabase function unit tests",
-    "deno",
-    ["test", "-A", "--config", SUPABASE_DENO_CONFIG, SUPABASE_UNIT_GLOB],
-    { cwd: ROOT_DIR },
-  );
+    if (options.skipFrontend) {
+      logSkip("frontend tests (--skip-frontend)");
+    } else {
+      await maybeRunFrontendTests(rootPackageJson);
+    }
+
+    await runCommand(
+      "Running Supabase function unit tests",
+      "deno",
+      ["test", "-A", "--config", SUPABASE_DENO_CONFIG, SUPABASE_UNIT_GLOB],
+      { cwd: ROOT_DIR },
+    );
+  }
 
   let backgroundProcess: BackgroundProcess | undefined;
+  let imageWorker: ManagedImageWorker | undefined;
 
   try {
     if (options.skipIntegration) {
@@ -374,7 +735,8 @@ async function main(): Promise<void> {
         { cwd: ROOT_DIR },
       );
 
-      backgroundProcess = await startSupabaseFunctionsServe();
+      imageWorker = await startImageWorker();
+      backgroundProcess = await startSupabaseFunctionsServe(imageWorker.envFilePath);
       await waitForFunctionsReady(backgroundProcess);
 
       await runCommand(
@@ -395,10 +757,13 @@ async function main(): Promise<void> {
         },
       );
 
-      await maybeRunE2ETests(rootPackageJson);
+      if (!options.integrationOnly) {
+        await maybeRunE2ETests(rootPackageJson);
+      }
     }
   } finally {
     await stopSupabaseFunctionsServe(backgroundProcess);
+    await stopImageWorker(imageWorker);
   }
 
   logStep("All requested tests passed");

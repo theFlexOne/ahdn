@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "test:all": "node --import tsx ./scripts/test-all.ts",
+    "test:integration": "node --import tsx ./scripts/test-all.ts --integration-only",
     "preview": "vite preview",
     "types": "supabase gen types typescript --project-id lzgryhrztslevnuajiqm --schema public > src/lib/database.types.ts",
     "script": "bash -c 'npm exec tsx $1'",

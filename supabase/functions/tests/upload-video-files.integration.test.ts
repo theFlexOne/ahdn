@@ -31,11 +31,8 @@ function hasResults(
 
 Deno.test({
   name: "upload-video-files uploads converted video variants to storage",
+  ignore: !isIntegrationTestEnabled(),
   async fn() {
-    if (!isIntegrationTestEnabled()) {
-      return;
-    }
-
     await ensureBucketExists(DEFAULT_MEDIA_BUCKET);
 
     const testId = crypto.randomUUID();

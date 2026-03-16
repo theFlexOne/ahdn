@@ -1,7 +1,7 @@
 [functions.upload-image-files]
 enabled = true
 verify_jwt = true
-import_map = "./functions/upload-image-files/deno.json"
+import_map = "./functions/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/upload-image-files/index.ts"
@@ -12,7 +12,7 @@ entrypoint = "./functions/upload-image-files/index.ts"
 [functions.upload-video-files]
 enabled = true
 verify_jwt = true
-import_map = "./functions/upload-video-files/deno.json"
+import_map = "./functions/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/upload-video-files/index.ts"

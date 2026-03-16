@@ -39,13 +39,13 @@ worker-typecheck: ## Type-check the image conversion worker
 build-all: build worker-build ## Build the app and worker
 
 test-all: ## Run the full test orchestrator; pass TEST_FLAGS='...'
-	node --import tsx ./scripts/test-all.ts $(TEST_FLAGS)
+	node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts $(TEST_FLAGS)
 
 test-quick: ## Run the test orchestrator without integration boot
-	node --import tsx ./scripts/test-all.ts --skip-integration
+	node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --skip-integration
 
 test-integration: ## Run integration tests only
-	node --import tsx ./scripts/test-all.ts --integration-only
+	node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --integration-only
 
 verify: lint build worker-typecheck test-quick ## Run a fast local verification pass
 

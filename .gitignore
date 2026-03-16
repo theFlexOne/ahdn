@@ -25,6 +25,11 @@ dist-ssr
 
 .env
 .env.*
+!.env.example
+!.env.admin.example
+!.env.test.example
+!supabase/functions/.env.example
+!workers/image-converter/.env.example
 
 notes.txt
 .data/

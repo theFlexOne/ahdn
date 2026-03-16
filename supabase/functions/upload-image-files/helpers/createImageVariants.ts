@@ -94,8 +94,8 @@ function getWorkerUrl(): string {
 }
 
 function getWorkerSecret(): string {
-  return readEnv("IMAGE_CONVERTER_SHARED_SECRET") ??
-    readEnv("WORKER_SHARED_SECRET") ??
+  return readEnv("WORKER_SHARED_SECRET") ??
+    readEnv("IMAGE_CONVERTER_SHARED_SECRET") ??
     "";
 }
 

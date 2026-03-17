@@ -30,6 +30,7 @@ dist-ssr
 !.env.test.example
 !supabase/functions/.env.example
 !workers/image-converter/.env.example
+.tmp/
 
 notes.txt
 .data/

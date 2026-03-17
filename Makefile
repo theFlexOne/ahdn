@@ -4,8 +4,11 @@ SHELL := bash
 WORKER_DIR := workers/image-converter
 SUPABASE_PROJECT_ID := lzgryhrztslevnuajiqm
 TEST_FLAGS ?=
+EDGE_DEBUG ?=
+NO_JWT ?=
+UPLOAD_IMAGE_INTEGRATION_TEST := supabase/functions/tests/upload-image-files.integration.test.ts
 
-.PHONY: help bootstrap dev build preview lint worker-build worker-test worker-typecheck build-all test-all test-quick test-integration verify verify-full types schema-remote schema-local data-remote data-local db-reset
+.PHONY: help bootstrap dev build preview lint worker-build worker-test worker-typecheck build-all test-all test-quick test-integration test-upload-image-integration verify verify-full types schema-remote schema-local data-remote data-local db-reset
 
 help: ## List available targets
 	@grep -E '^[a-zA-Z0-9_.-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "%-18s %s\n", $$1, $$2}'
@@ -38,14 +41,17 @@ worker-typecheck: ## Type-check the image conversion worker
 
 build-all: build worker-build ## Build the app and worker
 
-test-all: ## Run the full test orchestrator; pass TEST_FLAGS='...'
-	node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts $(TEST_FLAGS)
+test-all: ## Run the full test orchestrator; pass TEST_FLAGS='...', EDGE_DEBUG='true|false', NO_JWT='true'
+	EDGE_DEBUG=$(EDGE_DEBUG) NO_JWT=$(NO_JWT) node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts $(TEST_FLAGS)
 
 test-quick: ## Run the test orchestrator without integration boot
-	node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --skip-integration
+	EDGE_DEBUG=$(EDGE_DEBUG) NO_JWT=$(NO_JWT) node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --skip-integration
 
-test-integration: ## Run integration tests only
-	node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --integration-only
+test-integration: ## Run integration tests only; pass EDGE_DEBUG='true|false', NO_JWT='true'
+	EDGE_DEBUG=$(EDGE_DEBUG) NO_JWT=$(NO_JWT) node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --integration-only
+
+test-upload-image-integration: ## Run only the upload-image-files integration test; pass TEST_FLAGS='...', EDGE_DEBUG='true|false', NO_JWT='true'
+	EDGE_DEBUG=$(EDGE_DEBUG) NO_JWT=$(NO_JWT) SUPABASE_INTEGRATION_GLOB=$(UPLOAD_IMAGE_INTEGRATION_TEST) node --env-file-if-exists=.env.test.local --import tsx ./scripts/test-all.ts --integration-only $(TEST_FLAGS)
 
 verify: lint build worker-typecheck test-quick ## Run a fast local verification pass
 

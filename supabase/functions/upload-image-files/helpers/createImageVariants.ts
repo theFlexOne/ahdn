@@ -228,7 +228,7 @@ export default async function createImageVariants(
     );
   }
 
-  return workerResults.map((workerResult, index) => {
+  const results = workerResults.map((workerResult, index) => {
     const imageData = images[index];
 
     if (
@@ -255,4 +255,6 @@ export default async function createImageVariants(
       variants,
     };
   });
+
+  return results;
 }

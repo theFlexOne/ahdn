@@ -27,6 +27,9 @@ Project-level operating rules for Codex in this repository.
 
 ## Validation
 
+- Run only the smallest relevant validation practical for the task.
+- If validation is skipped, say so explicitly.
+
 ## Safety Rules
 
 - Do not edit `.env*` files unless explicitly requested.
@@ -45,6 +48,15 @@ Project-level operating rules for Codex in this repository.
 - Choose the smallest safe implementation that satisfies the request.
 - If ambiguity could cause data loss, security issues, or schema changes, ask before proceeding.
 
+## Commit Message Rules
+
+- When asked to write a git commit message, inspect staged changes first.
+- If nothing is staged, inspect unstaged changes.
+- Prefer a concise imperative summary.
+- Include only the number of bullets needed.
+- Keep bullets concrete and implementation-specific.
+- Print all git commit messages inside a markdown code block.
+
 ## Miscellaneous
 
-- Print all git commit messages inside a markdown box.
+- Print all git commit messages inside a markdown code block.

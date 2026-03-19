@@ -1,5 +1,4 @@
-import type { Prettify } from "@supabase/supabase-js";
-import type { IMAGE_MIME_TYPES } from "./constants";
+import type { VALID_MIME_TYPES } from "./constants";
 import type { Database } from "./lib/database.types";
 
 type NonNullProps<T, K extends keyof T = keyof T> =
@@ -24,15 +23,15 @@ export type Event = {
 type MediaMetadataView =
   Database["public"]["Views"]["media_bucket_metadata"]["Row"];
 
-export type MediaMetadata = Prettify<NonNullProps<MediaMetadataView>>;
+export type MediaMetadata = NonNullProps<MediaMetadataView>;
 
-export type CreateMediaMetadata = Prettify<
-  NonNullProps<
-    Database["public"]["CompositeTypes"]["media_metadata_input"]
-  >
+export type CreateMediaMetadata = NonNullProps<
+  Database["public"]["CompositeTypes"]["media_metadata_input"]
 >;
 
 export type MediaType = "image" | "video";
+
+type ValidImageMimeType = typeof VALID_MIME_TYPES.image[number];
 
 type ImageFileFormatSrcSet = {
   srcList: {
@@ -40,12 +39,11 @@ type ImageFileFormatSrcSet = {
     width: number;
     height: number;
   }[];
-  mimetype: typeof IMAGE_MIME_TYPES[number];
+  mimetype: ValidImageMimeType;
 };
 
-export type ImageBase = Prettify<
+export type ImageBase =
   & Omit<Database["public"]["Views"]["images_mv"]["Row"], "files">
   & {
     files: ImageFileFormatSrcSet[];
-  }
->;
+  };

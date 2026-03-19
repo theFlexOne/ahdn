@@ -3,17 +3,15 @@ import type { ClassValue } from "clsx";
 import { useState } from "react";
 
 type HeroVideoProps = {
-  urls: {
-    src: string;
-    type: string;
-  }[];
+  primarySrc: string;
+  secondarySrc: string;
   posterSrc: string;
   className?: ClassValue;
   fallbackImgClassName?: ClassValue;
   dim?: number;
 };
 
-export default function HeroVideo({ posterSrc, urls, className, fallbackImgClassName, dim = 0 }: HeroVideoProps) {
+export default function HeroVideo({ primarySrc, secondarySrc, posterSrc, className, fallbackImgClassName, dim = 0 }: HeroVideoProps) {
   const [canPlay, setCanPlay] = useState(false);
   const backgroundColor = `rgba(0, 0, 0, ${dim / 100})`;
 
@@ -29,14 +27,13 @@ export default function HeroVideo({ posterSrc, urls, className, fallbackImgClass
         poster={posterSrc}
         onCanPlay={() => setCanPlay(true)}
       >
-        {urls.map((url, index) => (
-          <source key={index} src={url.src} type={url.type} />
-        ))}
+        <source src={primarySrc} type="video/webm" />
+        <source src={secondarySrc} type="video/mp4" />
       </video>
       {!canPlay ? (
         <img
           src={posterSrc}
-          className={cn(fallbackImgClassName)}
+          className={cn(className, fallbackImgClassName)}
         />
       ) : null}
       <div className="absolute inset-0" style={{ backgroundColor }} />

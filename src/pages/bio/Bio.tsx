@@ -1,6 +1,6 @@
 import PageHeading from "@/components/PageHeading";
-import { STORAGE_URL_BASE } from "@/constants";
 import { Page, PageSection } from "@/layout";
+import { getSupabaseStorageUrl } from "@/lib/supabaseHelpers";
 import { cn } from "@/lib/utils";
 
 export default function Bio() {
@@ -8,7 +8,7 @@ export default function Bio() {
     <Page>
       <PageHeading>Bio</PageHeading>
       <PageSection className="flex flex-col gap-30">
-        <BioSection name="Jeff Boxell" beatleName="John Lennon" image={`${STORAGE_URL_BASE}/bio/jeff.avif`} imageAlt="Jeff Boxell performing" floatDirection="left">
+        <BioSection name="Jeff Boxell" beatleName="John Lennon" image={`${getSupabaseStorageUrl()}/jeff.avif`} imageAlt="Jeff Boxell performing" floatDirection="left">
           <p className="text-gray-800 leading-relaxed">
             Jeff Boxell was born in Minneapolis, MN considers himself not just a singer but also a  song writer, performer, actor, author.  Jeff also works in public education helping children with special needs.
           </p>
@@ -25,7 +25,7 @@ export default function Bio() {
             When asked why he still does it after all these years he was quoted as saying, “I've always loved The Beatles. I joined A Hard Da's Night four years ago, and ha't looked back. I co't ask to work with a more talented and professional group of musicians, and aspire to keep the music we pay tribute to alive for our future generations.”
           </p>
         </BioSection>
-        <BioSection name="Joe Covert" beatleName="Paul McCartney" image={`${STORAGE_URL_BASE}/bio/joe.avif`} imageAlt="Joe Covert performing" floatDirection="right">
+        <BioSection name="Joe Covert" beatleName="Paul McCartney" image={`${getSupabaseStorageUrl()}/joe.avif`} imageAlt="Joe Covert performing" floatDirection="right">
           <p className="text-gray-800 leading-relaxed">
             The leader of A Hard Day's Night, Joe Covert is an experienced thirty year veteran of the music business.  He was born and raised in South Minneapolis where his grandfather, Ray Covert, worked as a professional musician before touring the world with the USO during the Second World War. The elder Covert had a steady gig at the Warwick Hotel in New York City, the place where the Beatles stayed before performing on the Ed Sullivan Show.  Joe still has stacks of his grandfather's old promotional material.  Some of Joe's earliest memories are of listening to his grandfather sing and play guitar.
           </p>
@@ -53,7 +53,7 @@ export default function Bio() {
           </p>
 
         </BioSection>
-        <BioSection name="Aron Helm" beatleName="George Harrison" image={`${STORAGE_URL_BASE}/bio/aron.avif`} imageAlt="Aron Helm performing" floatDirection="left">
+        <BioSection name="Aron Helm" beatleName="George Harrison" image={`${getSupabaseStorageUrl()}/aron.avif`} imageAlt="Aron Helm performing" floatDirection="left">
           <p className="text-gray-800 leading-relaxed">
             Aron Helm has always had music in his life growing up with a father who was a touring musician and his mother who was an accomplished singer.  It was at a young age Aron developed his passion for music singing in the elementary school choir and even performing for US Military veterans as a trumpet player when he was only 11 years old.  Aron di't originally want to be a guitar player as his true musical passion early on was playing the drums.  Therefore, as a young boy he mainly played the drums, as well as singing at church and playing the trumpet regularly in the school band until he entered high school.  Through his teens into his early adult life Aron strayed from music and instead focused on athletics playing three sports through high school and playing four years of college baseball even getting a brief opportunity to play for the Saint Paul Saints Minor league baseball club.  Once out of college, at age 22, Aron returned to playing music and started his guitar playing by jamming on a few chords with his brother-in-law, who was a graduate at McNally Smith School of Music.  Aron quickly developed a passion for playing guitar and learning the music theory behind it.  Hence, these jams turned into band practices and before he knew it he was playing in his first rock and roll band as a rhythm guitar player and vocalist.  Though the band only lasted a few years and a few dozen gigs, it was clear to him what he wanted to do moving forward.  For the next two years Aron took time off from playing in bands to really learn the craft of playing the guitar.  He courted guitar teaching professionals who could not only guide him in the skill and technique of playing guitar, but also in the theory of music.
           </p>
@@ -64,7 +64,7 @@ export default function Bio() {
             In the spring of 2015 Aron decided it was time for a new challenge when one of his guitar teachers informed him of an opportunity to audition for a Beatles Band as George Harrison.  Aron has been a Beatles fan ever since he was introduced to the Sgt. Pepper Album during his high school days.  His love for the band grew through watching raw videos of the band performing or reading numerous documentaries about the band.  However, if there was a Beatle he knew the least about, it was George Harrison.  While auditioning for the band, Aron quickly realized how truly unique and gifted George was as a musician and song writer. “I never knew George was so talented until I had a chance to walk in his shoes and learn to play and sing some of the wonderful songs he has written and played on”. Aron knew this was the band for him.  As George, Aron does his very best to move, walk, talk, and reproduce the iconic sounds you hear on so many of the great Beatles records, making sure to hit every note and riff as if you were seeing him play it live today.  Since joining the band officially, in May of 2015, Aron has been known to tell more than a few people, “I feel lucky to be a part of something that is so much fun and authentic, and also having the chance to play with such talented musicians alongside me".
           </p>
         </BioSection>
-        <BioSection name="Kevin Fransen" beatleName="Ringo Starr" image={`${STORAGE_URL_BASE}/bio/kevin.avif`} imageAlt="Kevin Fransen performing" floatDirection="right">
+        <BioSection name="Kevin Fransen" beatleName="Ringo Starr" image={`${getSupabaseStorageUrl()}/kevin.avif`} imageAlt="Kevin Fransen performing" floatDirection="right">
           <p className="text-gray-800 leading-relaxed">
             Early on, Kevin knew he would be a musician. As a boy, his walls were full of KISS posters, and his Heathkit stereo bellowed Ted Nugent and Van Halen. In 1980, he would go play pool at his friend's house, blasting a better stereo, and noticed a drum set stashed in the corner. Not knowing how to set it up, he picked up the sticks and quickly found all the sounds he needed on the vinyl couch.  "My first accomplishment was the drum solo from KISS Alive! " He bought that silver glitter bass drum, snare, and one tom with lawn mowing money.
           </p>

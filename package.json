@@ -6,7 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "lint": "eslint .",
+    "test:all": "node --import tsx ./scripts/test-all.ts",
+    "test:integration": "node --import tsx ./scripts/test-all.ts --integration-only",
+    "preview": "vite preview",
+    "types": "supabase gen types typescript --project-id lzgryhrztslevnuajiqm --schema public > src/lib/database.types.ts",
+    "script": "bash -c 'npm exec tsx $1'",
+    "schema:remote": "supabase db dump --schema public -f supabase/schema.sql",
+    "schema:local": "supabase db dump --schema public,storage --local -f supabase/schema.sql",
+    "data:remote": "supabase db dump --linked --schema public --data-only -f supabase/data.sql",
+    "data:local": "supabase db dump --linked --schema public --local --data-only -f supabase/data.sql",
+    "db:reset": "bash ./scripts/db_reset.sh supabase"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",

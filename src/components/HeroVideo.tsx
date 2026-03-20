@@ -8,17 +8,22 @@ type HeroVideoProps = {
   posterSrc: string;
   className?: ClassValue;
   fallbackImgClassName?: ClassValue;
-  dim?: number;
 };
 
-export default function HeroVideo({ primarySrc, secondarySrc, posterSrc, className, fallbackImgClassName, dim = 0 }: HeroVideoProps) {
+export default function HeroVideo({ primarySrc, secondarySrc, posterSrc, className, fallbackImgClassName }: HeroVideoProps) {
   const [canPlay, setCanPlay] = useState(false);
-  const backgroundColor = `rgba(0, 0, 0, ${dim / 100})`;
 
   return (
-    <>
+    <div className={cn(
+      "relative h-full w-full",
+      "after:pointer-events-none after:absolute after:inset-0 after:bg-black/30 after:content-['']",
+      className
+    )}>
       <video
-        className={cn(className, !canPlay && "hidden")}
+        className={cn(
+          "absolute inset-0 h-full w-full object-cover",
+          !canPlay && "hidden",
+        )}
         autoPlay
         muted
         loop
@@ -33,10 +38,9 @@ export default function HeroVideo({ primarySrc, secondarySrc, posterSrc, classNa
       {!canPlay ? (
         <img
           src={posterSrc}
-          className={cn(className, fallbackImgClassName)}
+          className={cn(fallbackImgClassName)}
         />
       ) : null}
-      <div className="absolute inset-0" style={{ backgroundColor }} />
-    </>
+    </div>
   );
 }

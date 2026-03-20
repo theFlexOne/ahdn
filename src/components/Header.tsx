@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 export default function Header({ className }: { className?: string }) {
   return (
     <header className={cn(
-      'flex bg-black text-gray-200 py-4 px-4 items-center relative',
+      'flex bg-black text-gray-200 py-4 px-4 items-center w-full fixed',
       'after:content-[""] after:absolute after:w-full after:h-4 after:bg-[linear-gradient(to_top,#040404_0%,#020202_50%,#000000_100%)] after:bottom-0 after:left-0',
       className
     )}>

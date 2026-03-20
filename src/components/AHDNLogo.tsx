@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 export default function AHDNLogo({ className }: { className?: string }) {
   return (
     <svg
-      className={cn("fill-black", className)}
+      className={cn("w-full fill-gray-200/90 drop-shadow-[0_0_24px_rgba(0,0,0,0.6)]", className)}
       width="1164"
       height="546"
       viewBox="0 0 1164 546"

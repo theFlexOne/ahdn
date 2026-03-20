@@ -1,5 +1,7 @@
 import { MEDIA_BUCKET } from "@/constants";
-import supabase from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabaseClient";
+
+const supabase = getSupabaseClient();
 
 export function getMediaUrl(path: string) {
   try {

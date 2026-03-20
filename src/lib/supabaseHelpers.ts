@@ -1,12 +1,17 @@
-import supabase from "./supabaseClient";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+import { getSupabaseClient } from "./supabaseClient";
 
 export function getSupabaseStorageUrl(): string {
-  return buildUrl(SUPABASE_URL, "/storage/v1/object/public");
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+
+  if (!supabaseUrl) {
+    throw new Error("Missing VITE_SUPABASE_URL");
+  }
+
+  return buildUrl(supabaseUrl, "/storage/v1/object/public");
 }
 
 export async function fetchEvents(startDate = new Date(), endDate?: Date) {
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("events")
     .select(`*`)
@@ -22,6 +27,7 @@ export async function fetchEvents(startDate = new Date(), endDate?: Date) {
 }
 
 export async function fetchSongs() {
+  const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("songs")
     .select(`*`);

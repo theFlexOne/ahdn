@@ -15,6 +15,25 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    rules: {
+      'react-refresh/only-export-components': ['error', {
+        allowConstantExport: true,
+        allowExportNames: [
+          'action',
+          'clientAction',
+          'clientLoader',
+          'ErrorBoundary',
+          'handle',
+          'headers',
+          'HydrateFallback',
+          'Layout',
+          'links',
+          'loader',
+          'meta',
+          'shouldRevalidate',
+        ],
+      }],
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

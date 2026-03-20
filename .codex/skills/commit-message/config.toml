@@ -1,5 +1,0 @@
-[profiles.commitmsg-fast]
-model_reasoning_effort = "low"
-
-[profiles.commitmsg-deep]
-model_reasoning_effort = "high"

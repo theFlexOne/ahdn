@@ -36,3 +36,5 @@ notes.txt
 
 # Miscellaneous
 supabase/.temp
+.react-router/
+guides/

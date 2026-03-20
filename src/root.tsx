@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from "react";
+import "./index.css";
 import AppLayout from "@/layout/Layout";
 import {
   isRouteErrorResponse,
@@ -23,6 +24,7 @@ function Document({ children }: PropsWithChildren) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
         <Meta />
         <Links />
       </head>

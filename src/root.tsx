@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from "react";
 import "./index.css";
-import AppLayout from "@/layout/Layout";
 import {
   isRouteErrorResponse,
   Links,
@@ -18,18 +17,21 @@ export function meta() {
   ];
 }
 
+export function links() {
+  return [{ rel: "icon", href: "/favicon.svg" }];
+}
+
 function Document({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.svg" />
         <Meta />
         <Links />
       </head>
 
-      <body>
+      <body className="bg-neutral-950">
         {children}
         <Scripts />
         <ScrollRestoration />
@@ -39,11 +41,7 @@ function Document({ children }: PropsWithChildren) {
 }
 
 export function Layout({ children }: PropsWithChildren) {
-  return (
-    <Document>
-      <AppLayout>{children}</AppLayout>
-    </Document>
-  );
+  return <Document>{children}</Document>;
 }
 
 export function HydrateFallback() {

@@ -21,6 +21,10 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
+    ],
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -37,6 +41,7 @@
   },
   "include": [
     "src",
+    ".react-router/types/**/*",
     "env.d.ts"
   ]
 }

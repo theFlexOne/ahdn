@@ -1,3 +1,5 @@
+import { getSupabaseStorageUrl } from "./lib/supabaseHelpers";
+
 export const MEDIA_BUCKET = "public_media" as const;
 
 export const VALID_MIME_TYPES = {
@@ -13,9 +15,9 @@ export const VALID_MIME_TYPES = {
 } as const;
 
 export const HOME_PAGE_BACKGROUND = {
-  primaryVideo: "bg_hero_vid.av1.webm",
-  secondaryVideo: "bg_hero_vid.h264.mp4",
-  poster: "bg_hero_poster.avif",
+  primaryVideo: buildSrc("bg_hero_vid.av1.webm"),
+  secondaryVideo: buildSrc("bg_hero_vid.h264.mp4"),
+  poster: "images/bg_hero_vid_first_frame.avif",
 } as const;
 
 export const PAGE_BACKGROUNDS = {
@@ -44,3 +46,7 @@ export const PAGE_BACKGROUNDS = {
     alt: "Stage close-up",
   },
 } as const;
+
+function buildSrc(filePath: string) {
+  return `${getSupabaseStorageUrl()}/${MEDIA_BUCKET}/${filePath}`;
+}

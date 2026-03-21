@@ -19,8 +19,8 @@
 @font-face {
   font-family: "BOOTLE";
   src:
-    url("fonts/BOOTLE/BOOTLE.woff2") format("woff2"),
-    url("fonts/BOOTLE/BOOTLE.woff") format("woff");
+    url("fonts/BOOTLE/BOOTLE2.woff2") format("woff2"),
+    url("fonts/BOOTLE/BOOTLE2.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -40,7 +40,16 @@
   --font-ahdn: "AHDN", sans-serif;
   --font-beatles: "BOOTLE", sans-serif;
   --font-gl: "Great Lakes NF", serif;
-  --font-default: "Montserrat", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+  --font-default: var(--font-roboto);
+
+  --word-spacing-none: 0;
+  --word-spacing-tight: -0.1em;
+  --word-spacing-snug: -0.05em;
+  --word-spacing-normal: normal;
+  --word-spacing-relaxed: 0.05em;
+  --word-spacing-loose: 0.1em;
 }
 
 @theme inline {
@@ -166,4 +175,9 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@utility word-spacing-* {
+  word-spacing: --value(--word-spacing-*);
+  word-spacing: --value([length]);
 }

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { Link } from 'react-router'
 
 export default function Header({ className }: { className?: string }) {
   return (
@@ -10,22 +11,22 @@ export default function Header({ className }: { className?: string }) {
       <nav className="w-full text-2xl uppercase">
         <ul className="flex w-full items-center">
           <li className="flex flex-1 items-center justify-center">
-            <a href="/about">Bio</a>
+            <Link to="/bio">Bio</Link>
           </li>
           <li className="flex flex-1 items-center justify-center">
-            <a href="/schedule">Schedule</a>
+            <Link to="/schedule">Schedule</Link>
           </li>
           <li className="flex flex-1 items-center justify-center">
-            <a href="/songs">Songs</a>
+            <Link to="/song-list">Song List</Link>
           </li>
           <li className="flex flex-1 items-center justify-center">
-            <a href="/gallery">Gallery</a>
+            <Link to="/gallery">Gallery</Link>
           </li>
           <li className="flex flex-1 items-center justify-center">
-            <a href="/tech">Tech</a>
+            <Link to="/tech">Tech</Link>
           </li>
           <li className="flex flex-1 items-center justify-center">
-            <a href="/contact">Contact</a>
+            <Link to="/contact">Contact</Link>
           </li>
         </ul>
       </nav>

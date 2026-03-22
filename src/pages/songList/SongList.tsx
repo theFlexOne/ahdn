@@ -2,7 +2,7 @@ import PageHeading from "@/components/PageHeading";
 import { Page } from "@/layout";
 import { useLoaderData } from "react-router";
 
-export default function Songs() {
+export default function SongList() {
   const { songs }: { songs: string[] } = useLoaderData();
   return (
     <Page>

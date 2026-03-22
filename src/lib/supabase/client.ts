@@ -1,9 +1,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { type Database } from "@/lib/database.types";
+import { type Database } from "@/lib/supabase/database.types";
 
 let supabase: SupabaseClient<Database> | undefined;
 
-export function getSupabaseClient() {
+export default function getSupabaseClient() {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
   const supabaseAnonKey = (
     import.meta.env.VITE_SUPABASE_ANON_KEY ??

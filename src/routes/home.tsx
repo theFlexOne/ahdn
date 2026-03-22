@@ -1,11 +1,11 @@
 import Home from "@/pages/home/Home";
 import type { Route } from "./+types/home";
-import { fetchEvents } from "@/lib/supabaseHelpers";
+import { getEvents } from "@/lib/supabase/helpers";
 
 export async function clientLoader(): Promise<{
-  events: Awaited<ReturnType<typeof fetchEvents>>;
+  events: Awaited<ReturnType<typeof getEvents>>;
 }> {
-  const events = await fetchEvents({ limit: 5 });
+  const events = await getEvents({ limit: 5 });
 
   console.log('events', events);
 

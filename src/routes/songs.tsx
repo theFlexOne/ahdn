@@ -1,8 +1,8 @@
-import Songs from "@/pages/songs/Songs";
-import { fetchSongs } from "@/lib/supabaseHelpers";
+import SongList from "@/pages/songList/SongList";
+import { getSongs } from "@/lib/supabase/helpers";
 
 export async function clientLoader() {
-  const songData = await fetchSongs();
+  const songData = await getSongs();
 
   return {
     songs: songData.map((song) => song.name),
@@ -10,5 +10,5 @@ export async function clientLoader() {
 }
 
 export default function SongsRoute() {
-  return <Songs />;
+  return <SongList />;
 }

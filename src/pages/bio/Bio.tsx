@@ -1,6 +1,6 @@
 import PageHeading from "@/components/PageHeading";
 import { Page, PageSection } from "@/layout";
-import { getSupabaseStorageUrl } from "@/lib/supabaseHelpers";
+import { getSupabaseStorageUrl } from "@/lib/supabase/helpers";
 import { cn } from "@/lib/utils";
 
 export default function Bio() {

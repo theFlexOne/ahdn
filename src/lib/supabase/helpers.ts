@@ -1,4 +1,5 @@
-import { getSupabaseClient } from "./supabaseClient";
+import type { EventDetails } from "@/features/events/types";
+import getSupabaseClient from "./client";
 
 export function getSupabaseStorageUrl(): string {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -10,7 +11,7 @@ export function getSupabaseStorageUrl(): string {
   return buildUrl(supabaseUrl, "/storage/v1/object/public");
 }
 
-export async function fetchEvents({
+export async function getEvents({
   startDate = new Date(new Date().setHours(0, 0, 0, 0)),
   endDate = new Date("2100-01-01"),
   limit,
@@ -18,30 +19,31 @@ export async function fetchEvents({
   startDate?: Date;
   endDate?: Date;
   limit?: number;
-}) {
+}): Promise<EventDetails[]> {
   if (endDate < startDate) {
     throw new Error("End date must be after start date");
   }
 
   const supabase = getSupabaseClient();
-  console.log(supabase);
 
   let query = supabase
     .from("events")
     .select(`
-      date,
+      id,
+      dateTime:date_time,
       title,
-      venue,
+      venueName:venue_name,
       description,
       address (
-        street,
+        address1:address_1,
+        address2:address_2,
         city,
         state,
         zip
       )
     `)
-    .gte("date", startDate.toISOString())
-    .lte("date", endDate.toISOString());
+    .gte("date_time", startDate.toISOString())
+    .lte("date_time", endDate.toISOString());
 
   if (limit) {
     query = query.limit(limit);
@@ -55,13 +57,14 @@ export async function fetchEvents({
   }
 
   return data.map((event) => ({
-    date: new Date(event.date),
+    id: event.id ?? "",
+    dateTime: new Date(event.dateTime),
     title: event.title ?? "",
-    venue: event.venue ?? "",
+    venueName: event.venueName ?? "",
     description: event.description ?? "",
     address: {
-      ...event.address,
-      street: event.address?.street ?? "",
+      address1: event.address?.address1 ?? "",
+      address2: event.address?.address2 ?? "",
       city: event.address?.city ?? "",
       state: event.address?.state ?? "",
       zip: event.address?.zip ?? "",
@@ -69,7 +72,7 @@ export async function fetchEvents({
   }));
 }
 
-export async function fetchSongs() {
+export async function getSongs() {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("songs")

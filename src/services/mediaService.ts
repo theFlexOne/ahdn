@@ -1,5 +1,5 @@
 import { MEDIA_BUCKET } from "@/constants";
-import { getSupabaseClient } from "@/lib/supabaseClient";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 const supabase = getSupabaseClient();
 

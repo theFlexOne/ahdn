@@ -1,4 +1,4 @@
-import { getSupabaseStorageUrl } from "./lib/supabaseHelpers";
+import { getSupabaseStorageUrl } from "./lib/supabase/helpers.ts";
 
 export const MEDIA_BUCKET = "public_media" as const;
 

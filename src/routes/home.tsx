@@ -1,17 +1,16 @@
-import Home from "@/pages/home/Home";
-import type { Route } from "./+types/home";
-import { getEvents } from "@/lib/supabase/helpers";
+import { getUpcomingEvents } from '@/features/events/queries';
+import Home from '@/pages/home/Home';
 
+import type { Route } from "./+types/home";
+import type { EventDetails } from "@/features/events/types";
 export async function clientLoader(): Promise<{
-  events: Awaited<ReturnType<typeof getEvents>>;
+  events: Awaited<EventDetails[]>;
 }> {
-  const events = await getEvents({ limit: 5 });
+  const events = await getUpcomingEvents();
 
   console.log('events', events);
 
-  return {
-    events,
-  };
+  return { events };
 }
 
 export default function HomeRoute({ loaderData }: Route.ComponentProps) {

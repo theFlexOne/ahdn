@@ -1,5 +1,6 @@
-import { cn } from '@/lib/utils'
-import { Link } from 'react-router'
+import { Link } from 'react-router';
+
+import { cn } from '@/lib/utils';
 
 export default function Header({ className }: { className?: string }) {
   return (
@@ -21,9 +22,6 @@ export default function Header({ className }: { className?: string }) {
           </li>
           <li className="flex flex-1 items-center justify-center">
             <Link to="/gallery">Gallery</Link>
-          </li>
-          <li className="flex flex-1 items-center justify-center">
-            <Link to="/tech">Tech</Link>
           </li>
           <li className="flex flex-1 items-center justify-center">
             <Link to="/contact">Contact</Link>

@@ -1,13 +1,19 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-export default function EmbeddedVideo({ className, src }: { className?: string; src?: string }) {
+export default function EmbeddedVideo({ className, src, title }: {
+  className?: string;
+  src?: string;
+  title?: string;
+  onPlay?: () => void
+}) {
   return (
-    <div className={cn('aspect-video', className)}>
+    <div className={cn(className)}>
       <iframe
-        className="h-full w-full"
         src={src}
-        title="YouTube video player"
+        className="w-full aspect-video"
+        title={title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen
       ></iframe>
     </div>

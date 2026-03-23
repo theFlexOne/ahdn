@@ -1,5 +1,5 @@
 import type { EventDetails } from "@/features/events/types";
-import getSupabaseClient from "./client";
+import getSupabaseClient from './client';
 
 export function getSupabaseStorageUrl(): string {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -18,7 +18,7 @@ export async function getEvents({
 }: {
   startDate?: Date;
   endDate?: Date;
-  limit?: number;
+  limit: number;
 }): Promise<EventDetails[]> {
   if (endDate < startDate) {
     throw new Error("End date must be after start date");
@@ -72,7 +72,7 @@ export async function getEvents({
   }));
 }
 
-export async function getSongs() {
+export async function getSongList() {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("songs")

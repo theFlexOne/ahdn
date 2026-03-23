@@ -931,11 +931,12 @@ SET default_table_access_method = "heap";
 
 CREATE TABLE IF NOT EXISTS "public"."address" (
     "id" bigint NOT NULL,
-    "street" "text",
+    "address_1" "text",
     "city" "text",
     "state" "text",
     "zip" "text",
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "address_2" "text"
 );
 
 
@@ -957,7 +958,7 @@ CREATE TABLE IF NOT EXISTS "public"."events" (
     "id" bigint NOT NULL,
     "date_time" timestamp with time zone NOT NULL,
     "title" "text",
-    "venueName" "text",
+    "venue_name" "text",
     "description" "text",
     "address_id" bigint,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL

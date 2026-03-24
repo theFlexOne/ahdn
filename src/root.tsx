@@ -1,9 +1,12 @@
-import type { PropsWithChildren } from "react";
 import './index.css';
 
 import {
-    isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError
+    Links, Meta, Outlet, Scripts, ScrollRestoration
 } from 'react-router';
+
+import type { PropsWithChildren } from "react";
+
+export { ErrorBoundary } from "./components/ErrorBoundary";
 
 export function meta() {
   return [
@@ -48,23 +51,6 @@ export function HydrateFallback() {
     >
       <span className="sr-only">Loading page</span>
     </div>
-  );
-}
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  const title = isRouteErrorResponse(error)
-    ? `${error.status} ${error.statusText}`
-    : "Something went wrong";
-  const message = error instanceof Error ? error.message : null;
-
-  return (
-    <section className="mx-auto flex min-h-[40vh] w-full max-w-3xl flex-col justify-center gap-4 px-6 py-16 text-gray-200">
-      <h1 className="text-3xl font-semibold">{title}</h1>
-      <p className="text-base text-gray-300">
-        {message ?? "The page could not be rendered."}
-      </p>
-    </section>
   );
 }
 

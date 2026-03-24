@@ -20,27 +20,21 @@ export const HOME_PAGE_BACKGROUND = {
 
 export const PAGE_BACKGROUNDS = {
   bio: {
-    paths: ["heroes/bio"],
-    types: ["avif", "webp", "jpg"],
-    defaultType: "avif",
-    alt: "",
+    jpg: {
+      srcList: ["bg_hero_1-sm.jpg", "bg_hero_1-md.jpg", "bg_hero_1-lg.jpg"],
+      mimeType: "image/jpeg",
+    },
+    webp: {
+      srcList: ["bg_hero_1-sm.webp", "bg_hero_1-md.webp", "bg_hero_1-lg.webp"],
+      mimeType: "image/webp",
+    },
+    avif: {
+      srcList: ["bg_hero_1-sm.avif", "bg_hero_1-md.avif", "bg_hero_1-lg.avif"],
+      mimeType: "image/avif",
+    },
   },
-  schedule: {
-    paths: ["heroes/schedule"],
-    types: ["avif", "webp", "jpg"],
-    defaultType: "avif",
-    alt: "",
-  },
-  gallery: {
-    paths: ["heroes/gallery"],
-    types: ["avif", "webp", "jpg"],
-    defaultType: "avif",
-    alt: "",
-  },
-  contact: {
-    paths: ["heroes/contact"],
-    types: ["avif", "webp", "jpg"],
-    defaultType: "avif",
-    alt: "",
-  },
+  schedule: {},
+  songList: {},
+  gallery: {},
+  contact: {},
 } as const;

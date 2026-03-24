@@ -7,8 +7,8 @@ import { PauseButton } from '@/components/PauseButton';
 import { HOME_PAGE_BACKGROUND } from '@/constants';
 import { useIsScrolledFromTop } from '@/hooks/useIsScrolledFromTop';
 import { Page, PageSection } from '@/layout';
+import { buildSrc } from '@/lib/media';
 import PageCard from '@/layout/PageCard';
-import { buildSrc } from '@/lib/supabase/helpers';
 
 import UpcomingEvents from './components/UpcomingEvents';
 
@@ -49,7 +49,7 @@ export default function Home({ events }: {
   }
 
   return (
-    <Page className="relative mt-12">
+    <Page className="relative">
       <div>
         <HeroVideo
           ref={videoRef}
@@ -90,7 +90,7 @@ export default function Home({ events }: {
                 onPause={playVideo}
               />
             </div>
-            <div className='w-full flex gap-4 mt-8'>
+            <div className='w-full flex gap-8 mt-12'>
               <div className='w-1/2'>
                 <h2 className="text-center font-ahdn text-2xl uppercase mb-4">Endorsement by Rick Derringer</h2>
                 <EmbeddedVideo

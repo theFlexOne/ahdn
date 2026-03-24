@@ -1,4 +1,6 @@
 import type { EventDetails } from "@/features/events/types";
+import { MEDIA_BUCKET } from '@/constants';
+
 import getSupabaseClient from './client';
 
 export function getSupabaseStorageUrl(): string {
@@ -9,6 +11,14 @@ export function getSupabaseStorageUrl(): string {
   }
 
   return buildUrl(supabaseUrl, "/storage/v1/object/public");
+}
+
+export function getImageVariantSrcSets(filenameBase: string) {
+  return {
+    jpg: buildSrcSet(filenameBase, "jpg"),
+    webp: buildSrcSet(filenameBase, "webp"),
+    avif: buildSrcSet(filenameBase, "avif"),
+  };
 }
 
 export async function getEvents({
@@ -97,4 +107,14 @@ function buildUrl(base: string, ...parts: string[]) {
     .join("/");
 
   return safePath ? `${trimmedBase}/${safePath}` : trimmedBase;
+}
+export function buildSrc(filePath: string) {
+  return buildUrl(getSupabaseStorageUrl(), MEDIA_BUCKET, filePath);
+}
+function buildSrcSet(filenameBase: string, ext: string) {
+  return [
+    `${getSupabaseStorageUrl()}/${MEDIA_BUCKET}/${filenameBase}-sm.${ext}`,
+    `${getSupabaseStorageUrl()}/${MEDIA_BUCKET}/${filenameBase}-md.${ext}`,
+    `${getSupabaseStorageUrl()}/${MEDIA_BUCKET}/${filenameBase}-lg.${ext}`,
+  ];
 }

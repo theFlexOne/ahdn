@@ -6,7 +6,7 @@ export default function Page({ className, children, ...props }: React.ComponentP
   return (
     <main
       className={cn(
-        "w-full flex flex-col mt-18",
+        "w-full flex flex-col mt-18 mb-12",
         className
       )}
       {...props}

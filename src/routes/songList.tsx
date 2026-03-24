@@ -1,6 +1,8 @@
 import { getSongList } from '@/lib/supabase/helpers';
 import SongList from '@/pages/songList/SongList';
 
+import type { Route } from './+types/songList';
+
 export async function clientLoader() {
   const songData = await getSongList();
 
@@ -9,6 +11,6 @@ export async function clientLoader() {
   };
 }
 
-export default function SongListRoute() {
-  return <SongList />;
+export default function SongListRoute({ loaderData }: Route.ComponentProps) {
+  return <SongList songs={loaderData.songs} />;
 }

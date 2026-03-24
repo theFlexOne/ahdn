@@ -9,9 +9,9 @@ import type { SrcAndSources } from '@/components/Image';
 
 export default function Bio({ background }: { background: SrcAndSources }) {
   return (
-    <Page className='flex-col items-center gap-12 relative mb-12'>
+    <Page className='flex-col items-center gap-12 relative'>
       <div>
-        <Image className='fixed top-10 left-0 -z-10 blur-xs brightness-60' {...background} />
+        <Image className='fixed top-10 left-0 -z-10 brightness-60' {...background} />
       </div>
       <PageHeading>Bio</PageHeading>
       <PageCard>

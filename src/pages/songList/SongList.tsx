@@ -1,11 +1,9 @@
-import PageHeading from "@/components/PageHeading";
-import { Page } from "@/layout";
-import { useLoaderData } from "react-router";
+import PageHeading from '@/components/PageHeading';
+import { Page } from '@/layout';
 
-export default function SongList() {
-  const { songs }: { songs: string[] } = useLoaderData();
+export default function SongList({ songs }: { songs: string[] }) {
   return (
-    <Page>
+    <Page className="flex-col items-center gap-12 relative">
       <PageHeading>Song List</PageHeading>
       <ul className="grid grid-cols-[repeat(3,auto)] gap-2 mx-4 mb-4 list-disc list-inside">
         {songs.map((song) => (

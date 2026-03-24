@@ -3,9 +3,9 @@ import { buildSrc, buildSrcSet } from '@/lib/media';
 import Schedule from '@/pages/schedule/Schedule';
 
 import type { Route } from './+types/schedule';
+
 export async function clientLoader() {
   const events = await getUpcomingEvents(10);
-
   return { events };
 }
 

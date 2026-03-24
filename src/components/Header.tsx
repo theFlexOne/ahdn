@@ -1,10 +1,16 @@
-import { Link } from 'react-router';
+import { Link, NavLink } from 'react-router';
 
 import { cn } from '@/lib/utils';
 
 import AHDNLogo from './AHDNLogo';
 
 export default function Header({ className }: { className?: string }) {
+  const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'w-max transition-colors',
+      isActive && 'text-red-600'
+    );
+
   return (
     <header className={cn(
       'flex bg-black w-full fixed items-center text-gray-200',
@@ -19,19 +25,19 @@ export default function Header({ className }: { className?: string }) {
       <nav className="ml-auto mr-8 text-xl uppercase font-ahdn tracking-wider">
         <ul className="flex gap-8 w-full items-center">
           <li className="flex flex-1 items-center">
-            <Link to="/bio" className='w-max'>Bio</Link>
+            <NavLink to="/bio" className={navLinkClassName}>Bio</NavLink>
           </li>
           <li className="flex flex-1 items-center">
-            <Link to="/schedule" className='w-max'>Schedule</Link>
+            <NavLink to="/schedule" className={navLinkClassName}>Schedule</NavLink>
           </li>
           <li className="flex flex-1 items-center">
-            <Link to="/song-list" className='w-max'>Song List</Link>
+            <NavLink to="/song-list" className={navLinkClassName}>Song List</NavLink>
           </li>
           <li className="flex flex-1 items-center">
-            <Link to="/gallery" className='w-max'>Gallery</Link>
+            <NavLink to="/gallery" className={navLinkClassName}>Gallery</NavLink>
           </li>
           <li className="flex flex-1 items-center">
-            <Link to="/contact" className='w-max'>Contact</Link>
+            <NavLink to="/contact" className={navLinkClassName}>Contact</NavLink>
           </li>
         </ul>
       </nav>

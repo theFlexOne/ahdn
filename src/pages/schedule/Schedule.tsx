@@ -13,9 +13,9 @@ import type { SrcAndSources } from '@/components/Image';
 
 export default function Schedule({ events, background }: { events: EventDetails[], background: SrcAndSources }) {
   return (
-    <Page className="relative">
+    <Page className="flex-col items-center gap-12 relative">
       <div>
-        <Image className='fixed top-10 left-0 -z-10 blur-xs brightness-60' {...background} />
+        <Image className='fixed top-10 left-0 -z-10 brightness-60' {...background} />
       </div>
       <PageHeading>Scheduled Events</PageHeading>
       <PageCard>

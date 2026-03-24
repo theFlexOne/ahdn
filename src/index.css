@@ -1,49 +1,49 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap");
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
-  font-family: "AHDN";
+  font-family: 'AHDN';
   src:
-    url("/fonts/AHDN/AHDN.woff2") format("woff2"),
-    url("/fonts/AHDN/AHDN.woff") format("woff");
+    url('/fonts/AHDN/AHDN.woff2') format('woff2'),
+    url('/fonts/AHDN/AHDN.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "BOOTLE";
+  font-family: 'BOOTLE';
   src:
-    url("/fonts/BOOTLE/BOOTLE2.woff2") format("woff2"),
-    url("/fonts/BOOTLE/BOOTLE2.woff") format("woff");
+    url('/fonts/BOOTLE/BOOTLE2.woff2') format('woff2'),
+    url('/fonts/BOOTLE/BOOTLE2.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Great Lakes NF";
+  font-family: 'Great Lakes NF';
   src:
-    url("/fonts/Great Lakes NF/GreatLakesNF.woff2") format("woff2"),
-    url("/fonts/Great Lakes NF/GreatLakesNF.woff") format("woff");
+    url('/fonts/Great Lakes NF/GreatLakesNF.woff2') format('woff2'),
+    url('/fonts/Great Lakes NF/GreatLakesNF.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @theme {
-  --font-ahdn: "AHDN", sans-serif;
-  --font-beatles: "BOOTLE", sans-serif;
-  --font-gl: "Great Lakes NF", serif;
-  --font-montserrat: "Montserrat", sans-serif;
-  --font-roboto: "Roboto", sans-serif;
-  --font-poppins: "Poppins", sans-serif;
+  --font-ahdn: 'AHDN', sans-serif;
+  --font-beatles: 'BOOTLE', sans-serif;
+  --font-gl: 'Great Lakes NF', serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
   --font-default: var(--font-poppins);
 
   --word-spacing-none: 0;
@@ -153,5 +153,5 @@
 }
 
 body {
-  color: white;
+  color: var(--color-foreground);
 }

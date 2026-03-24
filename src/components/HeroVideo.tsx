@@ -11,9 +11,18 @@ type HeroVideoProps = {
   className?: ClassValue;
   fallbackImgClassName?: ClassValue;
   dim?: boolean
+  ref?: React.Ref<HTMLVideoElement>;
 };
 
-export default function HeroVideo({ primarySrc, secondarySrc, posterSrc, className, fallbackImgClassName, dim = false }: HeroVideoProps) {
+export default function HeroVideo({
+  primarySrc,
+  secondarySrc,
+  posterSrc,
+  className,
+  fallbackImgClassName,
+  dim = false,
+  ref
+}: HeroVideoProps) {
   const [canPlay, setCanPlay] = useState(false);
 
   return (
@@ -27,6 +36,7 @@ export default function HeroVideo({ primarySrc, secondarySrc, posterSrc, classNa
       style={{ filter: `brightness(${dim ? 0.5 : 1})` }}
     >
       <video
+        ref={ref}
         className={cn(
           "absolute inset-0 h-full w-full object-cover",
           !canPlay && "hidden",

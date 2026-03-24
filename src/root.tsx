@@ -1,14 +1,9 @@
 import type { PropsWithChildren } from "react";
-import "./index.css";
+import './index.css';
+
 import {
-  isRouteErrorResponse,
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useRouteError,
-} from "react-router";
+    isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError
+} from 'react-router';
 
 export function meta() {
   return [
@@ -74,5 +69,7 @@ export function ErrorBoundary() {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <Outlet />
+  );
 }

@@ -3,15 +3,17 @@ import Home from '@/pages/home/Home';
 
 import type { Route } from "./+types/home";
 import type { EventDetails } from "@/features/events/types";
-export async function clientLoader(): Promise<{
+
+// eslint-disable-next-line no-empty-pattern
+export async function clientLoader({ }: Route.ClientLoaderArgs): Promise<{
   events: Awaited<EventDetails[]>;
 }> {
   const events = await getUpcomingEvents();
 
-  console.log('events', events);
-
   return { events };
 }
+
+clientLoader.hydrate = true;
 
 export default function HomeRoute({ loaderData }: Route.ComponentProps) {
   return <Home events={loaderData.events} />;

@@ -1,5 +1,3 @@
-import { buildSrc } from './lib/supabase/helpers';
-
 export const MEDIA_BUCKET = "public_media" as const;
 
 export const VALID_MIME_TYPES = {

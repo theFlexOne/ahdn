@@ -1,11 +1,9 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export default function AHDNLogo({ className }: { className?: string }) {
   return (
     <svg
-      className={cn("w-full fill-gray-200/90 drop-shadow-[0_0_24px_rgba(0,0,0,0.6)]", className)}
-      width="1164"
-      height="546"
+      className={cn("w-auto h-auto fill-current drop-shadow-[0_0_24px_rgba(0,0,0,0.6)]", className)}
       viewBox="0 0 1164 546"
       xmlns="http://www.w3.org/2000/svg"
     >

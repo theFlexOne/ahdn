@@ -1,35 +1,24 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef } from 'react';
 
-export type PictureSource = ComponentPropsWithoutRef<"source">;
+export type PictureSource = ComponentPropsWithoutRef<'source'>;
 
 export type SrcAndSources = {
   src: string;
   sources?: readonly PictureSource[];
 };
 
-export type ImageProps = Omit<ComponentPropsWithoutRef<"img">, "src"> & SrcAndSources;
+export type ImageProps = Omit<ComponentPropsWithoutRef<'img'>, 'src'> & SrcAndSources;
 
-export default function Image({
-  src,
-  sources,
-  alt,
-  className,
-  ...imgProps
-}: ImageProps) {
+export default function Image({ src, sources, alt, className, ...imgProps }: ImageProps) {
   return (
-    <picture>
+    <picture className={className}>
       {sources?.map((source, index) => (
         <source
-          key={`${source.type ?? "default"}:${source.media ?? ""}:${source.srcSet ?? index}`}
+          key={`${source.type ?? 'default'}:${source.media ?? ''}:${source.srcSet ?? index}`}
           {...source}
         />
       ))}
-      <img
-        {...imgProps}
-        alt={alt ?? ""}
-        className={className}
-        src={src}
-      />
+      <img {...imgProps} alt={alt ?? ''} className={'w-full h-full object-cover'} src={src} />
     </picture>
   );
 }

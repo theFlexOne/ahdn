@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Link } from 'react-router';
 
 import AHDNLogo from '@/components/AHDNLogo';
 import EmbeddedVideo from '@/components/EmbeddedVideo';
@@ -7,15 +8,13 @@ import { PauseButton } from '@/components/PauseButton';
 import { HOME_PAGE_BACKGROUND } from '@/constants';
 import { useIsScrolledFromTop } from '@/hooks/useIsScrolledFromTop';
 import { Page, PageSection } from '@/layout';
-import { buildSrc } from '@/lib/media';
 import PageCard from '@/layout/PageCard';
+import { buildSrc } from '@/lib/media';
 
 import UpcomingEvents from './components/UpcomingEvents';
 
-import type { EventDetails } from "@/features/events/types";
-export default function Home({ events }: {
-  events: Awaited<EventDetails[]>
-}) {
+import type { EventDetails } from '@/features/events/types';
+export default function Home({ events }: { events: Awaited<EventDetails[]> }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const shouldDimVideo = useIsScrolledFromTop();
   const videoSrcs = getHomePageBackgroundSrcs();
@@ -30,7 +29,7 @@ export default function Home({ events }: {
     if (video.paused) {
       playVideo();
     } else {
-      video.pause();
+      pauseVideo();
     }
   }
 
@@ -45,7 +44,11 @@ export default function Home({ events }: {
       return;
     }
 
-    void video.play().catch(() => undefined);
+    try {
+      video.play();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -67,7 +70,9 @@ export default function Home({ events }: {
         <PageCard>
           <PageSection>
             <p className="text-2xl text-center tracking-widest leading-10">
-              Recognized by Joey Molland of Badfinger and Grammy-winning artist Rick Derringer, this acclaimed Beatles tribute delivers an authentic, high-energy performance that stands among the nation's very best.
+              Recognized by Joey Molland of Badfinger and Grammy-winning artist Rick Derringer, this
+              acclaimed Beatles tribute delivers an authentic, high-energy performance that stands
+              among the nation's very best.
             </p>
           </PageSection>
         </PageCard>
@@ -76,6 +81,9 @@ export default function Home({ events }: {
           <PageSection>
             <h2 className="text-center font-ahdn text-2xl uppercase">Upcoming Events</h2>
             <UpcomingEvents events={events} />
+            <Link to="/schedule" className="block text-center mt-4 hover:underline">
+              View full schedule
+            </Link>
           </PageSection>
         </PageCard>
 
@@ -90,9 +98,11 @@ export default function Home({ events }: {
                 onPause={playVideo}
               />
             </div>
-            <div className='w-full flex gap-8 mt-12'>
-              <div className='w-1/2'>
-                <h2 className="text-center font-ahdn text-2xl uppercase mb-4">Endorsement by Rick Derringer</h2>
+            <div className="w-full flex gap-8 mt-12">
+              <div className="w-1/2">
+                <h2 className="text-center font-ahdn text-2xl uppercase mb-4">
+                  Endorsement by Rick Derringer
+                </h2>
                 <EmbeddedVideo
                   src="https://www.youtube.com/embed/Rx9XswAbeAo"
                   className="w-full"
@@ -100,8 +110,10 @@ export default function Home({ events }: {
                   onPause={playVideo}
                 />
               </div>
-              <div className='w-1/2'>
-                <h2 className="text-center font-ahdn text-2xl uppercase mb-4">Endorsement by Joey Molland</h2>
+              <div className="w-1/2">
+                <h2 className="text-center font-ahdn text-2xl uppercase mb-4">
+                  Endorsement by Joey Molland
+                </h2>
                 <EmbeddedVideo
                   src="https://www.youtube.com/embed/Tcvod_bTBzM"
                   className="w-full"
@@ -118,7 +130,7 @@ export default function Home({ events }: {
         </PageCard>
       </div>
     </Page>
-  )
+  );
 }
 
 function getHomePageBackgroundSrcs() {

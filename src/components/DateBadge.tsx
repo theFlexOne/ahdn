@@ -1,39 +1,51 @@
-export function DateBadge({ date }: { date: Date }) {
+import { cn } from '@/lib/utils';
+
+type DateBadgeProps = {
+  date: Date;
+  className?: string;
+  monthClassName?: string;
+  dayClassName?: string;
+  timeClassName?: string;
+};
+
+export function DateBadge({
+  date,
+  className,
+  monthClassName,
+  dayClassName,
+  timeClassName,
+}: DateBadgeProps) {
   return (
-    <div className="text-center leading-none">
-      <div className="text-xs tracking-widest">
+    <div className={cn('text-center leading-none', className)}>
+      <div className={cn('text-xs tracking-widest', monthClassName)}>
         {formatMonth(date).toUpperCase()}
       </div>
 
-      <div className="text-3xl font-bold text-red-800">
-        {formatDay(date)}
-      </div>
+      <div className={cn('text-3xl font-bold text-red-800', dayClassName)}>{formatDay(date)}</div>
 
-      <div className="text-sm">
-        {formatTime(date).toLowerCase()}
-      </div>
+      <div className={cn('text-sm', timeClassName)}>{formatTime(date).toLowerCase()}</div>
     </div>
   );
 }
 
 function formatMonth(dateTime: Date) {
-  const monthFormatter = new Intl.DateTimeFormat("en-US", {
-    month: "short",
+  const monthFormatter = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
   });
   return monthFormatter.format(dateTime);
 }
 
 function formatDay(dateTime: Date) {
-  const dayFormatter = new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
+  const dayFormatter = new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
   });
   return dayFormatter.format(dateTime);
 }
 
 function formatTime(dateTime: Date) {
-  const timeFormatter = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
+  const timeFormatter = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
     hour12: true,
   });
   return timeFormatter.format(dateTime);

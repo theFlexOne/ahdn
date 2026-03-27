@@ -1,19 +1,19 @@
-import "@supabase/functions-js/edge-runtime.d.ts";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import handleStorageImageWebhook from "./handleStorageImageWebhook.ts";
+import '@supabase/functions-js/edge-runtime.d.ts';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import handleStorageImageWebhook from './handleStorageImageWebhook.ts';
 
 let supabase: SupabaseClient | null = null;
 
 try {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")?.trim() ?? "";
-  const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")?.trim() ??
-    Deno.env.get("SUPABASE_KEY")?.trim() ?? "";
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')?.trim() ?? '';
+  const supabaseKey =
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')?.trim() ?? Deno.env.get('SUPABASE_KEY')?.trim() ?? '';
 
   if (supabaseUrl && supabaseKey) {
     supabase = createClient(supabaseUrl, supabaseKey);
   }
 } catch (error) {
-  console.error("Error creating Supabase client:", error);
+  console.error('Error creating Supabase client:', error);
 }
 
 Deno.serve((req: Request): Promise<Response> => {

@@ -18,7 +18,7 @@ export default function Image({ src, sources, alt, className, ...imgProps }: Ima
           {...source}
         />
       ))}
-      <img {...imgProps} alt={alt ?? ''} className={'w-full h-full object-cover'} src={src} />
+      <img {...imgProps} alt={alt ?? ''} className={'h-full w-full object-cover'} src={src} />
     </picture>
   );
 }

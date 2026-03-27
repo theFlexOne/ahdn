@@ -9,7 +9,7 @@ import type { SrcAndSources } from '@/components/Image';
 
 export default function Bio({ background }: { background: SrcAndSources }) {
   return (
-    <Page className="flex-col items-center gap-12 relative">
+    <Page className="relative flex-col items-center gap-12">
       {/* <div> */}
       <Image className="fixed top-10 left-0 -z-10 brightness-60" {...background} />
       {/* </div> */}
@@ -157,10 +157,10 @@ function BioSection({
 }) {
   return (
     <div className="flex gap-8" style={{ flexDirection: reverse ? 'row-reverse' : 'row' }}>
-      <div className={cn('flex-2/7 shrink-0 mb-4 flex flex-col items-center font-ahdn uppercase')}>
+      <div className={cn('mb-4 flex flex-2/7 shrink-0 flex-col items-center font-ahdn uppercase')}>
         <div className="text-center">
-          <h2 className="text-3xl font-bold leading-tight">{name}</h2>
-          <p className="text-xl font-semibold text-gray-600 my-2">{`"${beatleName}"`}</p>
+          <h2 className="text-3xl leading-tight font-bold">{name}</h2>
+          <p className="my-2 text-xl font-semibold text-gray-600">{`"${beatleName}"`}</p>
         </div>
         <img src={buildSrc(image)} alt={imageAlt} className="w-full rounded-md" />
       </div>

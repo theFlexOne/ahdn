@@ -27,31 +27,31 @@ function loadScriptOnce(src: string, id: string) {
     // If it already exists, assume it's either loaded or loading
     return new Promise<void>((resolve, reject) => {
       if (existing._loaded) return resolve();
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("FB SDK failed to load")), {
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error('FB SDK failed to load')), {
         once: true,
       });
     });
   }
 
   return new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script") as ScriptWithLoadedFlag;
+    const script = document.createElement('script') as ScriptWithLoadedFlag;
     script.id = id;
     script.src = src;
     script.async = true;
     script.defer = true;
-    script.crossOrigin = "anonymous";
+    script.crossOrigin = 'anonymous';
 
     script.addEventListener(
-      "load",
+      'load',
       () => {
         script._loaded = true;
         resolve();
       },
-      { once: true }
+      { once: true },
     );
 
-    script.addEventListener("error", () => reject(new Error("FB SDK failed to load")), {
+    script.addEventListener('error', () => reject(new Error('FB SDK failed to load')), {
       once: true,
     });
 
@@ -64,16 +64,16 @@ export const fbClient = {
     if (fbPromise) return fbPromise;
 
     fbPromise = (async () => {
-      await loadScriptOnce("https://connect.facebook.net/en_US/sdk.js", "facebook-jssdk");
+      await loadScriptOnce('https://connect.facebook.net/en_US/sdk.js', 'facebook-jssdk');
 
       if (!window.FB) {
         // Extremely rare, but makes failures explicit ~ according to ChatGPT
-        throw new Error("FB SDK loaded but window.FB is unavailable");
+        throw new Error('FB SDK loaded but window.FB is unavailable');
       }
 
       window.FB.init({
         appId: opts.appId,
-        version: opts.version ?? "v25.0",
+        version: opts.version ?? 'v25.0',
         xfbml: opts.xfbml ?? true,
       });
 

@@ -1,4 +1,4 @@
-import { DEFAULT_VIDEO_FORMATS, VIDEO_FORMATS } from "./constants.ts";
+import { DEFAULT_VIDEO_FORMATS, VIDEO_FORMATS } from './constants.ts';
 
 export type ParsedVideoData = {
   file: File;
@@ -6,20 +6,20 @@ export type ParsedVideoData = {
   metadata: Record<string, unknown>;
 };
 
-export type VideoFormat = typeof DEFAULT_VIDEO_FORMATS[number];
-export type VideoVariantMimeType = typeof VIDEO_FORMATS[number]["mimeType"];
+export type VideoFormat = (typeof DEFAULT_VIDEO_FORMATS)[number];
+export type VideoVariantMimeType = (typeof VIDEO_FORMATS)[number]['mimeType'];
 
 export type FfmpegArgs = {
-  "-i": "pipe:0";
-  "-vf": string;
-  "-c:v": "libx264" | "libvpx-vp9";
-  "-crf": number;
-  "-preset"?: "slow" | "medium" | "fast" | "superfast" | "ultrafast";
-  "-b:v"?: number;
-  "-movflags"?: "+frag_keyframe+empty_moov";
-  "-an": true;
-  "-f": VideoFormat;
-  "pipe:1": true;
+  '-i': 'pipe:0';
+  '-vf': string;
+  '-c:v': 'libx264' | 'libvpx-vp9';
+  '-crf': number;
+  '-preset'?: 'slow' | 'medium' | 'fast' | 'superfast' | 'ultrafast';
+  '-b:v'?: number;
+  '-movflags'?: '+frag_keyframe+empty_moov';
+  '-an': true;
+  '-f': VideoFormat;
+  'pipe:1': true;
 };
 
 export type VideoVariantMetadata = Record<string, unknown> & {

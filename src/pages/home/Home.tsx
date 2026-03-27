@@ -59,17 +59,17 @@ export default function Home({ events }: { events: Awaited<EventDetails[]> }) {
           primarySrc={videoSrcs.primaryVideo}
           secondarySrc={videoSrcs.secondaryVideo}
           posterSrc={videoSrcs.poster}
-          className="fixed top-10 overflow-hidden -z-10"
+          className="fixed top-10 -z-10 overflow-hidden"
           dim={shouldDimVideo}
         />
         <AHDNLogo className="mx-auto h-screen w-7xl [fill-opacity:0.8]" />
         <PauseButton className="fixed top-22.5 right-5 z-20" onClick={handlePause} size="sm" />
       </div>
 
-      <div className="flex flex-col gap-8 m-8">
+      <div className="m-8 flex flex-col gap-8">
         <PageCard>
           <PageSection>
-            <p className="text-2xl text-center tracking-widest leading-10">
+            <p className="text-center text-2xl leading-10 tracking-widest">
               Recognized by Joey Molland of Badfinger and Grammy-winning artist Rick Derringer, this
               acclaimed Beatles tribute delivers an authentic, high-energy performance that stands
               among the nation's very best.
@@ -81,7 +81,7 @@ export default function Home({ events }: { events: Awaited<EventDetails[]> }) {
           <PageSection>
             <h2 className="text-center font-ahdn text-2xl uppercase">Upcoming Events</h2>
             <UpcomingEvents events={events} />
-            <Link to="/schedule" className="block text-center mt-4 hover:underline">
+            <Link to="/schedule" className="mt-4 block text-center hover:underline">
               View full schedule
             </Link>
           </PageSection>
@@ -98,9 +98,9 @@ export default function Home({ events }: { events: Awaited<EventDetails[]> }) {
                 onPause={playVideo}
               />
             </div>
-            <div className="w-full flex gap-8 mt-12">
+            <div className="mt-12 flex w-full gap-8">
               <div className="w-1/2">
-                <h2 className="text-center font-ahdn text-2xl uppercase mb-4">
+                <h2 className="mb-4 text-center font-ahdn text-2xl uppercase">
                   Endorsement by Rick Derringer
                 </h2>
                 <EmbeddedVideo
@@ -111,7 +111,7 @@ export default function Home({ events }: { events: Awaited<EventDetails[]> }) {
                 />
               </div>
               <div className="w-1/2">
-                <h2 className="text-center font-ahdn text-2xl uppercase mb-4">
+                <h2 className="mb-4 text-center font-ahdn text-2xl uppercase">
                   Endorsement by Joey Molland
                 </h2>
                 <EmbeddedVideo

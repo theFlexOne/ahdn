@@ -1,8 +1,4 @@
-import type {
-  YouTubeNamespace,
-  YouTubePlayer,
-  YouTubePlayerCallbacks,
-} from './types';
+import type { YouTubeNamespace, YouTubePlayer, YouTubePlayerCallbacks } from './types';
 
 const IFRAME_API_SRC = 'https://www.youtube.com/iframe_api';
 
@@ -69,7 +65,9 @@ function loadYouTubeApi(): Promise<YouTubeNamespace> {
       reject(new Error('YouTube iframe API loaded without a player.'));
     };
 
-    const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${IFRAME_API_SRC}"]`);
+    const existingScript = document.querySelector<HTMLScriptElement>(
+      `script[src="${IFRAME_API_SRC}"]`,
+    );
 
     if (existingScript) {
       return;

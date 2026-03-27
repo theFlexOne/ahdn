@@ -1,5 +1,5 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import extractImageDimensions from "./helpers/extractImageDimensions.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import extractImageDimensions from './helpers/extractImageDimensions.ts';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -12,7 +12,7 @@ type StorageObjectRecord = {
 };
 
 type StorageObjectWebhookPayload = {
-  type: "INSERT" | "UPDATE" | "DELETE";
+  type: 'INSERT' | 'UPDATE' | 'DELETE';
   table: string;
   schema: string;
   record: StorageObjectRecord | null;
@@ -20,11 +20,11 @@ type StorageObjectWebhookPayload = {
 };
 
 function isJsonRecord(value: unknown): value is JsonRecord {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function readRequiredString(value: unknown, field: string): string {
-  if (typeof value !== "string" || value.trim().length === 0) {
+  if (typeof value !== 'string' || value.trim().length === 0) {
     throw new Error(`Webhook payload is missing "${field}"`);
   }
 
@@ -32,11 +32,11 @@ function readRequiredString(value: unknown, field: string): string {
 }
 
 function readPositiveInteger(value: unknown): number | null {
-  if (typeof value === "number" && Number.isInteger(value) && value > 0) {
+  if (typeof value === 'number' && Number.isInteger(value) && value > 0) {
     return value;
   }
 
-  if (typeof value === "string" && /^\d+$/.test(value)) {
+  if (typeof value === 'string' && /^\d+$/.test(value)) {
     const parsed = Number.parseInt(value, 10);
     return parsed > 0 ? parsed : null;
   }
@@ -46,7 +46,7 @@ function readPositiveInteger(value: unknown): number | null {
 
 function parseStorageObjectRecord(
   value: unknown,
-  field: "record" | "old_record",
+  field: 'record' | 'old_record',
 ): StorageObjectRecord | null {
   if (value == null) {
     return null;
@@ -61,22 +61,20 @@ function parseStorageObjectRecord(
     bucket_id: readRequiredString(value.bucket_id, `${field}.bucket_id`),
     name: readRequiredString(value.name, `${field}.name`),
     metadata: isJsonRecord(value.metadata) ? value.metadata : null,
-    user_metadata: isJsonRecord(value.user_metadata)
-      ? value.user_metadata
-      : null,
+    user_metadata: isJsonRecord(value.user_metadata) ? value.user_metadata : null,
   };
 }
 
 function parseWebhookPayload(value: unknown): StorageObjectWebhookPayload {
   if (!isJsonRecord(value)) {
-    throw new Error("Webhook body must be a JSON object");
+    throw new Error('Webhook body must be a JSON object');
   }
 
-  const type = readRequiredString(value.type, "type");
-  const table = readRequiredString(value.table, "table");
-  const schema = readRequiredString(value.schema, "schema");
+  const type = readRequiredString(value.type, 'type');
+  const table = readRequiredString(value.table, 'table');
+  const schema = readRequiredString(value.schema, 'schema');
 
-  if (type !== "INSERT" && type !== "UPDATE" && type !== "DELETE") {
+  if (type !== 'INSERT' && type !== 'UPDATE' && type !== 'DELETE') {
     throw new Error(`Unsupported webhook type "${type}"`);
   }
 
@@ -84,16 +82,14 @@ function parseWebhookPayload(value: unknown): StorageObjectWebhookPayload {
     type,
     table,
     schema,
-    record: parseStorageObjectRecord(value.record, "record"),
-    old_record: parseStorageObjectRecord(value.old_record, "old_record"),
+    record: parseStorageObjectRecord(value.record, 'record'),
+    old_record: parseStorageObjectRecord(value.old_record, 'old_record'),
   };
 }
 
 function getMimeType(record: StorageObjectRecord): string | null {
   const mimeType = record.metadata?.mimetype;
-  return typeof mimeType === "string" && mimeType.length > 0
-    ? mimeType.toLowerCase()
-    : null;
+  return typeof mimeType === 'string' && mimeType.length > 0 ? mimeType.toLowerCase() : null;
 }
 
 function getUserMetadata(record: StorageObjectRecord): JsonRecord {
@@ -111,12 +107,10 @@ async function downloadStorageObject(
   bucketId: string,
   objectPath: string,
 ): Promise<Uint8Array> {
-  let lastErrorMessage = "Storage download returned no data";
+  let lastErrorMessage = 'Storage download returned no data';
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const { data, error } = await supabase.storage
-      .from(bucketId)
-      .download(objectPath);
+    const { data, error } = await supabase.storage.from(bucketId).download(objectPath);
 
     if (!error && data) {
       return new Uint8Array(await data.arrayBuffer());
@@ -147,10 +141,10 @@ async function updateUserMetadata(
   };
 
   const { error } = await supabase
-    .schema("storage")
-    .from("objects")
+    .schema('storage')
+    .from('objects')
     .update({ user_metadata: nextUserMetadata })
-    .eq("id", record.id);
+    .eq('id', record.id);
 
   if (error) {
     throw new Error(
@@ -163,22 +157,19 @@ export default async function handleStorageImageWebhook(
   req: Request,
   supabase: SupabaseClient | null,
 ): Promise<Response> {
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: { Allow: "OPTIONS, POST" },
+      headers: { Allow: 'OPTIONS, POST' },
     });
   }
 
-  if (req.method !== "POST") {
-    return Response.json({ error: "Method not allowed" }, { status: 405 });
+  if (req.method !== 'POST') {
+    return Response.json({ error: 'Method not allowed' }, { status: 405 });
   }
 
   if (!supabase) {
-    return Response.json(
-      { error: "Supabase client is not configured" },
-      { status: 500 },
-    );
+    return Response.json({ error: 'Supabase client is not configured' }, { status: 500 });
   }
 
   let payload: StorageObjectWebhookPayload;
@@ -190,24 +181,21 @@ export default async function handleStorageImageWebhook(
     return Response.json({ error: message }, { status: 400 });
   }
 
-  if (payload.schema !== "storage" || payload.table !== "objects") {
-    return Response.json(
-      { error: "Webhook must target storage.objects" },
-      { status: 400 },
-    );
+  if (payload.schema !== 'storage' || payload.table !== 'objects') {
+    return Response.json({ error: 'Webhook must target storage.objects' }, { status: 400 });
   }
 
-  if (payload.type === "DELETE" || !payload.record) {
+  if (payload.type === 'DELETE' || !payload.record) {
     return Response.json({
       skipped: true,
-      reason: "Webhook payload did not include a current storage object record",
+      reason: 'Webhook payload did not include a current storage object record',
     });
   }
 
   const record = payload.record;
   const mimeType = getMimeType(record);
 
-  if (mimeType && !mimeType.startsWith("image/")) {
+  if (mimeType && !mimeType.startsWith('image/')) {
     return Response.json({
       skipped: true,
       reason: `Storage object is not an image (${mimeType})`,
@@ -222,7 +210,7 @@ export default async function handleStorageImageWebhook(
   if (existingWidth && existingHeight) {
     return Response.json({
       skipped: true,
-      reason: "Image dimensions already exist in user_metadata",
+      reason: 'Image dimensions already exist in user_metadata',
       id: record.id,
       path: record.name,
       width: existingWidth,
@@ -231,19 +219,10 @@ export default async function handleStorageImageWebhook(
   }
 
   try {
-    const fileBytes = await downloadStorageObject(
-      supabase,
-      record.bucket_id,
-      record.name,
-    );
+    const fileBytes = await downloadStorageObject(supabase, record.bucket_id, record.name);
     const dimensions = extractImageDimensions(fileBytes, mimeType ?? undefined);
 
-    await updateUserMetadata(
-      supabase,
-      record,
-      dimensions.width,
-      dimensions.height,
-    );
+    await updateUserMetadata(supabase, record, dimensions.width, dimensions.height);
 
     return Response.json({
       updated: true,
@@ -255,13 +234,13 @@ export default async function handleStorageImageWebhook(
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    const status = message.startsWith("Unsupported image format") ||
-        message.includes("could not be determined")
-      ? 200
-      : 500;
+    const status =
+      message.startsWith('Unsupported image format') || message.includes('could not be determined')
+        ? 200
+        : 500;
 
     if (status === 500) {
-      console.error("Failed to sync storage image metadata:", {
+      console.error('Failed to sync storage image metadata:', {
         id: record.id,
         bucketId: record.bucket_id,
         path: record.name,
@@ -273,18 +252,18 @@ export default async function handleStorageImageWebhook(
     return Response.json(
       status === 200
         ? {
-          skipped: true,
-          reason: message,
-          id: record.id,
-          path: record.name,
-          mimeType,
-        }
+            skipped: true,
+            reason: message,
+            id: record.id,
+            path: record.name,
+            mimeType,
+          }
         : {
-          error: "Failed to sync storage image metadata",
-          message,
-          id: record.id,
-          path: record.name,
-        },
+            error: 'Failed to sync storage image metadata',
+            message,
+            id: record.id,
+            path: record.name,
+          },
       { status },
     );
   }

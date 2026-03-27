@@ -1,7 +1,7 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import extractImageDimensions from "../sync-storage-image-metadata/helpers/extractImageDimensions.ts";
-import handleStorageImageWebhook from "../sync-storage-image-metadata/handleStorageImageWebhook.ts";
-import { assert, assertEquals } from "./helpers/testUtils.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import extractImageDimensions from '../sync-storage-image-metadata/helpers/extractImageDimensions.ts';
+import handleStorageImageWebhook from '../sync-storage-image-metadata/handleStorageImageWebhook.ts';
+import { assert, assertEquals } from './helpers/testUtils.ts';
 
 type MockState = {
   bucketId: string | null;
@@ -19,27 +19,17 @@ function ascii(value: string): number[] {
 }
 
 function be32(value: number): number[] {
-  return [
-    (value >>> 24) & 0xff,
-    (value >>> 16) & 0xff,
-    (value >>> 8) & 0xff,
-    value & 0xff,
-  ];
+  return [(value >>> 24) & 0xff, (value >>> 16) & 0xff, (value >>> 8) & 0xff, value & 0xff];
 }
 
 function le32(value: number): number[] {
-  return [
-    value & 0xff,
-    (value >>> 8) & 0xff,
-    (value >>> 16) & 0xff,
-    (value >>> 24) & 0xff,
-  ];
+  return [value & 0xff, (value >>> 8) & 0xff, (value >>> 16) & 0xff, (value >>> 24) & 0xff];
 }
 
 function createPng(width: number, height: number): Uint8Array {
   return Uint8Array.from([
     0x89,
-    ...ascii("PNG"),
+    ...ascii('PNG'),
     0x0d,
     0x0a,
     0x1a,
@@ -48,7 +38,7 @@ function createPng(width: number, height: number): Uint8Array {
     0x00,
     0x00,
     0x0d,
-    ...ascii("IHDR"),
+    ...ascii('IHDR'),
     ...be32(width),
     ...be32(height),
   ]);
@@ -56,7 +46,7 @@ function createPng(width: number, height: number): Uint8Array {
 
 function createGif(width: number, height: number): Uint8Array {
   return Uint8Array.from([
-    ...ascii("GIF89a"),
+    ...ascii('GIF89a'),
     width & 0xff,
     (width >>> 8) & 0xff,
     height & 0xff,
@@ -99,10 +89,10 @@ function createJpeg(width: number, height: number): Uint8Array {
 
 function createWebp(width: number, height: number): Uint8Array {
   return Uint8Array.from([
-    ...ascii("RIFF"),
+    ...ascii('RIFF'),
     ...le32(22),
-    ...ascii("WEBP"),
-    ...ascii("VP8X"),
+    ...ascii('WEBP'),
+    ...ascii('VP8X'),
     ...le32(10),
     0x00,
     0x00,
@@ -122,25 +112,18 @@ function box(type: string, payload: number[]): number[] {
 }
 
 function createAvif(width: number, height: number): Uint8Array {
-  const ispe = box("ispe", [
+  const ispe = box('ispe', [0x00, 0x00, 0x00, 0x00, ...be32(width), ...be32(height)]);
+  const ipco = box('ipco', ispe);
+  const iprp = box('iprp', ipco);
+  const meta = box('meta', [0x00, 0x00, 0x00, 0x00, ...iprp]);
+  const ftyp = box('ftyp', [
+    ...ascii('avif'),
     0x00,
     0x00,
     0x00,
     0x00,
-    ...be32(width),
-    ...be32(height),
-  ]);
-  const ipco = box("ipco", ispe);
-  const iprp = box("iprp", ipco);
-  const meta = box("meta", [0x00, 0x00, 0x00, 0x00, ...iprp]);
-  const ftyp = box("ftyp", [
-    ...ascii("avif"),
-    0x00,
-    0x00,
-    0x00,
-    0x00,
-    ...ascii("avif"),
-    ...ascii("mif1"),
+    ...ascii('avif'),
+    ...ascii('mif1'),
   ]);
 
   return Uint8Array.from([...ftyp, ...meta]);
@@ -208,105 +191,105 @@ function createMockSupabase(downloadBytes: Uint8Array) {
   };
 }
 
-Deno.test("extractImageDimensions reads PNG dimensions", () => {
-  const dimensions = extractImageDimensions(createPng(2, 3), "image/png");
+Deno.test('extractImageDimensions reads PNG dimensions', () => {
+  const dimensions = extractImageDimensions(createPng(2, 3), 'image/png');
 
   assertEquals(dimensions.width, 2);
   assertEquals(dimensions.height, 3);
 });
 
-Deno.test("extractImageDimensions reads GIF dimensions", () => {
-  const dimensions = extractImageDimensions(createGif(4, 5), "image/gif");
+Deno.test('extractImageDimensions reads GIF dimensions', () => {
+  const dimensions = extractImageDimensions(createGif(4, 5), 'image/gif');
 
   assertEquals(dimensions.width, 4);
   assertEquals(dimensions.height, 5);
 });
 
-Deno.test("extractImageDimensions reads JPEG dimensions", () => {
-  const dimensions = extractImageDimensions(createJpeg(6, 7), "image/jpeg");
+Deno.test('extractImageDimensions reads JPEG dimensions', () => {
+  const dimensions = extractImageDimensions(createJpeg(6, 7), 'image/jpeg');
 
   assertEquals(dimensions.width, 6);
   assertEquals(dimensions.height, 7);
 });
 
-Deno.test("extractImageDimensions reads WebP dimensions", () => {
-  const dimensions = extractImageDimensions(createWebp(320, 180), "image/webp");
+Deno.test('extractImageDimensions reads WebP dimensions', () => {
+  const dimensions = extractImageDimensions(createWebp(320, 180), 'image/webp');
 
   assertEquals(dimensions.width, 320);
   assertEquals(dimensions.height, 180);
 });
 
-Deno.test("extractImageDimensions reads AVIF dimensions", () => {
-  const dimensions = extractImageDimensions(
-    createAvif(1440, 900),
-    "image/avif",
-  );
+Deno.test('extractImageDimensions reads AVIF dimensions', () => {
+  const dimensions = extractImageDimensions(createAvif(1440, 900), 'image/avif');
 
   assertEquals(dimensions.width, 1440);
   assertEquals(dimensions.height, 900);
 });
 
-Deno.test("handleStorageImageWebhook updates storage.objects user_metadata with image dimensions", async () => {
-  const { client, state } = createMockSupabase(createPng(640, 360));
-  const request = new Request("http://localhost", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      type: "INSERT",
-      table: "objects",
-      schema: "storage",
-      record: {
-        id: "11111111-1111-1111-1111-111111111111",
-        bucket_id: "public_media",
-        name: "images/example-image-640.jpg",
-        metadata: { mimetype: "image/png" },
-        user_metadata: { alt: "Hero image", tags: ["hero"] },
-      },
-      old_record: null,
-    }),
-  });
+Deno.test(
+  'handleStorageImageWebhook updates storage.objects user_metadata with image dimensions',
+  async () => {
+    const { client, state } = createMockSupabase(createPng(640, 360));
+    const request = new Request('http://localhost', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'INSERT',
+        table: 'objects',
+        schema: 'storage',
+        record: {
+          id: '11111111-1111-1111-1111-111111111111',
+          bucket_id: 'public_media',
+          name: 'images/example-image-640.jpg',
+          metadata: { mimetype: 'image/png' },
+          user_metadata: { alt: 'Hero image', tags: ['hero'] },
+        },
+        old_record: null,
+      }),
+    });
 
-  const response = await handleStorageImageWebhook(request, client);
-  const body = await response.json();
+    const response = await handleStorageImageWebhook(request, client);
+    const body = await response.json();
 
-  assertEquals(response.status, 200);
-  assertEquals(state.bucketId, "public_media");
-  assertEquals(state.objectPath, "images/example-image-640.jpg");
-  assertEquals(state.schemaName, "storage");
-  assertEquals(state.tableName, "objects");
-  assertEquals(state.eqColumn, "id");
-  assertEquals(state.eqValue, "11111111-1111-1111-1111-111111111111");
-  assertEquals(
-    JSON.stringify(state.updateValues),
-    JSON.stringify({
-      user_metadata: {
-        alt: "Hero image",
-        tags: ["hero"],
-        width: 640,
-        height: 360,
-      },
-    }),
-  );
-  assertEquals(body.updated, true);
-  assertEquals(body.width, 640);
-  assertEquals(body.height, 360);
-});
+    assertEquals(response.status, 200);
+    assertEquals(state.bucketId, 'public_media');
+    assertEquals(state.objectPath, 'images/example-image-640.jpg');
+    assertEquals(state.schemaName, 'storage');
+    assertEquals(state.tableName, 'objects');
+    assertEquals(state.eqColumn, 'id');
+    assertEquals(state.eqValue, '11111111-1111-1111-1111-111111111111');
+    assertEquals(
+      JSON.stringify(state.updateValues),
+      JSON.stringify({
+        user_metadata: {
+          alt: 'Hero image',
+          tags: ['hero'],
+          width: 640,
+          height: 360,
+        },
+      }),
+    );
+    assertEquals(body.updated, true);
+    assertEquals(body.width, 640);
+    assertEquals(body.height, 360);
+  },
+);
 
-Deno.test("handleStorageImageWebhook skips rows that already have width and height", async () => {
+Deno.test('handleStorageImageWebhook skips rows that already have width and height', async () => {
   const { client, state } = createMockSupabase(createPng(1, 1));
-  const request = new Request("http://localhost", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const request = new Request('http://localhost', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      type: "UPDATE",
-      table: "objects",
-      schema: "storage",
+      type: 'UPDATE',
+      table: 'objects',
+      schema: 'storage',
       record: {
-        id: "22222222-2222-2222-2222-222222222222",
-        bucket_id: "public_media",
-        name: "images/example-image-640.jpg",
-        metadata: { mimetype: "image/png" },
-        user_metadata: { width: 640, height: 360, alt: "Hero image" },
+        id: '22222222-2222-2222-2222-222222222222',
+        bucket_id: 'public_media',
+        name: 'images/example-image-640.jpg',
+        metadata: { mimetype: 'image/png' },
+        user_metadata: { width: 640, height: 360, alt: 'Hero image' },
       },
       old_record: null,
     }),
@@ -319,5 +302,5 @@ Deno.test("handleStorageImageWebhook skips rows that already have width and heig
   assertEquals(body.skipped, true);
   assertEquals(state.downloadCalls, 0);
   assertEquals(state.updateValues, null);
-  assert(body.reason.includes("already exist"));
+  assert(body.reason.includes('already exist'));
 });

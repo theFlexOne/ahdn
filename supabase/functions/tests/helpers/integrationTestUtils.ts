@@ -1,16 +1,14 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const DEFAULT_LOCAL_SUPABASE_URL = "http://127.0.0.1:54321";
-const DEFAULT_LOCAL_JWT_SECRET =
-  "super-secret-jwt-token-with-at-least-32-characters-long";
-const DEFAULT_JWT_ISSUER = "supabase-demo";
-const LOCAL_FUNCTION_ENV_FILE = new URL("../../.env", import.meta.url);
+const DEFAULT_LOCAL_SUPABASE_URL = 'http://127.0.0.1:54321';
+const DEFAULT_LOCAL_JWT_SECRET = 'super-secret-jwt-token-with-at-least-32-characters-long';
+const DEFAULT_JWT_ISSUER = 'supabase-demo';
+const LOCAL_FUNCTION_ENV_FILE = new URL('../../.env', import.meta.url);
 
-export const INTEGRATION_TEST_RUN_FLAG =
-  "RUN_SUPABASE_FUNCTION_INTEGRATION_TESTS" as const;
-export const DEFAULT_MEDIA_BUCKET = "public_media" as const;
+export const INTEGRATION_TEST_RUN_FLAG = 'RUN_SUPABASE_FUNCTION_INTEGRATION_TESTS' as const;
+export const DEFAULT_MEDIA_BUCKET = 'public_media' as const;
 
-type JwtRole = "anon" | "service_role";
+type JwtRole = 'anon' | 'service_role';
 
 export type MediaBucketMetadataRow = {
   path: string;
@@ -69,11 +67,11 @@ function getLocalFunctionEnv(): ReadonlyMap<string, string> {
     for (const line of contents.split(/\r?\n/u)) {
       const trimmed = line.trim();
 
-      if (!trimmed || trimmed.startsWith("#")) {
+      if (!trimmed || trimmed.startsWith('#')) {
         continue;
       }
 
-      const separatorIndex = trimmed.indexOf("=");
+      const separatorIndex = trimmed.indexOf('=');
 
       if (separatorIndex <= 0) {
         continue;
@@ -100,47 +98,46 @@ function readConfiguredEnv(key: string): string | undefined {
 }
 
 export function getSupabaseUrl(): string {
-  return readProcessEnv("TEST_SUPABASE_URL") ??
-    readConfiguredEnv("SUPABASE_URL") ??
-    DEFAULT_LOCAL_SUPABASE_URL;
+  return (
+    readProcessEnv('TEST_SUPABASE_URL') ??
+    readConfiguredEnv('SUPABASE_URL') ??
+    DEFAULT_LOCAL_SUPABASE_URL
+  );
 }
 
 export function isIntegrationTestEnabled(): boolean {
-  return readProcessEnv(INTEGRATION_TEST_RUN_FLAG) === "true";
+  return readProcessEnv(INTEGRATION_TEST_RUN_FLAG) === 'true';
 }
 
 function getJwtSecret(): string {
-  return readProcessEnv("TEST_SUPABASE_JWT_SECRET") ??
-    readConfiguredEnv("SUPABASE_JWT_SECRET") ??
-    readConfiguredEnv("JWT_SECRET") ??
-    DEFAULT_LOCAL_JWT_SECRET;
+  return (
+    readProcessEnv('TEST_SUPABASE_JWT_SECRET') ??
+    readConfiguredEnv('SUPABASE_JWT_SECRET') ??
+    readConfiguredEnv('JWT_SECRET') ??
+    DEFAULT_LOCAL_JWT_SECRET
+  );
 }
 
 function getTokenEnvVar(role: JwtRole): string {
-  return role === "anon"
-    ? readProcessEnv("TEST_SUPABASE_ANON_KEY") ??
-      readConfiguredEnv("SUPABASE_ANON_KEY") ??
-      ""
-    : readProcessEnv("TEST_SUPABASE_SERVICE_ROLE_KEY") ??
-      readConfiguredEnv("SUPABASE_SERVICE_ROLE_KEY") ??
-      "";
+  return role === 'anon'
+    ? (readProcessEnv('TEST_SUPABASE_ANON_KEY') ?? readConfiguredEnv('SUPABASE_ANON_KEY') ?? '')
+    : (readProcessEnv('TEST_SUPABASE_SERVICE_ROLE_KEY') ??
+        readConfiguredEnv('SUPABASE_SERVICE_ROLE_KEY') ??
+        '');
 }
 
 function toBase64Url(value: Uint8Array): string {
-  let binary = "";
+  let binary = '';
 
   for (const byte of value) {
     binary += String.fromCharCode(byte);
   }
 
-  return btoa(binary)
-    .replaceAll("+", "-")
-    .replaceAll("/", "_")
-    .replace(/=+$/g, "");
+  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/g, '');
 }
 
 async function mintLocalJwt(role: JwtRole): Promise<string> {
-  const header = { alg: "HS256", typ: "JWT" };
+  const header = { alg: 'HS256', typ: 'JWT' };
   const payload = {
     iss: DEFAULT_JWT_ISSUER,
     role,
@@ -152,23 +149,19 @@ async function mintLocalJwt(role: JwtRole): Promise<string> {
   const payloadSegment = toBase64Url(encoder.encode(JSON.stringify(payload)));
   const signingInput = `${headerSegment}.${payloadSegment}`;
   const key = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     encoder.encode(getJwtSecret()),
-    { name: "HMAC", hash: "SHA-256" },
+    { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ["sign"],
+    ['sign'],
   );
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    encoder.encode(signingInput),
-  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(signingInput));
 
   return `${signingInput}.${toBase64Url(new Uint8Array(signature))}`;
 }
 
 async function getAccessToken(role: JwtRole): Promise<string> {
-  return getTokenEnvVar(role) || await mintLocalJwt(role);
+  return getTokenEnvVar(role) || (await mintLocalJwt(role));
 }
 
 async function createClientForRole(role: JwtRole): Promise<SupabaseClient> {
@@ -189,18 +182,16 @@ async function createClientForRole(role: JwtRole): Promise<SupabaseClient> {
 }
 
 export async function getAnonClient(): Promise<SupabaseClient> {
-  anonClientPromise ??= createClientForRole("anon");
+  anonClientPromise ??= createClientForRole('anon');
   return await anonClientPromise;
 }
 
 export async function getAdminClient(): Promise<SupabaseClient> {
-  adminClientPromise ??= createClientForRole("service_role");
+  adminClientPromise ??= createClientForRole('service_role');
   return await adminClientPromise;
 }
 
-export async function ensureBucketExists(
-  bucket = DEFAULT_MEDIA_BUCKET,
-): Promise<void> {
+export async function ensureBucketExists(bucket = DEFAULT_MEDIA_BUCKET): Promise<void> {
   const admin = await getAdminClient();
   const { data, error } = await admin.storage.listBuckets();
 
@@ -218,22 +209,17 @@ export async function ensureBucketExists(
     public: true,
   });
 
-  if (createError && !createError.message.toLowerCase().includes("exists")) {
-    throw new Error(
-      `Failed to create storage bucket "${bucket}": ${createError.message}`,
-    );
+  if (createError && !createError.message.toLowerCase().includes('exists')) {
+    throw new Error(`Failed to create storage bucket "${bucket}": ${createError.message}`);
   }
 }
 
-export async function invokeFunction(
-  functionName: string,
-  body: FormData,
-): Promise<Response> {
-  const accessToken = await getAccessToken("anon");
+export async function invokeFunction(functionName: string, body: FormData): Promise<Response> {
+  const accessToken = await getAccessToken('anon');
 
   try {
     return await fetch(`${getSupabaseUrl()}/functions/v1/${functionName}`, {
-      method: "POST",
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -260,9 +246,9 @@ export async function fetchMediaMetadataByPaths(
 ): Promise<MediaBucketMetadataRow[]> {
   const admin = await getAdminClient();
   const { data, error } = await admin
-    .from("media_bucket_metadata")
-    .select("path, mimeType, alt, tags")
-    .in("path", paths);
+    .from('media_bucket_metadata')
+    .select('path, mimeType, alt, tags')
+    .in('path', paths);
 
   if (error) {
     throw new Error(`Failed to fetch media metadata: ${error.message}`);

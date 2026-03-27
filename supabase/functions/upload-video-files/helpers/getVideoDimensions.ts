@@ -1,5 +1,5 @@
-import path from "node:path";
-import resolveFfprobePath from "./resolveFfprobePath.ts";
+import path from 'node:path';
+import resolveFfprobePath from './resolveFfprobePath.ts';
 
 const ffprobePath = resolveFfprobePath();
 
@@ -14,7 +14,7 @@ export default async function getVideoDimensions(
   file: File,
 ): Promise<{ width: number; height: number }> {
   const tempFilePath = await Deno.makeTempFile({
-    suffix: path.extname(file.name) || ".mp4",
+    suffix: path.extname(file.name) || '.mp4',
   });
 
   try {
@@ -22,14 +22,14 @@ export default async function getVideoDimensions(
 
     const command = new Deno.Command(ffprobePath, {
       args: [
-        "-v",
-        "error",
-        "-select_streams",
-        "v:0",
-        "-show_entries",
-        "stream=width,height",
-        "-of",
-        "json",
+        '-v',
+        'error',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream=width,height',
+        '-of',
+        'json',
         tempFilePath,
       ],
     });
@@ -39,16 +39,10 @@ export default async function getVideoDimensions(
       throw new Error(new TextDecoder().decode(stderr));
     }
 
-    const output = JSON.parse(
-      new TextDecoder().decode(stdout),
-    ) as FfprobeOutput;
+    const output = JSON.parse(new TextDecoder().decode(stdout)) as FfprobeOutput;
     const stream = output.streams?.[0];
 
-    if (
-      !stream ||
-      !Number.isFinite(stream.width) ||
-      !Number.isFinite(stream.height)
-    ) {
+    if (!stream || !Number.isFinite(stream.width) || !Number.isFinite(stream.height)) {
       throw new Error(`Could not determine dimensions for "${file.name}"`);
     }
 

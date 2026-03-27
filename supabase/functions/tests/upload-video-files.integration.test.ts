@@ -1,5 +1,5 @@
-import type { UploadedVideoVariantsData } from "../upload-video-files/types.ts";
-import { assert, assertEquals } from "./helpers/testUtils.ts";
+import type { UploadedVideoVariantsData } from '../upload-video-files/types.ts';
+import { assert, assertEquals } from './helpers/testUtils.ts';
 import {
   DEFAULT_MEDIA_BUCKET,
   ensureBucketExists,
@@ -9,28 +9,25 @@ import {
   isIntegrationTestEnabled,
   readFixtureFile,
   removeStorageObjects,
-} from "./helpers/integrationTestUtils.ts";
+} from './helpers/integrationTestUtils.ts';
 
-const VIDEO_FIXTURE_URL = new URL(
-  "./fixtures/videos/sample-video.mp4",
-  import.meta.url,
-);
+const VIDEO_FIXTURE_URL = new URL('./fixtures/videos/sample-video.mp4', import.meta.url);
 
-type UploadVideoResponse = {
-  results: UploadedVideoVariantsData[];
-} | {
-  error: string;
-  message?: string;
-};
+type UploadVideoResponse =
+  | {
+      results: UploadedVideoVariantsData[];
+    }
+  | {
+      error: string;
+      message?: string;
+    };
 
-function hasResults(
-  body: UploadVideoResponse,
-): body is { results: UploadedVideoVariantsData[] } {
-  return "results" in body;
+function hasResults(body: UploadVideoResponse): body is { results: UploadedVideoVariantsData[] } {
+  return 'results' in body;
 }
 
 Deno.test({
-  name: "upload-video-files uploads converted video variants to storage",
+  name: 'upload-video-files uploads converted video variants to storage',
   ignore: !isIntegrationTestEnabled(),
   async fn() {
     await ensureBucketExists(DEFAULT_MEDIA_BUCKET);
@@ -41,32 +38,32 @@ Deno.test({
     const uploadedPaths: string[] = [];
 
     try {
-      formData.append("formats", "mp4");
-      formData.append("formats", "webm");
-      formData.append("upsert", "true");
-      formData.append("tags[0]", "integration");
-      formData.append("tags[0]", testId);
+      formData.append('formats', 'mp4');
+      formData.append('formats', 'webm');
+      formData.append('upsert', 'true');
+      formData.append('tags[0]', 'integration');
+      formData.append('tags[0]', testId);
       formData.append(
-        "metadata[0]",
-        JSON.stringify({ suite: "functions", case: "upload-video-files" }),
+        'metadata[0]',
+        JSON.stringify({ suite: 'functions', case: 'upload-video-files' }),
       );
       formData.append(
-        "file[0]",
+        'file[0]',
         await readFixtureFile(VIDEO_FIXTURE_URL, {
           name: `${filenameBase}.mp4`,
-          type: "video/mp4",
+          type: 'video/mp4',
         }),
       );
 
-      const response = await invokeFunction("upload-video-files", formData);
-      const body = await response.json() as UploadVideoResponse;
+      const response = await invokeFunction('upload-video-files', formData);
+      const body = (await response.json()) as UploadVideoResponse;
 
       assertEquals(
         response.status,
         200,
-        `Expected 200 response. Set ${INTEGRATION_TEST_RUN_FLAG}=true and make sure the local stack and function runtime are running. ${
-          JSON.stringify(body)
-        }`,
+        `Expected 200 response. Set ${INTEGRATION_TEST_RUN_FLAG}=true and make sure the local stack and function runtime are running. ${JSON.stringify(
+          body,
+        )}`,
       );
       if (!hasResults(body)) {
         throw new Error(`Unexpected response body: ${JSON.stringify(body)}`);
@@ -79,10 +76,7 @@ Deno.test({
       const variants = body.results[0].variants;
       const mimeTypes = variants.map((variant) => variant.mimeType).sort();
 
-      assertEquals(
-        JSON.stringify(mimeTypes),
-        JSON.stringify(["video/mp4", "video/webm"]),
-      );
+      assertEquals(JSON.stringify(mimeTypes), JSON.stringify(['video/mp4', 'video/webm']));
 
       for (const variant of variants) {
         uploadedPaths.push(variant.path);
@@ -95,16 +89,13 @@ Deno.test({
       assertEquals(metadataRows.length, uploadedPaths.length);
 
       for (const row of metadataRows) {
-        assert(
-          uploadedPaths.includes(row.path),
-          `Unexpected metadata row: ${row.path}`,
-        );
-        assert(row.tags?.includes("integration") === true);
+        assert(uploadedPaths.includes(row.path), `Unexpected metadata row: ${row.path}`);
+        assert(row.tags?.includes('integration') === true);
         assert(row.tags?.includes(testId) === true);
       }
     } finally {
       await removeStorageObjects(uploadedPaths).catch((error) => {
-        console.warn("Failed to clean up uploaded video variants:", error);
+        console.warn('Failed to clean up uploaded video variants:', error);
       });
     }
   },

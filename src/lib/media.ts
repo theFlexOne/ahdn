@@ -21,9 +21,9 @@ export function buildSrc(filePath: string): string {
 }
 
 export function buildSrcSet(filenameBase: string, ext: string): string {
-  return IMAGE_VARIANTS
-    .map(({ suffix, width }) => `${buildSrc(`${filenameBase}-${suffix}.${ext}`)} ${width}w`)
-    .join(', ');
+  return IMAGE_VARIANTS.map(
+    ({ suffix, width }) => `${buildSrc(`${filenameBase}-${suffix}.${ext}`)} ${width}w`,
+  ).join(', ');
 }
 
 export function getImageVariantSrcSets(filenameBase: string) {

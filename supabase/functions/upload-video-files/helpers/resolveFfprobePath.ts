@@ -1,21 +1,19 @@
-import ffmpegStatic from "ffmpeg-static";
-import fs from "node:fs";
-import path from "node:path";
-import process from "node:process";
+import ffmpegStatic from 'ffmpeg-static';
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
 
 const ffmpegStaticPath = ffmpegStatic as unknown as string | null;
 
 export default function resolveFfprobePath(): string {
-  const binaryName = process.platform === "win32" ? "ffprobe.exe" : "ffprobe";
+  const binaryName = process.platform === 'win32' ? 'ffprobe.exe' : 'ffprobe';
   const candidates = [
     process.env.FFPROBE_PATH,
     process.env.FFMPEG_PATH
       ? path.resolve(path.dirname(process.env.FFMPEG_PATH), binaryName)
       : null,
-    ffmpegStaticPath
-      ? path.resolve(path.dirname(ffmpegStaticPath), binaryName)
-      : null,
-    path.resolve(process.cwd(), "node_modules/ffmpeg-static", binaryName),
+    ffmpegStaticPath ? path.resolve(path.dirname(ffmpegStaticPath), binaryName) : null,
+    path.resolve(process.cwd(), 'node_modules/ffmpeg-static', binaryName),
     binaryName,
   ];
 
@@ -23,7 +21,7 @@ export default function resolveFfprobePath(): string {
 
   if (!resolved) {
     throw new Error(
-      "ffprobe binary not found. Install ffprobe or set FFPROBE_PATH to a valid executable path.",
+      'ffprobe binary not found. Install ffprobe or set FFPROBE_PATH to a valid executable path.',
     );
   }
 
@@ -31,7 +29,7 @@ export default function resolveFfprobePath(): string {
 }
 
 function isCommandName(value: string): boolean {
-  return !value.includes("/") && !value.includes("\\");
+  return !value.includes('/') && !value.includes('\\');
 }
 
 function canUsePath(value: string | null | undefined): value is string {

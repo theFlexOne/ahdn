@@ -1,4 +1,4 @@
-import { IMAGE_FORMATS, IMAGE_PRESETS } from "./constants.ts";
+import { IMAGE_FORMATS, IMAGE_PRESETS } from './constants.ts';
 
 export type ParsedImageData = {
   file: File;
@@ -8,8 +8,8 @@ export type ParsedImageData = {
 };
 
 export type ImagePreset = keyof typeof IMAGE_PRESETS;
-export type ImageVariantExtension = typeof IMAGE_FORMATS[number]["extension"];
-export type ImageVariantMimeType = typeof IMAGE_FORMATS[number]["mimeType"];
+export type ImageVariantExtension = (typeof IMAGE_FORMATS)[number]['extension'];
+export type ImageVariantMimeType = (typeof IMAGE_FORMATS)[number]['mimeType'];
 
 export type ImageVariantMetadata = Record<string, unknown> & {
   tags: string[];

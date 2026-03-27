@@ -5,21 +5,21 @@ import { cn } from '@/lib/utils';
 type PauseButtonProps = {
   onClick?: () => void;
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   ariaLabel?: string;
 };
 
 const sizeClasses = {
-  sm: "size-12",
-  md: "size-16",
-  lg: "size-20",
+  sm: 'size-12',
+  md: 'size-16',
+  lg: 'size-20',
 } as const;
 
 export function PauseButton({
   onClick,
   className,
-  size = "md",
-  ariaLabel = "Pause",
+  size = 'md',
+  ariaLabel = 'Pause',
 }: PauseButtonProps) {
   const [isPaused, setIsPaused] = useState(false);
   const sizeClass = sizeClasses[size];
@@ -35,11 +35,11 @@ export function PauseButton({
       onClick={handleClick}
       aria-label={ariaLabel}
       className={cn(
-        "group inline-flex shrink-0 items-center justify-center rounded-full text-white/75 outline-none transition-[transform,color] duration-200 ease-out",
-        "hover:scale-[1.03] hover:text-white active:scale-[0.97]",
-        "focus-visible:scale-[1.03] focus-visible:text-white focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40",
+        'group inline-flex shrink-0 items-center justify-center rounded-full text-white/75 transition-[transform,color] duration-200 ease-out outline-none',
+        'hover:scale-[1.03] hover:text-white active:scale-[0.97]',
+        'focus-visible:scale-[1.03] focus-visible:text-white focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black/40',
         sizeClass,
-        className
+        className,
       )}
     >
       <svg
@@ -63,7 +63,8 @@ export function PauseButton({
             transform="translate(167.0648 120.654) scale(0.72)"
             className="fill-none stroke-current group-hover:fill-white/50"
             strokeWidth="2"
-          />) : (
+          />
+        ) : (
           <g id="pause" strokeWidth="1">
             <rect
               x="156"

@@ -4,7 +4,7 @@ import ImageCarousel from '@/components/ImageCarousel';
 import PageHeading from '@/components/PageHeading';
 import { Page } from '@/layout';
 
-import type { MediaMetadata } from "@/types";
+import type { MediaMetadata } from '@/types';
 export default function Gallery() {
   const { images }: { images: MediaMetadata[] } = useLoaderData();
 

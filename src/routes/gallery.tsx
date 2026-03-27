@@ -1,4 +1,4 @@
-import Gallery from "@/pages/gallery/Gallery";
+import Gallery from '@/pages/gallery/Gallery';
 
 export async function clientLoader() {
   return {};

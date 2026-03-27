@@ -83,11 +83,7 @@ export function Modal({
         <button
           type="button"
           aria-label="Close modal"
-          className="
-              inline-flex h-9 w-9 items-center justify-center rounded-full
-              text-zinc-400 transition hover:bg-white/10 hover:text-white
-              focus:outline-none cursor-pointer
-            "
+          className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-zinc-400 transition hover:bg-white/10 hover:text-white focus:outline-none"
           onClick={() => closeModal()}
         >
           x

@@ -1,16 +1,16 @@
-import { ReactElement } from "react";
+import { ReactElement } from 'react';
 const RHAP_UI = {
-  CURRENT_TIME = "CURRENT_TIME",
-  CURRENT_LEFT_TIME = "CURRENT_LEFT_TIME",
-  PROGRESS_BAR = "PROGRESS_BAR",
-  DURATION = "DURATION",
-  ADDITIONAL_CONTROLS = "ADDITIONAL_CONTROLS",
-  MAIN_CONTROLS = "MAIN_CONTROLS",
-  VOLUME_CONTROLS = "VOLUME_CONTROLS",
-  LOOP = "LOOP",
-  VOLUME = "VOLUME"
-}
-declare module "react-h5-audio-player" {
+  CURRENT_TIME = 'CURRENT_TIME',
+  CURRENT_LEFT_TIME = 'CURRENT_LEFT_TIME',
+  PROGRESS_BAR = 'PROGRESS_BAR',
+  DURATION = 'DURATION',
+  ADDITIONAL_CONTROLS = 'ADDITIONAL_CONTROLS',
+  MAIN_CONTROLS = 'MAIN_CONTROLS',
+  VOLUME_CONTROLS = 'VOLUME_CONTROLS',
+  LOOP = 'LOOP',
+  VOLUME = 'VOLUME',
+};
+declare module 'react-h5-audio-player' {
   type CustomUIModule = RHAP_UI | ReactElement;
   type CustomUIModules = Array<CustomUIModule>;
   type OnSeek = (audio: HTMLAudioElement, time: number) => Promise<void>;

@@ -5,7 +5,7 @@ export default function validateMediaMimeType(file: File) {
     return;
   }
 
-  if (!type.startsWith("image") && !type.startsWith("video")) {
+  if (!type.startsWith('image') && !type.startsWith('video')) {
     console.error(`File ${file.name} is not an image or video`);
     return;
   }

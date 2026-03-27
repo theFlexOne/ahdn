@@ -26,12 +26,12 @@ export default function Schedule({
   const [selectedEvent, setSelectedEvent] = useState<EventDetails | null>(null);
 
   return (
-    <Page className="flex-col items-center gap-12 relative">
+    <Page className="relative flex-col items-center gap-12">
       <Image className="fixed top-10 left-0 -z-10 brightness-60" {...background} />
       <PageHeading>Scheduled Events</PageHeading>
       <PageCard>
         <PageSection>
-          <div className="w-full px-4 self-center">
+          <div className="w-full self-center px-4">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -45,7 +45,7 @@ export default function Schedule({
                   <TableRow
                     key={event.id}
                     data-event-id={event.id}
-                    className="cursor-pointer hover:bg-gray-200 hover:text-black transition-colors duration-300 ease-in-out"
+                    className="cursor-pointer transition-colors duration-300 ease-in-out hover:bg-gray-200 hover:text-black"
                     onClick={() => setSelectedEvent(event)}
                   >
                     <TableCell>
@@ -69,7 +69,7 @@ export default function Schedule({
         </PageSection>
       </PageCard>
       <Modal
-        className="max-w-4xl min-h-80"
+        className="min-h-80 max-w-4xl"
         open={selectedEvent !== null}
         closeModal={() => setSelectedEvent(null)}
         title={selectedEvent?.title}
@@ -82,7 +82,7 @@ export default function Schedule({
               </p>
             </div>
 
-            <div className="flex flex-col gap-4 md:border-l md:border-white/10 md:pl-6 self-center">
+            <div className="flex flex-col gap-4 self-center md:border-l md:border-white/10 md:pl-6">
               <div className="space-y-1">
                 <p className="font-semibold">{selectedEvent?.venueName}</p>
                 <p>
@@ -95,7 +95,7 @@ export default function Schedule({
               </div>
 
               <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Date</p>
+                <p className="text-xs font-semibold tracking-wide text-zinc-400 uppercase">Date</p>
                 <p>{selectedEvent ? formatDisplayDate(selectedEvent.dateTime) : null}</p>
                 <p>{selectedEvent ? formatDisplayTime(selectedEvent.dateTime) : null}</p>
               </div>

@@ -1,6 +1,6 @@
-import { DEFAULT_VIDEO_FORMATS } from "../constants.ts";
+import { DEFAULT_VIDEO_FORMATS } from '../constants.ts';
 
-import type { UploadRequestOptions, VideoFormat } from "../types.ts";
+import type { UploadRequestOptions, VideoFormat } from '../types.ts';
 
 function isVideoFormat(value: string): value is VideoFormat {
   return DEFAULT_VIDEO_FORMATS.includes(value as VideoFormat);
@@ -11,7 +11,7 @@ function parseUpsert(formDataValue: FormDataEntryValue | null): boolean {
     return false;
   }
 
-  if (typeof formDataValue !== "string") {
+  if (typeof formDataValue !== 'string') {
     throw new Error('Field "upsert" must be a string');
   }
 
@@ -21,24 +21,22 @@ function parseUpsert(formDataValue: FormDataEntryValue | null): boolean {
     return false;
   }
 
-  if (normalizedValue === "true" || normalizedValue === "1") {
+  if (normalizedValue === 'true' || normalizedValue === '1') {
     return true;
   }
 
-  if (normalizedValue === "false" || normalizedValue === "0") {
+  if (normalizedValue === 'false' || normalizedValue === '0') {
     return false;
   }
 
   throw new Error('Field "upsert" must be "true", "false", "1", or "0"');
 }
 
-function parseStringList(
-  formData: FormData,
-  keys: readonly string[],
-): string[] {
-  return keys.flatMap((key) => formData.getAll(key))
+function parseStringList(formData: FormData, keys: readonly string[]): string[] {
+  return keys
+    .flatMap((key) => formData.getAll(key))
     .map((value) => {
-      if (typeof value !== "string") {
+      if (typeof value !== 'string') {
         throw new Error(`Field "${keys[0]}" must be a string`);
       }
 
@@ -48,7 +46,7 @@ function parseStringList(
 }
 
 function parseFormats(formData: FormData): VideoFormat[] {
-  const rawFormats = parseStringList(formData, ["formats", "format"]);
+  const rawFormats = parseStringList(formData, ['formats', 'format']);
 
   if (rawFormats.length === 0) {
     return [...DEFAULT_VIDEO_FORMATS];
@@ -56,20 +54,16 @@ function parseFormats(formData: FormData): VideoFormat[] {
 
   return [...new Set(rawFormats)].map((format) => {
     if (!isVideoFormat(format)) {
-      throw new Error(
-        `Field "formats" must be one of: ${DEFAULT_VIDEO_FORMATS.join(", ")}`,
-      );
+      throw new Error(`Field "formats" must be one of: ${DEFAULT_VIDEO_FORMATS.join(', ')}`);
     }
 
     return format;
   });
 }
 
-export default function parseRequestOptions(
-  formData: FormData,
-): UploadRequestOptions {
+export default function parseRequestOptions(formData: FormData): UploadRequestOptions {
   return {
     formats: parseFormats(formData),
-    upsert: parseUpsert(formData.get("upsert")),
+    upsert: parseUpsert(formData.get('upsert')),
   };
 }

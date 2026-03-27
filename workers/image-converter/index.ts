@@ -1,16 +1,12 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import express, {
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
-import multer from "multer";
-import sharp, { type Metadata } from "sharp";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import express, { type NextFunction, type Request, type Response } from 'express';
+import multer from 'multer';
+import sharp, { type Metadata } from 'sharp';
 
 export const app = express();
 const port = Number(process.env.PORT ?? 8080);
-const workerSharedSecret = process.env.WORKER_SHARED_SECRET?.trim() ?? "";
+const workerSharedSecret = process.env.WORKER_SHARED_SECRET?.trim() ?? '';
 const maxUploadBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 20 * 1024 * 1024);
 
 const upload = multer({
@@ -24,15 +20,13 @@ const IMAGE_PRESETS = {
   hero: { sm: 768, md: 1280, lg: 1920 },
 } as const;
 
-const DEFAULT_IMAGE_PRESET = "content" as const;
-const IMAGE_PRESET_KEYS = Object.keys(IMAGE_PRESETS) as Array<
-  keyof typeof IMAGE_PRESETS
->;
+const DEFAULT_IMAGE_PRESET = 'content' as const;
+const IMAGE_PRESET_KEYS = Object.keys(IMAGE_PRESETS) as Array<keyof typeof IMAGE_PRESETS>;
 
 const IMAGE_FORMATS = [
-  { extension: "avif", mimeType: "image/avif" },
-  { extension: "webp", mimeType: "image/webp" },
-  { extension: "jpg", mimeType: "image/jpeg" },
+  { extension: 'avif', mimeType: 'image/avif' },
+  { extension: 'webp', mimeType: 'image/webp' },
+  { extension: 'jpg', mimeType: 'image/jpeg' },
 ] as const;
 
 const IMAGE_ENCODERS = {
@@ -42,7 +36,7 @@ const IMAGE_ENCODERS = {
 } as const;
 
 type ImagePreset = keyof typeof IMAGE_PRESETS;
-type ImageVariantMimeType = typeof IMAGE_FORMATS[number]["mimeType"];
+type ImageVariantMimeType = (typeof IMAGE_FORMATS)[number]['mimeType'];
 type MultipartBody = Record<string, unknown>;
 
 export type UploadedFile = {
@@ -64,18 +58,14 @@ type ImageVariantsData = {
   variants: ImageVariantData[];
 };
 
-function requireWorkerSecret(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+function requireWorkerSecret(req: Request, res: Response, next: NextFunction): void {
   if (!workerSharedSecret) {
     next();
     return;
   }
 
-  if (req.get("x-worker-secret") !== workerSharedSecret) {
-    res.status(401).json({ error: "Unauthorized" });
+  if (req.get('x-worker-secret') !== workerSharedSecret) {
+    res.status(401).json({ error: 'Unauthorized' });
     return;
   }
 
@@ -83,16 +73,14 @@ function requireWorkerSecret(
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function isImagePreset(value: string): value is ImagePreset {
   return IMAGE_PRESET_KEYS.includes(value as ImagePreset);
 }
 
-function getIndexedField(
-  key: string,
-): { keyName: string; index: number } | null {
+function getIndexedField(key: string): { keyName: string; index: number } | null {
   const indexedMatch = key.match(/^(\w+)\[(\d+)\]$/);
 
   if (indexedMatch) {
@@ -100,8 +88,8 @@ function getIndexedField(
     return { keyName, index: Number(indexValue) };
   }
 
-  if (key === "file") {
-    return { keyName: "file", index: 0 };
+  if (key === 'file') {
+    return { keyName: 'file', index: 0 };
   }
 
   return null;
@@ -112,7 +100,7 @@ function getStringValues(value: unknown, key: string): string[] {
     return [];
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return [value];
   }
 
@@ -123,16 +111,12 @@ function getStringValues(value: unknown, key: string): string[] {
   throw new Error(`Field "${key}" must be a string`);
 }
 
-export function parseRequestOptions(
-  body: MultipartBody,
-): { preset: ImagePreset } {
-  const [presetValue] = getStringValues(body.preset, "preset");
+export function parseRequestOptions(body: MultipartBody): { preset: ImagePreset } {
+  const [presetValue] = getStringValues(body.preset, 'preset');
   const normalizedPreset = presetValue?.trim() || DEFAULT_IMAGE_PRESET;
 
   if (!isImagePreset(normalizedPreset)) {
-    throw new Error(
-      `Field "preset" must be one of: ${IMAGE_PRESET_KEYS.join(", ")}`,
-    );
+    throw new Error(`Field "preset" must be one of: ${IMAGE_PRESET_KEYS.join(', ')}`);
   }
 
   return { preset: normalizedPreset };
@@ -146,15 +130,13 @@ function toUploadedFile(file: Express.Multer.File): UploadedFile {
   };
 }
 
-export function parseMultipartFiles(
-  files: Express.Multer.File[],
-): UploadedFile[] {
+export function parseMultipartFiles(files: Express.Multer.File[]): UploadedFile[] {
   const filesByIndex = new Map<number, UploadedFile>();
 
   for (const file of files) {
     const match = getIndexedField(file.fieldname);
 
-    if (!match || match.keyName !== "file") {
+    if (!match || match.keyName !== 'file') {
       continue;
     }
 
@@ -164,7 +146,7 @@ export function parseMultipartFiles(
   return [...filesByIndex.entries()]
     .sort(([leftIndex], [rightIndex]) => leftIndex - rightIndex)
     .map(([, file]) => {
-      if (file.type && !file.type.startsWith("image/")) {
+      if (file.type && !file.type.startsWith('image/')) {
         throw new Error(`File "${file.name}" must be an image`);
       }
 
@@ -173,9 +155,7 @@ export function parseMultipartFiles(
 }
 
 function getTargetWidths(sourceWidth: number, preset: ImagePreset): number[] {
-  const presetWidths = Object.values(IMAGE_PRESETS[preset]).filter((width) =>
-    width <= sourceWidth
-  );
+  const presetWidths = Object.values(IMAGE_PRESETS[preset]).filter((width) => width <= sourceWidth);
 
   if (presetWidths.length > 0) {
     return [...new Set(presetWidths)];
@@ -185,13 +165,10 @@ function getTargetWidths(sourceWidth: number, preset: ImagePreset): number[] {
 }
 
 function isSvgFile(file: UploadedFile): boolean {
-  return file.type === "image/svg+xml" ||
-    path.extname(file.name).toLowerCase() === ".svg";
+  return file.type === 'image/svg+xml' || path.extname(file.name).toLowerCase() === '.svg';
 }
 
-function getOrientedDimensions(
-  metadata: Metadata,
-): { width: number; height: number } | null {
+function getOrientedDimensions(metadata: Metadata): { width: number; height: number } | null {
   if (!metadata.width || !metadata.height) {
     return null;
   }
@@ -215,20 +192,20 @@ async function createVariant(
   filenameBase: string,
   sourceName: string,
   targetWidth: number,
-  format: typeof IMAGE_FORMATS[number],
+  format: (typeof IMAGE_FORMATS)[number],
 ): Promise<ImageVariantData> {
   const image = sharp(sourceBytes)
     .rotate()
     .resize({ width: targetWidth, withoutEnlargement: true });
 
   switch (format.extension) {
-    case "avif":
+    case 'avif':
       image.avif(IMAGE_ENCODERS.avif);
       break;
-    case "webp":
+    case 'webp':
       image.webp(IMAGE_ENCODERS.webp);
       break;
-    case "jpg":
+    case 'jpg':
       image.jpeg(IMAGE_ENCODERS.jpg);
       break;
   }
@@ -246,7 +223,7 @@ async function createVariant(
     width,
     height,
     filename: `${filenameBase}-${width}.${format.extension}`,
-    contentBase64: data.toString("base64"),
+    contentBase64: data.toString('base64'),
   };
 }
 
@@ -255,40 +232,27 @@ async function createImageVariantSet(
   preset: ImagePreset,
 ): Promise<ImageVariantsData> {
   if (isSvgFile(file)) {
-    throw new Error(
-      `File "${file.name}" is an SVG, which is not supported by this worker`,
-    );
+    throw new Error(`File "${file.name}" is an SVG, which is not supported by this worker`);
   }
 
-  const filenameBase = path.basename(
-    file.name,
-    path.extname(file.name),
-  );
+  const filenameBase = path.basename(file.name, path.extname(file.name));
   const sourceWidth = await getSourceWidth(file.bytes);
 
   if (!sourceWidth) {
-    throw new Error(
-      `Could not determine image width for "${file.name}"`,
-    );
+    throw new Error(`Could not determine image width for "${file.name}"`);
   }
 
   const targetWidths = getTargetWidths(sourceWidth, preset);
   const variants = await Promise.all(
     targetWidths.flatMap((targetWidth) =>
       IMAGE_FORMATS.map((format) =>
-        createVariant(
-          file.bytes,
-          filenameBase,
-          file.name,
-          targetWidth,
-          format,
-        )
-      )
+        createVariant(file.bytes, filenameBase, file.name, targetWidth, format),
+      ),
     ),
   );
 
-  variants.sort((left, right) =>
-    left.width - right.width || left.mimeType.localeCompare(right.mimeType)
+  variants.sort(
+    (left, right) => left.width - right.width || left.mimeType.localeCompare(right.mimeType),
   );
 
   return {
@@ -301,17 +265,15 @@ export function createImageVariants(
   files: UploadedFile[],
   preset: ImagePreset = DEFAULT_IMAGE_PRESET,
 ): Promise<ImageVariantsData[]> {
-  return Promise.all(
-    files.map((file) => createImageVariantSet(file, preset)),
-  );
+  return Promise.all(files.map((file) => createImageVariantSet(file, preset)));
 }
 
-app.get("/health", (_req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
 
 app.post(
-  "/convert",
+  '/convert',
   requireWorkerSecret,
   upload.any(),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -322,9 +284,7 @@ app.post(
       const parsedFiles = parseMultipartFiles(files);
 
       if (parsedFiles.length === 0) {
-        res.status(400).json(
-          { error: "Body must include at least one image file" },
-        );
+        res.status(400).json({ error: 'Body must include at least one image file' });
         return;
       }
 
@@ -337,38 +297,33 @@ app.post(
   },
 );
 
-app.use(
-  (
-    error: unknown,
-    _req: Request,
-    res: Response,
-    _next: NextFunction,
-  ): void => {
-    const message = error instanceof Error ? error.message : String(error);
-    const status = message.startsWith("Field ") ||
-        message.startsWith("Missing image file") ||
-        message.startsWith("File ") ||
-        message.startsWith("Body must include")
+app.use((error: unknown, _req: Request, res: Response, _next: NextFunction): void => {
+  const message = error instanceof Error ? error.message : String(error);
+  const status =
+    message.startsWith('Field ') ||
+    message.startsWith('Missing image file') ||
+    message.startsWith('File ') ||
+    message.startsWith('Body must include')
       ? 400
       : 500;
 
-    if (status === 500) {
-      console.error("Error processing uploaded images:", error);
-    }
+  if (status === 500) {
+    console.error('Error processing uploaded images:', error);
+  }
 
-    res.status(status).json({
-      error: status === 400 ? message : "Failed to process uploaded images",
-      ...(status === 500 ? { message } : {}),
-    });
-  },
-);
+  res.status(status).json({
+    error: status === 400 ? message : 'Failed to process uploaded images',
+    ...(status === 500 ? { message } : {}),
+  });
+});
 
-const isDirectRun = process.env.NODE_ENV !== "test" &&
+const isDirectRun =
+  process.env.NODE_ENV !== 'test' &&
   process.argv[1] !== undefined &&
   path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 if (isDirectRun) {
-  app.listen(port, "0.0.0.0", () => {
+  app.listen(port, '0.0.0.0', () => {
     console.log(`Image worker listening on port ${port}`);
   });
 }

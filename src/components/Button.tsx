@@ -4,7 +4,7 @@ export default function Button({ className, children, ...props }: React.Componen
   return (
     <button
       className={cn(
-        'py-2 px-4 border rounded-sm cursor-pointer hover:bg-current/30  transition-colors duration-200 ease-in-out',
+        'cursor-pointer rounded-sm border px-4 py-2 transition-colors duration-200 ease-in-out hover:bg-current/30',
         className,
       )}
       {...props}

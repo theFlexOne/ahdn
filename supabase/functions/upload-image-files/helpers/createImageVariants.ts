@@ -1,5 +1,5 @@
-import path from "node:path";
-import { DEFAULT_IMAGE_PRESET } from "../constants.ts";
+import path from 'node:path';
+import { DEFAULT_IMAGE_PRESET } from '../constants.ts';
 
 import type {
   ImagePreset,
@@ -7,10 +7,9 @@ import type {
   ImageVariantMimeType,
   ImageVariantsData,
   ParsedImageData,
-} from "../types.ts";
+} from '../types.ts';
 
-const DEFAULT_LOCAL_IMAGE_CONVERTER_URL =
-  "http://127.0.0.1:8080/convert" as const;
+const DEFAULT_LOCAL_IMAGE_CONVERTER_URL = 'http://127.0.0.1:8080/convert' as const;
 
 type WorkerImageVariantData = {
   mimeType: ImageVariantMimeType;
@@ -30,12 +29,11 @@ type WorkerResponseBody = {
 };
 
 function isSvgFile(file: File): boolean {
-  return file.type === "image/svg+xml" ||
-    path.extname(file.name).toLowerCase() === ".svg";
+  return file.type === 'image/svg+xml' || path.extname(file.name).toLowerCase() === '.svg';
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function readEnv(key: string): string | undefined {
@@ -60,27 +58,27 @@ function normalizeWorkerUrl(urlValue: string): string {
     throw new Error(`IMAGE_CONVERTER_URL is invalid: ${urlValue}`);
   }
 
-  if (url.pathname === "" || url.pathname === "/") {
-    url.pathname = "/convert";
+  if (url.pathname === '' || url.pathname === '/') {
+    url.pathname = '/convert';
   }
 
   return url.toString();
 }
 
 function getWorkerUrl(): string {
-  const configuredWorkerUrl = readEnv("IMAGE_CONVERTER_URL");
+  const configuredWorkerUrl = readEnv('IMAGE_CONVERTER_URL');
 
   if (configuredWorkerUrl) {
     return normalizeWorkerUrl(configuredWorkerUrl);
   }
 
-  const supabaseUrl = readEnv("SUPABASE_URL");
+  const supabaseUrl = readEnv('SUPABASE_URL');
 
   if (supabaseUrl) {
     try {
       const hostname = new URL(supabaseUrl).hostname.toLowerCase();
 
-      if (hostname === "127.0.0.1" || hostname === "localhost") {
+      if (hostname === '127.0.0.1' || hostname === 'localhost') {
         return DEFAULT_LOCAL_IMAGE_CONVERTER_URL;
       }
     } catch {
@@ -88,15 +86,11 @@ function getWorkerUrl(): string {
     }
   }
 
-  throw new Error(
-    "IMAGE_CONVERTER_URL is not configured for upload-image-files",
-  );
+  throw new Error('IMAGE_CONVERTER_URL is not configured for upload-image-files');
 }
 
 function getWorkerSecret(): string {
-  return readEnv("WORKER_SHARED_SECRET") ??
-    readEnv("IMAGE_CONVERTER_SHARED_SECRET") ??
-    "";
+  return readEnv('WORKER_SHARED_SECRET') ?? readEnv('IMAGE_CONVERTER_SHARED_SECRET') ?? '';
 }
 
 function decodeBase64(value: string): Uint8Array {
@@ -126,7 +120,7 @@ function toImageVariantData(
     !Number.isFinite(variant.height) ||
     variant.height <= 0
   ) {
-    throw new Error("Image conversion worker returned an invalid variant");
+    throw new Error('Image conversion worker returned an invalid variant');
   }
 
   return {
@@ -151,7 +145,7 @@ async function requestImageVariants(
   preset: ImagePreset,
 ): Promise<WorkerImageVariantsData[]> {
   const formData = new FormData();
-  formData.append("preset", preset);
+  formData.append('preset', preset);
 
   images.forEach((imageData, index) => {
     formData.append(`file[${index}]`, imageData.file, imageData.file.name);
@@ -161,14 +155,14 @@ async function requestImageVariants(
   const workerSecret = getWorkerSecret();
 
   if (workerSecret) {
-    headers.set("x-worker-secret", workerSecret);
+    headers.set('x-worker-secret', workerSecret);
   }
 
   let response: Response;
 
   try {
     response = await fetch(getWorkerUrl(), {
-      method: "POST",
+      method: 'POST',
       headers,
       body: formData,
     });
@@ -188,13 +182,13 @@ async function requestImageVariants(
         throw new Error(rawBody);
       }
 
-      throw new Error("Image conversion worker returned invalid JSON");
+      throw new Error('Image conversion worker returned invalid JSON');
     }
   }
 
   if (!response.ok) {
     const errorMessage =
-      isRecord(parsedBody) && typeof parsedBody.error === "string"
+      isRecord(parsedBody) && typeof parsedBody.error === 'string'
         ? parsedBody.error
         : rawBody || `Image conversion worker returned HTTP ${response.status}`;
 
@@ -202,7 +196,7 @@ async function requestImageVariants(
   }
 
   if (!isRecord(parsedBody) || !Array.isArray(parsedBody.results)) {
-    throw new Error("Image conversion worker returned an invalid response");
+    throw new Error('Image conversion worker returned an invalid response');
   }
 
   return (parsedBody as WorkerResponseBody).results;
@@ -223,35 +217,27 @@ export default async function createImageVariants(
   const workerResults = await requestImageVariants(images, preset);
 
   if (workerResults.length !== images.length) {
-    throw new Error(
-      "Image conversion worker returned an unexpected number of result sets",
-    );
+    throw new Error('Image conversion worker returned an unexpected number of result sets');
   }
 
   const results = workerResults.map((workerResult, index) => {
     const imageData = images[index];
 
-    if (
-      !imageData ||
-      !isRecord(workerResult) ||
-      !Array.isArray(workerResult.variants)
-    ) {
-      throw new Error("Image conversion worker returned an invalid response");
+    if (!imageData || !isRecord(workerResult) || !Array.isArray(workerResult.variants)) {
+      throw new Error('Image conversion worker returned an invalid response');
     }
 
-    const variants = workerResult.variants.map((variant) =>
-      toImageVariantData(imageData, variant)
-    );
+    const variants = workerResult.variants.map((variant) => toImageVariantData(imageData, variant));
 
-    variants.sort((left, right) =>
-      left.width - right.width || left.mimeType.localeCompare(right.mimeType)
+    variants.sort(
+      (left, right) => left.width - right.width || left.mimeType.localeCompare(right.mimeType),
     );
 
     return {
-      filenameBase: typeof workerResult.filenameBase === "string" &&
-          workerResult.filenameBase.length > 0
-        ? workerResult.filenameBase
-        : toFilenameBase(imageData),
+      filenameBase:
+        typeof workerResult.filenameBase === 'string' && workerResult.filenameBase.length > 0
+          ? workerResult.filenameBase
+          : toFilenameBase(imageData),
       variants,
     };
   });

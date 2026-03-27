@@ -16,7 +16,13 @@ type EmbeddedVideoProps = {
   onPause?: () => void;
 };
 
-export default function EmbeddedVideo({ className, src, title, onPlay, onPause }: EmbeddedVideoProps) {
+export default function EmbeddedVideo({
+  className,
+  src,
+  title,
+  onPlay,
+  onPause,
+}: EmbeddedVideoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onPlayRef = useRef(onPlay);
   const onPauseRef = useRef(onPause);
@@ -37,7 +43,8 @@ export default function EmbeddedVideo({ className, src, title, onPlay, onPause }
     iframe.src = buildYouTubeEmbedSrc(src, window.location.origin);
     iframe.className = IFRAME_CLASS_NAME;
     iframe.title = title ?? DEFAULT_TITLE;
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allow =
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.referrerPolicy = 'strict-origin-when-cross-origin';
     iframe.allowFullscreen = true;
 
@@ -71,10 +78,5 @@ export default function EmbeddedVideo({ className, src, title, onPlay, onPause }
     };
   }, [src, title]);
 
-  return (
-    <div
-      ref={containerRef}
-      className={cn(CONTAINER_CLASS_NAME, className)}
-    />
-  )
+  return <div ref={containerRef} className={cn(CONTAINER_CLASS_NAME, className)} />;
 }

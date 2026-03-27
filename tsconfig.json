@@ -11,13 +11,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*",
-        "./supabase/functions/*"
-      ]
+      "@/*": ["./src/*", "./supabase/functions/*"]
     },
-    "types": [
-      "facebook-js-sdk"
-    ]
+    "types": ["facebook-js-sdk"]
   }
 }

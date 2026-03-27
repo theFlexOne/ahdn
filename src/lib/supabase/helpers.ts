@@ -1,16 +1,11 @@
-import type { EventDetails } from "@/features/events/types";
+import type { EventDetails } from '@/features/events/types';
 
 import getSupabaseClient from './client';
-export {
-  buildSrc,
-  buildSrcSet,
-  getImageVariantSrcSets,
-  getSupabaseStorageUrl,
-} from '@/lib/media';
+export { buildSrc, buildSrcSet, getImageVariantSrcSets, getSupabaseStorageUrl } from '@/lib/media';
 
 export async function getEvents({
   startDate = new Date(new Date().setHours(0, 0, 0, 0)),
-  endDate = new Date("2100-01-01"),
+  endDate = new Date('2100-01-01'),
   limit,
 }: {
   startDate?: Date;
@@ -18,14 +13,15 @@ export async function getEvents({
   limit: number;
 }): Promise<EventDetails[]> {
   if (endDate < startDate) {
-    throw new Error("End date must be after start date");
+    throw new Error('End date must be after start date');
   }
 
   const supabase = getSupabaseClient();
 
   let query = supabase
-    .from("events")
-    .select(`
+    .from('events')
+    .select(
+      `
       id,
       dateTime:date_time,
       title,
@@ -38,9 +34,10 @@ export async function getEvents({
         state,
         zip
       )
-    `)
-    .gte("date_time", startDate.toISOString())
-    .lte("date_time", endDate.toISOString());
+    `,
+    )
+    .gte('date_time', startDate.toISOString())
+    .lte('date_time', endDate.toISOString());
 
   if (limit) {
     query = query.limit(limit);
@@ -54,26 +51,24 @@ export async function getEvents({
   }
 
   return data.map((event) => ({
-    id: event.id ?? "",
+    id: event.id ?? '',
     dateTime: new Date(event.dateTime),
-    title: event.title ?? "",
-    venueName: event.venueName ?? "",
-    description: event.description ?? "",
+    title: event.title ?? '',
+    venueName: event.venueName ?? '',
+    description: event.description ?? '',
     address: {
-      address1: event.address?.address1 ?? "",
-      address2: event.address?.address2 ?? "",
-      city: event.address?.city ?? "",
-      state: event.address?.state ?? "",
-      zip: event.address?.zip ?? "",
+      address1: event.address?.address1 ?? '',
+      address2: event.address?.address2 ?? '',
+      city: event.address?.city ?? '',
+      state: event.address?.state ?? '',
+      zip: event.address?.zip ?? '',
     },
   }));
 }
 
 export async function getSongList() {
   const supabase = getSupabaseClient();
-  const { data, error } = await supabase
-    .from("songs")
-    .select(`*`);
+  const { data, error } = await supabase.from('songs').select(`*`);
 
   if (error) {
     console.error(error);

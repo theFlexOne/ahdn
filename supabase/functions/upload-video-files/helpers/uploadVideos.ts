@@ -1,21 +1,18 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { VIDEO_UPLOAD_BUCKET } from "../constants.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { VIDEO_UPLOAD_BUCKET } from '../constants.ts';
 
 import type {
   UploadedVideoVariantsData,
   UploadVideosOptions,
   VideoVariantsData,
-} from "../types.ts";
+} from '../types.ts';
 
 export default async function uploadVideos(
   supabase: SupabaseClient,
   videos: VideoVariantsData[],
   options: UploadVideosOptions = {},
 ): Promise<UploadedVideoVariantsData[]> {
-  const {
-    bucket = VIDEO_UPLOAD_BUCKET,
-    upsert = false,
-  } = options;
+  const { bucket = VIDEO_UPLOAD_BUCKET, upsert = false } = options;
 
   return await Promise.all(
     videos.map(async ({ filenameBase, variants }) => ({
@@ -32,9 +29,7 @@ export default async function uploadVideos(
             });
 
           if (error) {
-            throw new Error(
-              `Failed to upload "${variant.file.name}": ${error.message}`,
-            );
+            throw new Error(`Failed to upload "${variant.file.name}": ${error.message}`);
           }
 
           return {

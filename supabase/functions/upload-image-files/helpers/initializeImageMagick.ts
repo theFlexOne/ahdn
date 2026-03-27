@@ -1,5 +1,5 @@
-import { initializeImageMagick } from "@imagemagick/magick-wasm";
-import { MAGICK_WASM_WASM_SPEC } from "../constants.ts";
+import { initializeImageMagick } from '@imagemagick/magick-wasm';
+import { MAGICK_WASM_WASM_SPEC } from '../constants.ts';
 
 let imageMagickInitialization: Promise<void> | null = null;
 

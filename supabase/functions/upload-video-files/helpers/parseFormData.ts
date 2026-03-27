@@ -1,7 +1,7 @@
-import type { ParsedVideoData } from "../types.ts";
+import type { ParsedVideoData } from '../types.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 export default function parseFormData(formData: FormData): ParsedVideoData[] {
@@ -19,7 +19,7 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
     const videoData = videoDataByIndex.get(index) ?? {};
     videoDataByIndex.set(index, videoData);
 
-    if (keyName === "file") {
+    if (keyName === 'file') {
       if (!(value instanceof File)) {
         throw new Error(`Field "${key}" must be a file`);
       }
@@ -29,16 +29,16 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
     }
 
     switch (keyName) {
-      case "tags":
-        if (typeof value !== "string") {
+      case 'tags':
+        if (typeof value !== 'string') {
           throw new Error(`Field "${key}" must be a string`);
         }
 
         videoData.tags ??= [];
         videoData.tags.push(value.trim());
         return;
-      case "metadata":
-        if (typeof value !== "string") {
+      case 'metadata':
+        if (typeof value !== 'string') {
           throw new Error(`Field "${key}" must be a JSON string`);
         }
 
@@ -46,14 +46,12 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
           const parsedMetadata = JSON.parse(value) as unknown;
 
           if (!isRecord(parsedMetadata)) {
-            throw new Error("metadata must be a JSON object");
+            throw new Error('metadata must be a JSON object');
           }
 
           videoData.metadata = parsedMetadata;
         } catch (error) {
-          const message = error instanceof Error
-            ? error.message
-            : String(error);
+          const message = error instanceof Error ? error.message : String(error);
           throw new Error(`Field "${key}" is invalid: ${message}`);
         }
 
@@ -70,7 +68,7 @@ export default function parseFormData(formData: FormData): ParsedVideoData[] {
         throw new Error(`Missing video file for index ${index}`);
       }
 
-      if (videoData.file.type && !videoData.file.type.startsWith("video/")) {
+      if (videoData.file.type && !videoData.file.type.startsWith('video/')) {
         throw new Error(`File "${videoData.file.name}" must be a video`);
       }
 

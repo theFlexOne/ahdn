@@ -1,22 +1,17 @@
 import './index.css';
 
-import {
-    Links, Meta, Outlet, Scripts, ScrollRestoration
-} from 'react-router';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren } from 'react';
 
-export { ErrorBoundary } from "./components/ErrorBoundary";
+export { ErrorBoundary } from './components/ErrorBoundary';
 
 export function meta() {
-  return [
-    { title: "ahdn" },
-    { name: "description", content: "Website for A Hard Day's Night." },
-  ];
+  return [{ title: 'ahdn' }, { name: 'description', content: "Website for A Hard Day's Night." }];
 }
 
 export function links() {
-  return [{ rel: "icon", href: "/favicon.svg" }];
+  return [{ rel: 'icon', href: '/favicon.svg' }];
 }
 
 function Document({ children }: PropsWithChildren) {
@@ -55,7 +50,5 @@ export function HydrateFallback() {
 }
 
 export default function App() {
-  return (
-    <Outlet />
-  );
+  return <Outlet />;
 }

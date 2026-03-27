@@ -1,21 +1,18 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { IMAGE_UPLOAD_BUCKET } from "../constants.ts";
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { IMAGE_UPLOAD_BUCKET } from '../constants.ts';
 
 import type {
   ImageVariantsData,
   UploadedImageVariantsData,
   UploadImagesOptions,
-} from "../types.ts";
+} from '../types.ts';
 
 export default async function uploadImages(
   supabase: SupabaseClient,
   imageVariants: ImageVariantsData[],
   options: UploadImagesOptions = {},
 ): Promise<UploadedImageVariantsData[]> {
-  const {
-    bucket = IMAGE_UPLOAD_BUCKET,
-    upsert = false,
-  } = options;
+  const { bucket = IMAGE_UPLOAD_BUCKET, upsert = false } = options;
 
   return await Promise.all(
     imageVariants.map(async ({ filenameBase, variants }) => ({
@@ -32,9 +29,7 @@ export default async function uploadImages(
             });
 
           if (error) {
-            throw new Error(
-              `Failed to upload "${variant.file.name}": ${error.message}`,
-            );
+            throw new Error(`Failed to upload "${variant.file.name}": ${error.message}`);
           }
 
           return {

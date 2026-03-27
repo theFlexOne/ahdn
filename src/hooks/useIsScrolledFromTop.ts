@@ -9,10 +9,10 @@ export function useIsScrolledFromTop() {
     };
 
     handleScroll(); // initialize on mount
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 

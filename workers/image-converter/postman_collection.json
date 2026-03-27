@@ -13,12 +13,8 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/health",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "health"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
         },
         "description": "Equivalent to `curl -i http://127.0.0.1:8080/health`."
       },
@@ -47,12 +43,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/convert",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "convert"
-          ]
+          "host": ["{{baseUrl}}"],
+          "path": ["convert"]
         },
         "description": "Equivalent to the multipart curl request for local image conversion."
       },

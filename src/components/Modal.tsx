@@ -72,7 +72,7 @@ export function Modal({
       aria-labelledby={titleId}
       onClick={handleBackdropClick}
       className={cn(
-        'm-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-white/10 bg-zinc-900 p-0 text-zinc-100 shadow-2xl backdrop:bg-black/60 open:flex open:flex-col',
+        'm-auto w-[calc(100%-2rem)] max-w-xl rounded-2xl border border-white/10 bg-zinc-900 p-0 text-zinc-100 shadow-2xl backdrop:bg-black/60 open:flex open:flex-col',
         className,
       )}
     >

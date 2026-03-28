@@ -21,7 +21,7 @@ lerna-debug.log*
 *.local
 .tmp/
 .data/
-notes.txt
+notes.*
 
 # Editor and system files
 .vscode/*

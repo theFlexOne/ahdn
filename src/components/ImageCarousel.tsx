@@ -5,9 +5,10 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-  type CarouselApi,
 } from './ui/carousel';
 import { useState, useEffect, useMemo } from 'react';
+
+import type { CarouselApi } from './ui/carousel';
 
 type ImageCarouselProps = {
   images: MediaMetadata[];
@@ -81,7 +82,7 @@ export default function ImageCarousel({ images, windowRadius = 2 }: ImageCarouse
                     draggable={false}
                   />
                 ) : (
-                  <div className="bg-muted/40 h-[80vh] w-full" />
+                  <div className="bg-muted/40 h-screen/80 w-full" />
                 )}
               </div>
             </CarouselItem>

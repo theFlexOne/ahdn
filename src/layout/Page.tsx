@@ -4,7 +4,10 @@ import type React from 'react';
 
 export default function Page({ className, children, ...props }: React.ComponentProps<'div'>) {
   return (
-    <main className={cn('mt-18 mb-12 flex w-full flex-col', className)} {...props}>
+    <main
+      className={cn('relative mt-18 mb-12 flex w-full flex-col items-center gap-10', className)}
+      {...props}
+    >
       {children}
     </main>
   );

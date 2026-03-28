@@ -26,7 +26,7 @@ export default function Schedule({
   const [selectedEvent, setSelectedEvent] = useState<EventDetails | null>(null);
 
   return (
-    <Page className="relative flex-col items-center gap-12">
+    <Page>
       <Image className="fixed top-10 left-0 -z-10 brightness-60" {...background} />
       <PageHeading>Scheduled Events</PageHeading>
       <PageCard>

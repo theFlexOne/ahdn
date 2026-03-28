@@ -6,8 +6,8 @@ import type { MouseEvent, ReactNode } from 'react';
 type ModalProps = {
   open: boolean;
   closeModal: () => void;
-  title: ReactNode;
   children: ReactNode;
+  title?: ReactNode;
   className?: string;
   closeOnBackdropClick?: boolean;
 };
@@ -78,7 +78,7 @@ export function Modal({
     >
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
         <h2 id={titleId} className="text-3xl font-semibold">
-          {title}
+          {title || ''}
         </h2>
         <button
           type="button"

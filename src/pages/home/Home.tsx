@@ -52,83 +52,79 @@ export default function Home({ events }: { events: Awaited<EventDetails[]> }) {
   }
 
   return (
-    <Page className="relative">
-      <div>
-        <HeroVideo
-          ref={videoRef}
-          primarySrc={videoSrcs.primaryVideo}
-          secondarySrc={videoSrcs.secondaryVideo}
-          posterSrc={videoSrcs.poster}
-          className="fixed top-10 -z-10 overflow-hidden"
-          dim={shouldDimVideo}
-        />
-        <AHDNLogo className="mx-auto h-screen w-7xl [fill-opacity:0.8]" />
-        <PauseButton className="fixed top-22.5 right-5 z-20" onClick={handlePause} size="sm" />
-      </div>
+    <Page>
+      <HeroVideo
+        ref={videoRef}
+        primarySrc={videoSrcs.primaryVideo}
+        secondarySrc={videoSrcs.secondaryVideo}
+        posterSrc={videoSrcs.poster}
+        className="fixed top-10 -z-10 overflow-hidden"
+        dim={shouldDimVideo}
+      />
+      <PauseButton className="fixed top-22.5 right-5 z-20" onClick={handlePause} size="sm" />
+      <AHDNLogo className="mx-auto mt-10 h-screen/80 w-7xl [fill-opacity:0.8]" />
 
-      <div className="m-8 flex flex-col gap-8">
-        <PageCard>
-          <PageSection>
-            <p className="text-center text-2xl leading-10 tracking-widest">
-              Recognized by Joey Molland of Badfinger and Grammy-winning artist Rick Derringer, this
-              acclaimed Beatles tribute delivers an authentic, high-energy performance that stands
-              among the nation's very best.
-            </p>
-          </PageSection>
-        </PageCard>
+      <PageCard>
+        <PageSection>
+          <p className="text-center text-2xl leading-10 tracking-widest">
+            Recognized by Joey Molland of Badfinger and Grammy-winning artist Rick Derringer, this
+            acclaimed Beatles tribute delivers an authentic, high-energy performance that stands
+            among the nation's very best.
+          </p>
+        </PageSection>
+      </PageCard>
 
-        <PageCard>
-          <PageSection>
-            <h2 className="text-center font-ahdn text-2xl uppercase">Upcoming Events</h2>
-            <UpcomingEvents events={events} />
-            <Link to="/schedule" className="mt-4 block text-center hover:underline">
-              View full schedule
-            </Link>
-          </PageSection>
-        </PageCard>
+      <PageCard>
+        <PageSection>
+          <h2 className="text-center font-ahdn text-2xl uppercase">Upcoming Events</h2>
+          <UpcomingEvents events={events} />
+          <Link to="/schedule" className="mt-4 block text-center hover:underline">
+            View full schedule
+          </Link>
+        </PageSection>
+      </PageCard>
 
-        <PageCard>
-          <PageSection>
-            <div className="flex flex-col gap-4">
-              <h2 className="text-center font-ahdn text-2xl uppercase">Promotional Video</h2>
+      <PageCard>
+        <PageSection>
+          <div className="flex flex-col gap-4">
+            <h2 className="text-center font-ahdn text-2xl uppercase">Promotional Video</h2>
+            <EmbeddedVideo
+              src="https://www.youtube.com/embed/5vqgS9w-FOg"
+              className="w-full"
+              onPlay={pauseVideo}
+              onPause={playVideo}
+            />
+          </div>
+          <div className="mt-12 flex w-full gap-8">
+            <div className="w-1/2">
+              <h2 className="mb-4 text-center font-ahdn text-2xl uppercase">
+                Endorsement by Rick Derringer
+              </h2>
               <EmbeddedVideo
-                src="https://www.youtube.com/embed/5vqgS9w-FOg"
+                src="https://www.youtube.com/embed/Rx9XswAbeAo"
                 className="w-full"
                 onPlay={pauseVideo}
                 onPause={playVideo}
               />
             </div>
-            <div className="mt-12 flex w-full gap-8">
-              <div className="w-1/2">
-                <h2 className="mb-4 text-center font-ahdn text-2xl uppercase">
-                  Endorsement by Rick Derringer
-                </h2>
-                <EmbeddedVideo
-                  src="https://www.youtube.com/embed/Rx9XswAbeAo"
-                  className="w-full"
-                  onPlay={pauseVideo}
-                  onPause={playVideo}
-                />
-              </div>
-              <div className="w-1/2">
-                <h2 className="mb-4 text-center font-ahdn text-2xl uppercase">
-                  Endorsement by Joey Molland
-                </h2>
-                <EmbeddedVideo
-                  src="https://www.youtube.com/embed/Tcvod_bTBzM"
-                  className="w-full"
-                  onPlay={pauseVideo}
-                  onPause={playVideo}
-                />
-              </div>
+            <div className="w-1/2">
+              <h2 className="mb-4 text-center font-ahdn text-2xl uppercase">
+                Endorsement by Joey Molland
+              </h2>
+              <EmbeddedVideo
+                src="https://www.youtube.com/embed/Tcvod_bTBzM"
+                className="w-full"
+                onPlay={pauseVideo}
+                onPause={playVideo}
+              />
             </div>
-          </PageSection>
-        </PageCard>
+          </div>
+        </PageSection>
+      </PageCard>
 
-        <PageCard>
-          <img src="/images/banner_1-1440.avif" alt="banner" />
-        </PageCard>
-      </div>
+      <PageCard>
+        <img src="/images/banner_1-1440.avif" alt="banner" />
+      </PageCard>
     </Page>
   );
 }

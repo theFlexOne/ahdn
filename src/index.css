@@ -152,6 +152,42 @@
   word-spacing: --value([length]);
 }
 
+@import 'tailwindcss';
+
+@utility h-screen\/10 {
+  height: 10vh;
+}
+@utility h-screen\/20 {
+  height: 20vh;
+}
+@utility h-screen\/25 {
+  height: 25vh;
+}
+@utility h-screen\/30 {
+  height: 30vh;
+}
+@utility h-screen\/40 {
+  height: 40vh;
+}
+@utility h-screen\/50 {
+  height: 50vh;
+}
+@utility h-screen\/60 {
+  height: 60vh;
+}
+@utility h-screen\/70 {
+  height: 70vh;
+}
+@utility h-screen\/75 {
+  height: 75vh;
+}
+@utility h-screen\/80 {
+  height: 80vh;
+}
+@utility h-screen\/90 {
+  height: 90vh;
+}
+
 body {
   color: var(--color-foreground);
 }

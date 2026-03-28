@@ -10,6 +10,7 @@ export default [
     route('gallery', 'routes/gallery.tsx'),
     route('song-list', 'routes/songList.tsx'),
     route('contact', 'routes/contact.tsx'),
+    route('test', 'routes/test.tsx'),
     route('*', 'routes/notFound.tsx'),
   ]),
 ] satisfies RouteConfig;

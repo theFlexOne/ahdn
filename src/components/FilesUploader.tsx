@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { TagsInput } from './TagsInput';
+import { TagsInput } from './tagsInput/TagsInput';
 
 export type FileItem = {
   file: File;
@@ -51,22 +51,12 @@ export default function FilesUploader({ fileItems, onChange, className }: FilesU
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop, multiple: true });
 
-  function handleAddTag(fileItem: FileItem, tag: string): void {
+  function handleTagsChange(fileItem: FileItem, tags: string[]): void {
     updateFileItem(fileItem, (item) => ({
       ...item,
       metadata: {
         ...item.metadata,
-        tags: [...item.metadata.tags, tag],
-      },
-    }));
-  }
-
-  function handleRemoveTag(fileItem: FileItem, tag: string): void {
-    updateFileItem(fileItem, (item) => ({
-      ...item,
-      metadata: {
-        ...item.metadata,
-        tags: item.metadata.tags.filter((t) => t !== tag),
+        tags,
       },
     }));
   }
@@ -89,9 +79,7 @@ export default function FilesUploader({ fileItems, onChange, className }: FilesU
         <div>
           <ul className="flex flex-col gap-2">
             {fileItems.map((fileItem) => (
-              <li
-                key={`${fileItem.file.name}-${fileItem.file.lastModified}-${fileItem.file.size}`}
-              >
+              <li key={`${fileItem.file.name}-${fileItem.file.lastModified}-${fileItem.file.size}`}>
                 <div className="flex rounded-sm border border-gray-400 p-4">
                   <div className="flex flex-col items-center gap-2">
                     <div className="grid aspect-square place-items-center border border-gray-400/20">
@@ -106,8 +94,7 @@ export default function FilesUploader({ fileItems, onChange, className }: FilesU
                   <div>
                     <TagsInput
                       tags={fileItem.metadata.tags}
-                      onAddTag={(tag) => handleAddTag(fileItem, tag)}
-                      onRemoveTag={(tag) => handleRemoveTag(fileItem, tag)}
+                      onTagsChange={(tags) => handleTagsChange(fileItem, tags)}
                     />
                   </div>
                 </div>

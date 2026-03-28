@@ -1,0 +1,15 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "build",
+        "-t",
+        "REGION-docker.pkg.dev/$PROJECT_ID/REPO/image-converter:$COMMIT_SHA",
+        "-t",
+        "REGION-docker.pkg.dev/$PROJECT_ID/REPO/image-converter:latest",
+        "."
+      ]
+
+images:
+  - REGION-docker.pkg.dev/$PROJECT_ID/REPO/image-converter:$COMMIT_SHA
+  - REGION-docker.pkg.dev/$PROJECT_ID/REPO/image-converter:latest

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { DEFAULT_IMAGE_PRESET } from '../constants.ts';
+import { DEFAULT_IMAGE_PRESET, IMAGE_FORMATS, IMAGE_PRESETS } from '../constants.ts';
 
 import type {
   ImagePreset,
@@ -104,6 +104,14 @@ function decodeBase64(value: string): Uint8Array {
   return bytes;
 }
 
+function getRequestedFormats(): string[] {
+  return IMAGE_FORMATS.map((format) => format.extension);
+}
+
+function getRequestedWidths(preset: ImagePreset): number[] {
+  return [...new Set(Object.values(IMAGE_PRESETS[preset]))].sort((left, right) => left - right);
+}
+
 function toFilenameBase(imageData: ParsedImageData): string {
   return path.basename(imageData.file.name, path.extname(imageData.file.name));
 }
@@ -145,7 +153,14 @@ async function requestImageVariants(
   preset: ImagePreset,
 ): Promise<WorkerImageVariantsData[]> {
   const formData = new FormData();
-  formData.append('preset', preset);
+
+  getRequestedFormats().forEach((format) => {
+    formData.append('formats', format);
+  });
+
+  getRequestedWidths(preset).forEach((width) => {
+    formData.append('widths', String(width));
+  });
 
   images.forEach((imageData, index) => {
     formData.append(`file[${index}]`, imageData.file, imageData.file.name);

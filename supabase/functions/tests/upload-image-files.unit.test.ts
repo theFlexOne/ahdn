@@ -66,9 +66,7 @@ Deno.test('parseRequestOptions reads preset and upsert values', () => {
   assertEquals(options.upsert, true);
 });
 
-Deno.test(
-  'createImageVariants proxies conversion through the worker and remaps metadata',
-  async () => {
+Deno.test('createImageVariants proxies conversion through the worker and remaps metadata', async () => {
     const originalFetch = globalThis.fetch;
     const originalWorkerUrl = Deno.env.get('IMAGE_CONVERTER_URL');
     const originalWorkerSecret = Deno.env.get('WORKER_SHARED_SECRET');
@@ -130,7 +128,8 @@ Deno.test(
       const requestBody = fetchCalls[0].init?.body;
       assert(requestBody instanceof FormData);
       const formData = requestBody as FormData;
-      assertEquals(formData.get('preset'), 'content');
+      assertEquals(JSON.stringify(formData.getAll('formats')), JSON.stringify(['avif', 'webp', 'jpg']));
+      assertEquals(JSON.stringify(formData.getAll('widths')), JSON.stringify(['600', '900', '1440']));
       assertEquals((formData.get('file[0]') as File | null)?.name, 'example-image1.jpg');
 
       assertEquals(results.length, 1);

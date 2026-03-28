@@ -29,8 +29,33 @@
           "mode": "formdata",
           "formdata": [
             {
-              "key": "preset",
-              "value": "thumbnail",
+              "key": "formats",
+              "value": "avif",
+              "type": "text"
+            },
+            {
+              "key": "formats",
+              "value": "webp",
+              "type": "text"
+            },
+            {
+              "key": "formats",
+              "value": "jpg",
+              "type": "text"
+            },
+            {
+              "key": "widths",
+              "value": "240",
+              "type": "text"
+            },
+            {
+              "key": "widths",
+              "value": "400",
+              "type": "text"
+            },
+            {
+              "key": "widths",
+              "value": "640",
               "type": "text"
             },
             {

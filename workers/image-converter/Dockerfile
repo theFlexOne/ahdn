@@ -1,25 +1,14 @@
-FROM node:24-bookworm-slim AS build
+FROM denoland/deno:2.1.4
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY deno.json deno.lock ./
+COPY src ./src
 
-COPY tsconfig.json index.ts ./
-RUN npm run build
+RUN deno cache --lock=deno.lock --frozen --allow-scripts=npm:sharp --allow-env --allow-net --allow-read src/main.ts
 
-FROM node:24-bookworm-slim AS runtime
-
-ENV NODE_ENV=production
 ENV PORT=8080
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install --omit=dev
-
-COPY --from=build /app/dist ./dist
 
 EXPOSE 8080
 
-CMD ["node", "dist/index.js"]
+CMD ["run", "--allow-scripts=npm:sharp", "--allow-env", "--allow-net", "--allow-read", "--allow-ffi", "src/main.ts"]

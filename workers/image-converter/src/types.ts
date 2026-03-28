@@ -1,8 +1,12 @@
-import { IMAGE_FORMATS, IMAGE_PRESETS } from './constants.js';
+import { IMAGE_FORMATS } from "./constants.ts";
 
-export type ImagePreset = keyof typeof IMAGE_PRESETS;
-export type ImageVariantMimeType = (typeof IMAGE_FORMATS)[number]['mimeType'];
-export type MultipartBody = Record<string, unknown>;
+export type ImageOutputFormat = (typeof IMAGE_FORMATS)[number];
+export type ImageVariantMimeType = ImageOutputFormat["mimeType"];
+
+export type ImageConversionOptions = {
+  formats: ImageOutputFormat[];
+  widths: number[];
+};
 
 export type UploadedFile = {
   name: string;

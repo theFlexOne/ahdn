@@ -1,5 +1,6 @@
-node_modules
-dist
-npm-debug.log*
-.env
-.env.*
+.git
+.env.local
+README.md
+postman_collection.json
+src/*.test.ts
+src/*.integration.test.ts

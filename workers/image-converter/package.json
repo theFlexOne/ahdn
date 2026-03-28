@@ -3,28 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
-    "dev": "node --env-file-if-exists=.env.local --watch --import tsx index.ts",
-    "build": "tsc -p tsconfig.json",
-    "test": "NODE_ENV=test node --env-file-if-exists=.env.local --import tsx --test index.test.ts",
-    "test:integration": "NODE_ENV=test node --env-file-if-exists=.env.local --import tsx --test index.integration.test.ts",
-    "start": "node --env-file-if-exists=.env.local dist/index.js",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
-  },
-  "engines": {
-    "node": "24.x"
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "multer": "^2.0.2",
-    "sharp": "^0.34.5"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^24.10.12",
-    "tsx": "^4.21.0",
-    "typescript": "~5.9.3"
+    "dev": "deno task dev",
+    "start": "deno task start",
+    "test": "deno task test",
+    "test:integration": "deno task test:integration",
+    "typecheck": "deno task check",
+    "fmt": "deno task fmt",
+    "lint": "deno task lint"
   }
 }
